@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllStates, getAllCounties } from "@/lib/db";
+import { getAllStates, getAllCounties, getAllCountyComparisonSlugs } from "@/lib/db";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://propertytaxpeek.com";
@@ -64,5 +64,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...statePages, ...countyPages, ...comparisonPages];
+  const countyComparisonPages: MetadataRoute.Sitemap = getAllCountyComparisonSlugs(49000).map((c) => ({
+    url: `${SITE_URL}/county-compare/${c.slug}/`,
+    changeFrequency: "yearly" as const,
+    priority: 0.5,
+  }));
+
+  return [...staticPages, ...statePages, ...countyPages, ...comparisonPages, ...countyComparisonPages];
 }

@@ -148,3 +148,35 @@ export function countCounties(): number {
     .get() as { cnt: number };
   return row.cnt;
 }
+
+// --- County Comparison queries ---
+
+export interface CountyComparison {
+  id: number;
+  slug: string;
+  county_a_slug: string;
+  county_b_slug: string;
+}
+
+export function getAllCountyComparisonSlugs(limit = 50000): CountyComparison[] {
+  return getDb()
+    .prepare('SELECT * FROM county_comparisons ORDER BY id LIMIT ?')
+    .all(limit) as CountyComparison[];
+}
+
+export function getCountyComparisonBySlug(slug: string): { a: County; b: County } | undefined {
+  const row = getDb()
+    .prepare('SELECT county_a_slug, county_b_slug FROM county_comparisons WHERE slug = ?')
+    .get(slug) as { county_a_slug: string; county_b_slug: string } | undefined;
+  if (!row) return undefined;
+  const a = getCountyBySlug(row.county_a_slug);
+  const b = getCountyBySlug(row.county_b_slug);
+  if (!a || !b) return undefined;
+  return { a, b };
+}
+
+export function countCountyComparisons(): number {
+  try {
+    return (getDb().prepare('SELECT COUNT(*) as c FROM county_comparisons').get() as { c: number }).c;
+  } catch { return 0; }
+}
