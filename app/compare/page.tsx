@@ -199,19 +199,26 @@ export default function ComparePage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           {[
-            ["Texas", "California"],
-            ["New Jersey", "Florida"],
-            ["Illinois", "Indiana"],
-            ["New York", "Connecticut"],
-            ["Ohio", "Pennsylvania"],
-            ["Washington", "Oregon"],
-          ].map(([x, y]) => (
-            <div
-              key={`${x}-${y}`}
-              className="p-3 bg-slate-50 border border-slate-200 rounded-lg"
+            ["texas", "california", "Texas", "California"],
+            ["new-jersey", "florida", "New Jersey", "Florida"],
+            ["illinois", "indiana", "Illinois", "Indiana"],
+            ["new-york", "connecticut", "New York", "Connecticut"],
+            ["ohio", "pennsylvania", "Ohio", "Pennsylvania"],
+            ["washington", "oregon", "Washington", "Oregon"],
+            ["texas", "florida", "Texas", "Florida"],
+            ["california", "new-york", "California", "New York"],
+            ["new-jersey", "new-york", "New Jersey", "New York"],
+            ["georgia", "north-carolina", "Georgia", "North Carolina"],
+            ["colorado", "arizona", "Colorado", "Arizona"],
+            ["tennessee", "texas", "Tennessee", "Texas"],
+          ].map(([slugA, slugB, nameA, nameB]) => (
+            <a
+              key={`${slugA}-${slugB}`}
+              href={`/compare/${slugA}-vs-${slugB}/`}
+              className="p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
             >
-              {x} vs {y} Property Taxes
-            </div>
+              {nameA} vs {nameB} Property Taxes
+            </a>
           ))}
         </div>
       </section>
