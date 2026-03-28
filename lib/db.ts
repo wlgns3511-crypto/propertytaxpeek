@@ -164,6 +164,16 @@ export function getAllCountyComparisonSlugs(limit = 50000): CountyComparison[] {
     .all(limit) as CountyComparison[];
 }
 
+export function getCountyComparisonCount(): number {
+  return (getDb().prepare('SELECT COUNT(*) as c FROM county_comparisons').get() as { c: number }).c;
+}
+
+export function getCountyComparisonSlugsPage(offset: number, limit: number): CountyComparison[] {
+  return getDb()
+    .prepare('SELECT slug FROM county_comparisons ORDER BY id LIMIT ? OFFSET ?')
+    .all(limit, offset) as CountyComparison[];
+}
+
 export function getCountyComparisonBySlug(slug: string): { a: County; b: County } | undefined {
   const row = getDb()
     .prepare('SELECT county_a_slug, county_b_slug FROM county_comparisons WHERE slug = ?')
