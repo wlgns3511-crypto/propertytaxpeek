@@ -1,15 +1,8 @@
 import type { MetadataRoute } from "next";
-import {
-  getAllStates,
-  getAllCounties,
-  getCountyComparisonCount,
-  getCountyComparisonSlugsPage,
-} from "@/lib/db";
+import { getAllStates, getAllCounties, getAllCountyComparisonSlugs } from "@/lib/db";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://propertytaxpeek.com";
-
-const URLS_PER_SITEMAP = 40000;
 
 // Top 20 states for pre-built comparison pages
 const TOP_STATES = [
@@ -34,60 +27,43 @@ function generateComparisonSlugs(): string[] {
   return slugs;
 }
 
-/**
- * Sitemap index: id 0 = static + states + counties + state comparisons
- * id 1..N = county comparison pages (paginated, 124K+ URLs)
- */
-export async function generateSitemaps() {
-  const totalComparisons = getCountyComparisonCount();
-  const compSitemapCount = Math.ceil(totalComparisons / URLS_PER_SITEMAP);
-  const ids = [{ id: 0 }];
-  for (let i = 1; i <= compSitemapCount; i++) {
-    ids.push({ id: i });
-  }
-  return ids;
-}
+export default function sitemap(): MetadataRoute.Sitemap {
+  const states = getAllStates();
+  const counties = getAllCounties();
+  const comparisonSlugs = generateComparisonSlugs();
 
-export default function sitemap({ id: rawId }: { id: number }): MetadataRoute.Sitemap {
-  const id = Number(rawId);
-  if (id === 0) {
-    const states = getAllStates();
-    const counties = getAllCounties();
-    const comparisonSlugs = generateComparisonSlugs();
+  // 50K URL 제한 — states + counties 먼저, 나머지 county comparisons으로 채움
+  const baseCount = 7 + states.length + counties.length + comparisonSlugs.length;
+  const countyCompLimit = Math.min(45000 - baseCount, 42000);
+  const countyComparisons = getAllCountyComparisonSlugs(countyCompLimit);
 
-    return [
-      { url: SITE_URL, changeFrequency: "monthly", priority: 1.0 },
-      { url: `${SITE_URL}/calculator`, changeFrequency: "monthly", priority: 0.9 },
-      { url: `${SITE_URL}/compare`, changeFrequency: "monthly", priority: 0.8 },
-      { url: `${SITE_URL}/about`, changeFrequency: "yearly", priority: 0.3 },
-      { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
-      { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
-      { url: `${SITE_URL}/contact`, changeFrequency: "yearly", priority: 0.3 },
-      ...states.map((s) => ({
-        url: `${SITE_URL}/state/${s.slug}`,
-        changeFrequency: "monthly" as const,
-        priority: 0.9,
-      })),
-      ...counties.map((c) => ({
-        url: `${SITE_URL}/county/${c.slug}`,
-        changeFrequency: "monthly" as const,
-        priority: 0.7,
-      })),
-      ...comparisonSlugs.map((slug) => ({
-        url: `${SITE_URL}/compare/${slug}`,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      })),
-    ];
-  }
-
-  // County comparison pages: paginated
-  const offset = (id - 1) * URLS_PER_SITEMAP;
-  const comparisons = getCountyComparisonSlugsPage(offset, URLS_PER_SITEMAP);
-
-  return comparisons.map((c) => ({
-    url: `${SITE_URL}/county-compare/${c.slug}/`,
-    changeFrequency: "yearly" as const,
-    priority: 0.5,
-  }));
+  return [
+    { url: SITE_URL, changeFrequency: "monthly", priority: 1.0 },
+    { url: `${SITE_URL}/calculator`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/compare`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/about`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/contact`, changeFrequency: "yearly", priority: 0.3 },
+    ...states.map((s) => ({
+      url: `${SITE_URL}/state/${s.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
+    ...counties.map((c) => ({
+      url: `${SITE_URL}/county/${c.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...comparisonSlugs.map((slug) => ({
+      url: `${SITE_URL}/compare/${slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...countyComparisons.map((c) => ({
+      url: `${SITE_URL}/county-compare/${c.slug}/`,
+      changeFrequency: "yearly" as const,
+      priority: 0.5,
+    })),
+  ];
 }
