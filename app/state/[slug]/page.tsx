@@ -11,6 +11,8 @@ import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { DataFeedback } from "@/components/DataFeedback";
+import { TaxRateChart } from "@/components/TaxRateChart";
+import { CiteButton } from "@/components/CiteButton";
 
 export function generateStaticParams() {
   return getAllStates().map((s) => ({ slug: s.slug }));
@@ -154,6 +156,8 @@ export default async function StatePage({
       <FreshnessTag />
 
       <AdSlot id="1234567890" />
+
+      <TaxRateChart stateRate={state.effective_rate} nationalRate={national.avg_rate} stateName={state.state} />
 
       {/* State Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8">
@@ -327,6 +331,10 @@ export default async function StatePage({
           <a href="https://zippeek.com" className="text-blue-600 hover:underline">ZipPeek - ZIP demographics &rarr;</a>
         </div>
       </section>
+
+      <div className="flex items-center gap-4 mt-4">
+        <CiteButton title={`${state.state} Property Tax Rates`} url={`https://propertytaxpeek.com/state/${slug}`} source="PropertyTaxPeek" />
+      </div>
 
       <DataFeedback />
     </>
