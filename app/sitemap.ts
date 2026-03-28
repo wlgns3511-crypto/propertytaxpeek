@@ -48,7 +48,8 @@ export async function generateSitemaps() {
   return ids;
 }
 
-export default function sitemap({ id }: { id: number }): MetadataRoute.Sitemap {
+export default function sitemap({ id: rawId }: { id: number }): MetadataRoute.Sitemap {
+  const id = Number(rawId);
   if (id === 0) {
     const states = getAllStates();
     const counties = getAllCounties();

@@ -171,7 +171,7 @@ export function getCountyComparisonCount(): number {
 export function getCountyComparisonSlugsPage(offset: number, limit: number): CountyComparison[] {
   return getDb()
     .prepare('SELECT slug FROM county_comparisons ORDER BY id LIMIT ? OFFSET ?')
-    .all(limit, offset) as CountyComparison[];
+    .all(Number(limit), Number(offset)) as CountyComparison[];
 }
 
 export function getCountyComparisonBySlug(slug: string): { a: County; b: County } | undefined {
