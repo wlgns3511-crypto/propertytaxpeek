@@ -111,6 +111,22 @@ export default async function StatePage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Dataset",
+            "name": `${state.state} Property Tax Rates`,
+            "description": `Property tax rates, median annual tax, and county-level breakdown for ${state.state}. Effective rate: ${state.effective_rate.toFixed(2)}%.`,
+            "url": `https://propertytaxpeek.com/state/${slug}`,
+            "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "creator": { "@type": "Organization", "name": "DataPeek Facts", "url": "https://datapeekfacts.com" },
+            "temporalCoverage": "2024/2026",
+            "distribution": { "@type": "DataDownload", "encodingFormat": "text/html" }
+          })
+        }}
+      />
       <Breadcrumb
         items={[
           { label: "Home", href: "/" },
@@ -300,6 +316,16 @@ export default async function StatePage({
           <a href="https://costbycity.com">cost of living</a>, and{" "}
           <a href="https://zippeek.com">ZIP code details</a> for {state.state}.
         </p>
+      </section>
+
+      {/* Related Data Resources */}
+      <section className="mt-8 p-4 bg-slate-50 rounded-lg">
+        <h3 className="text-sm font-semibold text-slate-500 mb-2">Related Data Resources</h3>
+        <div className="flex flex-wrap gap-3 text-sm">
+          <a href="https://fairrentwize.com" className="text-blue-600 hover:underline">FairRentWize - Fair market rents &rarr;</a>
+          <a href="https://costbycity.com" className="text-blue-600 hover:underline">CostByCity - Cost of living &rarr;</a>
+          <a href="https://zippeek.com" className="text-blue-600 hover:underline">ZipPeek - ZIP demographics &rarr;</a>
+        </div>
       </section>
 
       <DataFeedback />
