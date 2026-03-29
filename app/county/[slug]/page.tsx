@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   getAllCounties,
   getCountyBySlug,
+  getCountiesByState,
   getStateByAbbr,
   getNationalAverage,
   getAllStates,
@@ -227,6 +228,55 @@ export default async function CountyPage({
           <a href="https://costbycity.com">CostByCity</a>.
         </p>
       </section>
+
+      {/* Compare with other counties — internal links for crawling */}
+      {(() => {
+        const sameState = getCountiesByState(county.state)
+          .filter((c) => c.slug !== county.slug)
+          .slice(0, 8);
+        const topCounties = getAllCounties()
+          .filter((c) => c.state !== county.state)
+          .slice(0, 8);
+        return (
+          <section className="mt-12 mb-8">
+            <h2 className="text-xl font-bold mb-4">
+              Compare {county.county_name} Property Taxes
+            </h2>
+            {sameState.length > 0 && (
+              <>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase mb-2">
+                  vs Other {county.state} Counties
+                </h3>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {sameState.map((c) => (
+                    <a
+                      key={c.slug}
+                      href={`/county-compare/${county.slug}-vs-${c.slug}/`}
+                      className="text-sm px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 rounded-full"
+                    >
+                      vs {c.county_name}
+                    </a>
+                  ))}
+                </div>
+              </>
+            )}
+            <h3 className="text-sm font-semibold text-slate-500 uppercase mb-2">
+              vs Popular Counties Nationwide
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {topCounties.map((c) => (
+                <a
+                  key={c.slug}
+                  href={`/county-compare/${county.slug}-vs-${c.slug}/`}
+                  className="text-sm px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 rounded-full"
+                >
+                  vs {c.county_name}, {c.state}
+                </a>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       <DataFeedback />
     </>

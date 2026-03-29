@@ -175,12 +175,23 @@ export function getCountyComparisonSlugsPage(offset: number, limit: number): Cou
 }
 
 export function getCountyComparisonBySlug(slug: string): { a: County; b: County } | undefined {
-  const row = getDb()
-    .prepare('SELECT county_a_slug, county_b_slug FROM county_comparisons WHERE slug = ?')
-    .get(slug) as { county_a_slug: string; county_b_slug: string } | undefined;
-  if (!row) return undefined;
-  const a = getCountyBySlug(row.county_a_slug);
-  const b = getCountyBySlug(row.county_b_slug);
+  // First try DB lookup
+  try {
+    const row = getDb()
+      .prepare('SELECT county_a_slug, county_b_slug FROM county_comparisons WHERE slug = ?')
+      .get(slug) as { county_a_slug: string; county_b_slug: string } | undefined;
+    if (row) {
+      const a = getCountyBySlug(row.county_a_slug);
+      const b = getCountyBySlug(row.county_b_slug);
+      if (a && b) return { a, b };
+    }
+  } catch { /* table may not exist */ }
+
+  // Fallback: parse slug directly (e.g. "cook-county-il-vs-los-angeles-county-ca")
+  const parts = slug.split("-vs-");
+  if (parts.length !== 2) return undefined;
+  const a = getCountyBySlug(parts[0]);
+  const b = getCountyBySlug(parts[1]);
   if (!a || !b) return undefined;
   return { a, b };
 }

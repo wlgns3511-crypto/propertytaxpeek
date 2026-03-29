@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllCountyComparisonSlugs, getCountyComparisonBySlug, getNationalAverage } from "@/lib/db";
+import { getAllCountyComparisonSlugs, getCountyComparisonBySlug, getNationalAverage, getCountiesByState, getAllCounties } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
@@ -154,6 +154,37 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
         "@type": "FAQPage",
         mainEntity: faqs.map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))
       }) }} />
+
+      {/* Related comparisons for internal linking */}
+      {(() => {
+        const related = getAllCounties()
+          .filter((c) => c.slug !== a.slug && c.slug !== b.slug)
+          .slice(0, 6);
+        return (
+          <section className="mt-8 mb-4">
+            <h2 className="text-lg font-bold mb-3">Related Comparisons</h2>
+            <div className="grid sm:grid-cols-2 gap-2">
+              {related.map((c) => (
+                <div key={c.slug} className="flex gap-2">
+                  <a
+                    href={`/county-compare/${a.slug}-vs-${c.slug}/`}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {a.county_name} vs {c.county_name}, {c.state}
+                  </a>
+                  <span className="text-slate-300">|</span>
+                  <a
+                    href={`/county-compare/${b.slug}-vs-${c.slug}/`}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {b.county_name} vs {c.county_name}, {c.state}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
     </div>
   );
 }
