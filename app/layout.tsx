@@ -74,6 +74,9 @@ export default function RootLayout({
               <a href="/compare" className="hover:text-blue-600">
                 Compare
               </a>
+              <a href="/blog/" className="hover:text-blue-600">
+                Guides
+              </a>
               <a href="/es/" className="text-slate-400 hover:text-blue-600 text-xs">
                 ES
               </a>

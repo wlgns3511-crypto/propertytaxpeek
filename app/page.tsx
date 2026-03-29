@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getAllStates, getHighestTaxStates, getLowestTaxStates, getNationalAverage } from "@/lib/db";
+import { getAllPosts } from "@/lib/blog";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { AdSlot } from "@/components/AdSlot";
 import { FreshnessTag } from "@/components/FreshnessTag";
@@ -24,6 +25,7 @@ export default function HomePage() {
   const lowest = getLowestTaxStates(10);
   const national = getNationalAverage();
 
+  const latestPosts = getAllPosts().slice(0, 3);
   const calcStates = states.map((s) => ({
     abbr: s.abbr,
     state: s.state,
@@ -205,6 +207,36 @@ export default function HomePage() {
       <PropertyTaxCalculator states={calcStates} />
 
       <AdSlot id="9012345678" />
+
+      {/* Latest Guides */}
+      <section className="mt-12 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-slate-800">Property Tax Guides</h2>
+          <a href="/blog/" className="text-sm text-blue-600 hover:underline">
+            All guides →
+          </a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {latestPosts.map((post) => (
+            <a
+              key={post.slug}
+              href={`/blog/${post.slug}/`}
+              className="block border border-slate-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-sm transition-all group"
+            >
+              <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
+                {post.category}
+              </span>
+              <h3 className="text-sm font-semibold text-slate-900 group-hover:text-blue-700 mt-2 leading-snug">
+                {post.title}
+              </h3>
+              <p className="text-xs text-slate-500 mt-2 line-clamp-2">
+                {post.description}
+              </p>
+              <p className="text-xs text-slate-400 mt-2">{post.readingTime} min read</p>
+            </a>
+          ))}
+        </div>
+      </section>
 
       {/* SEO content */}
       <section className="prose prose-slate max-w-none mt-12">
