@@ -38,6 +38,10 @@ export async function generateMetadata({
   return {
     title: `${county.county_name}, ${county.state} Property Tax Rate - ${county.effective_rate.toFixed(2)}%`,
     description: `${county.county_name}, ${county.state} has an effective property tax rate of ${county.effective_rate.toFixed(2)}%. Median annual property tax is ${fmt(county.median_tax)} on a median home value of ${fmt(county.median_home_value)}.`,
+    alternates: {
+      canonical: `/county/${slug}/`,
+      languages: { en: `/county/${slug}/`, es: `/es/county/${slug}/`, "x-default": `/county/${slug}/` },
+    },
   };
 }
 

@@ -1,0 +1,80 @@
+{
+  "common": {
+    "home": "Inicio",
+    "calculator": "Calculadora",
+    "compare": "Comparar",
+    "about": "Acerca de",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "contact": "Contacto",
+    "stateAvg": "Promedio Estatal",
+    "nationalAvg": "Promedio Nacional",
+    "effectiveRate": "Tasa Impositiva Efectiva",
+    "medianTax": "Impuesto Anual Mediano",
+    "medianHomeValue": "Valor Mediano de Vivienda",
+    "population": "Población",
+    "viewProfile": "Perfil completo →",
+    "relatedResources": "Recursos de Datos Relacionados",
+    "dataUpdated": "Datos actualizados",
+    "source": "Fuente",
+    "allRightsReserved": "Todos los derechos reservados.",
+    "langSwitch": "English",
+    "langSwitchPrefix": ""
+  },
+  "county": {
+    "title": "Tasa de Impuesto a la Propiedad en {county}, {state}",
+    "rateDescription": "{county} tiene una tasa impositiva efectiva de",
+    "aboveAvg": "por encima de",
+    "belowAvg": "por debajo de",
+    "theNationalAvg": "el promedio nacional",
+    "comparisonTitle": "Comparación con el Promedio Estatal y Nacional",
+    "location": "Ubicación",
+    "rate": "Tasa",
+    "medianTax": "Impuesto Mediano",
+    "medianHome": "Vivienda Mediana",
+    "compareTaxes": "Comparar Impuestos de {county}",
+    "vsOtherCounties": "vs Otros Condados de {state}",
+    "vsPopularCounties": "vs Condados Populares a Nivel Nacional",
+    "propertyTaxInfo": "Información del Impuesto a la Propiedad de {county}",
+    "propertyOwners": "Los propietarios en {county}, {state} pagan un impuesto anual mediano de {tax}.",
+    "effectiveRateIs": "La tasa impositiva efectiva de {rate} es",
+    "higherThan": "más alta que",
+    "lowerThan": "más baja que",
+    "theStateAvg": "el promedio estatal de {state}"
+  },
+  "compare": {
+    "title": "Comparación de Impuestos: {stateA} vs {stateB}",
+    "higherRate": "{state} tiene una tasa impositiva efectiva {diff}% más alta que {otherState}.",
+    "onHome": "En una vivienda de $350,000, pagaría {amount}/año más en {state}.",
+    "sideByComparison": "Comparación Lado a Lado",
+    "detailedComparison": "Comparación Detallada",
+    "visualComparison": "Comparación Visual",
+    "metric": "Métrica",
+    "difference": "Diferencia",
+    "taxOnHome": "Impuesto en Vivienda de ${amount}",
+    "vsNationalAvg": "vs Promedio Nacional ({rate}%)",
+    "relatedComparisons": "Comparaciones de Impuestos Relacionadas",
+    "whyHigher": "Por Qué {state} Tiene Impuestos Más Altos que {otherState}"
+  },
+  "countyCompare": {
+    "title": "{countyA}, {stateA} vs {countyB}, {stateB}",
+    "subtitle": "Comparación de Tasas de Impuesto a la Propiedad 2025",
+    "quickAnswer": "Respuesta Rápida",
+    "sideByComparison": "Comparación Lado a Lado",
+    "compareCounties": "Comparar Condados",
+    "relatedComparisons": "Comparaciones Relacionadas",
+    "faq": "Preguntas Frecuentes"
+  },
+  "state": {
+    "title": "Tasas de Impuesto a la Propiedad en {state}",
+    "overview": "Resumen",
+    "countyBreakdown": "Desglose por Condado",
+    "neighborComparison": "Cómo se Compara {state} con Estados Vecinos"
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "whatIsDifference": "¿Cuál es la diferencia de impuestos entre {a} y {b}?",
+    "whichHigher": "¿Qué condado tiene impuestos más altos, {a} o {b}?",
+    "howCompareNational": "¿Cómo se comparan {a} y {b} con el promedio nacional?"
+  }
+}

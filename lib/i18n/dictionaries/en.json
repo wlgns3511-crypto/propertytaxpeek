@@ -1,0 +1,80 @@
+{
+  "common": {
+    "home": "Home",
+    "calculator": "Calculator",
+    "compare": "Compare",
+    "about": "About",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact",
+    "stateAvg": "State Average",
+    "nationalAvg": "National Average",
+    "effectiveRate": "Effective Tax Rate",
+    "medianTax": "Median Annual Tax",
+    "medianHomeValue": "Median Home Value",
+    "population": "Population",
+    "viewProfile": "Full profile →",
+    "relatedResources": "Related Data Resources",
+    "dataUpdated": "Data updated",
+    "source": "Source",
+    "allRightsReserved": "All rights reserved.",
+    "langSwitch": "Español",
+    "langSwitchPrefix": "/es"
+  },
+  "county": {
+    "title": "{county}, {state} Property Tax Rate",
+    "rateDescription": "{county} has an effective property tax rate of",
+    "aboveAvg": "above",
+    "belowAvg": "below",
+    "theNationalAvg": "the national average",
+    "comparisonTitle": "Comparison with State & National Average",
+    "location": "Location",
+    "rate": "Rate",
+    "medianTax": "Median Tax",
+    "medianHome": "Median Home",
+    "compareTaxes": "Compare {county} Property Taxes",
+    "vsOtherCounties": "vs Other {state} Counties",
+    "vsPopularCounties": "vs Popular Counties Nationwide",
+    "propertyTaxInfo": "{county} Property Tax Information",
+    "propertyOwners": "Property owners in {county}, {state} pay a median annual property tax of {tax}.",
+    "effectiveRateIs": "The effective tax rate of {rate} is",
+    "higherThan": "higher than",
+    "lowerThan": "lower than",
+    "theStateAvg": "the {state} state average"
+  },
+  "compare": {
+    "title": "{stateA} vs {stateB} Property Tax Comparison",
+    "higherRate": "{state} has a {diff}% higher effective property tax rate than {otherState}.",
+    "onHome": "On a $350,000 home, you would pay {amount}/year more in {state}.",
+    "sideByComparison": "Side-by-Side Comparison",
+    "detailedComparison": "Detailed Comparison",
+    "visualComparison": "Visual Comparison",
+    "metric": "Metric",
+    "difference": "Difference",
+    "taxOnHome": "Tax on ${amount} Home",
+    "vsNationalAvg": "vs National Average ({rate}%)",
+    "relatedComparisons": "Related Property Tax Comparisons",
+    "whyHigher": "Why {state} Has Higher Property Taxes Than {otherState}"
+  },
+  "countyCompare": {
+    "title": "{countyA}, {stateA} vs {countyB}, {stateB}",
+    "subtitle": "Property Tax Rate Comparison 2025",
+    "quickAnswer": "Quick Answer",
+    "sideByComparison": "Side-by-Side Comparison",
+    "compareCounties": "Compare Counties",
+    "relatedComparisons": "Related Comparisons",
+    "faq": "Frequently Asked Questions"
+  },
+  "state": {
+    "title": "{state} Property Tax Rates",
+    "overview": "Overview",
+    "countyBreakdown": "County Property Tax Breakdown",
+    "neighborComparison": "How {state} Compares to Neighboring States"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "whatIsDifference": "What is the property tax difference between {a} and {b}?",
+    "whichHigher": "Which county has higher property taxes, {a} or {b}?",
+    "howCompareNational": "How do {a} and {b} compare to the national average?"
+  }
+}
