@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllCountyComparisonSlugs, getCountyComparisonBySlug, getNationalAverage, getCountiesByState, getAllCounties } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ComparisonBar } from "@/components/ComparisonBar";
 
 export const dynamicParams = true;
 export const revalidate = 86400;
@@ -107,6 +108,46 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Visual comparison bars */}
+        <div className="mt-6 space-y-4">
+          <div>
+            <h3 className="text-sm font-medium text-slate-600 mb-2">Effective Tax Rate</h3>
+            <ComparisonBar
+              bars={[
+                { label: a.county_name, value: a.effective_rate },
+                { label: b.county_name, value: b.effective_rate },
+                { label: "National Avg", value: national.avg_rate },
+              ]}
+              format={(v) => v.toFixed(2) + "%"}
+              referenceValue={national.avg_rate}
+            />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-slate-600 mb-2">Median Annual Tax</h3>
+            <ComparisonBar
+              bars={[
+                { label: a.county_name, value: a.median_tax },
+                { label: b.county_name, value: b.median_tax },
+                { label: "National Avg", value: national.avg_median_tax },
+              ]}
+              format={fmt}
+              referenceValue={national.avg_median_tax}
+            />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-slate-600 mb-2">Median Home Value</h3>
+            <ComparisonBar
+              bars={[
+                { label: a.county_name, value: a.median_home_value },
+                { label: b.county_name, value: b.median_home_value },
+                { label: "National Avg", value: national.avg_home_value },
+              ]}
+              format={fmt}
+              referenceValue={national.avg_home_value}
+            />
+          </div>
         </div>
       </section>
 

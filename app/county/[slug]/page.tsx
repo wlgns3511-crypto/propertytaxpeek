@@ -8,6 +8,7 @@ import {
   getNationalAverage,
   getAllStates,
 } from "@/lib/db";
+import { ComparisonBar } from "@/components/ComparisonBar";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -187,6 +188,34 @@ export default async function CountyPage({
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {/* Visual comparison bars */}
+      <div className="space-y-4 mb-8">
+        <div>
+          <h3 className="text-sm font-medium text-slate-600 mb-2">Effective Tax Rate</h3>
+          <ComparisonBar
+            bars={[
+              { label: county.county_name, value: county.effective_rate },
+              ...(stateData ? [{ label: `${stateData.state} avg`, value: stateData.effective_rate }] : []),
+              { label: "National avg", value: national.avg_rate },
+            ]}
+            format={(v) => v.toFixed(2) + "%"}
+            referenceValue={national.avg_rate}
+          />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-slate-600 mb-2">Median Annual Tax</h3>
+          <ComparisonBar
+            bars={[
+              { label: county.county_name, value: county.median_tax },
+              ...(stateData ? [{ label: `${stateData.state} avg`, value: stateData.median_tax }] : []),
+              { label: "National avg", value: national.avg_median_tax },
+            ]}
+            format={fmt}
+            referenceValue={national.avg_median_tax}
+          />
+        </div>
       </div>
 
       <AdSlot id="5678901234" />

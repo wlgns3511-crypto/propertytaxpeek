@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllStates, getStateBySlug, getNationalAverage } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ComparisonBar } from "@/components/ComparisonBar";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { DataFeedback } from "@/components/DataFeedback";
@@ -257,6 +258,43 @@ export default async function ComparisonPage({
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {/* Visual comparison bars */}
+      <div className="space-y-4 mb-8">
+        <h2 className="text-xl font-bold text-slate-800 mb-2">Visual Comparison</h2>
+        <div>
+          <h3 className="text-sm font-medium text-slate-600 mb-2">Effective Tax Rate</h3>
+          <ComparisonBar
+            bars={[
+              { label: stateA.state, value: stateA.effective_rate },
+              { label: stateB.state, value: stateB.effective_rate },
+              { label: "National avg", value: national.avg_rate },
+            ]}
+            format={(v) => v.toFixed(2) + "%"}
+            referenceValue={national.avg_rate}
+          />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-slate-600 mb-2">Tax on $350K Home</h3>
+          <ComparisonBar
+            bars={[
+              { label: stateA.state, value: taxOn350kA },
+              { label: stateB.state, value: taxOn350kB },
+            ]}
+            format={fmt}
+          />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-slate-600 mb-2">Median Annual Tax</h3>
+          <ComparisonBar
+            bars={[
+              { label: stateA.state, value: stateA.median_tax },
+              { label: stateB.state, value: stateB.median_tax },
+            ]}
+            format={fmt}
+          />
+        </div>
       </div>
 
       <AdSlot id="7890123456" />

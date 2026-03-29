@@ -12,6 +12,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { DataFeedback } from "@/components/DataFeedback";
 import { TaxRateChart } from "@/components/TaxRateChart";
+import { ComparisonBar } from "@/components/ComparisonBar";
 import { CiteButton } from "@/components/CiteButton";
 
 export function generateStaticParams() {
@@ -290,6 +291,18 @@ export default async function StatePage({
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Visual rate comparison */}
+          <div className="mt-4">
+            <ComparisonBar
+              bars={[
+                { label: state.state, value: state.effective_rate },
+                ...neighbors.map((n) => ({ label: n.state, value: n.effective_rate })),
+              ]}
+              format={(v) => v.toFixed(2) + "%"}
+              referenceValue={state.effective_rate}
+            />
           </div>
         </section>
       )}
