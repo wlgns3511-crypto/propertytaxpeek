@@ -39,6 +39,25 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5724806562146685"
           crossOrigin="anonymous"
         />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "name": "PropertyTaxPeek",
+              "url": "https://propertytaxpeek.com",
+              "description": "Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.",
+              "inLanguage": "en-US"
+            },
+            {
+              "@type": "Organization",
+              "name": "PropertyTaxPeek",
+              "url": "https://propertytaxpeek.com",
+              "description": "Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.",
+              "sameAs": []
+            }
+          ]
+        }) }} />
       </head>
       <body
         className={`${inter.className} antialiased bg-white text-slate-900 min-h-screen flex flex-col`}
