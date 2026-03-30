@@ -39,15 +39,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const countyCompLimit = Math.min(45000 - baseCount, 42000);
   const countyComparisons = getAllCountyComparisonSlugs(countyCompLimit);
 
-  return [
-    { url: SITE_URL, changeFrequency: "monthly", priority: 1.0 },
-    { url: `${SITE_URL}/calculator`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/compare`, changeFrequency: "monthly", priority: 0.8 },
+  const entries: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1.0 },
+    { url: `${SITE_URL}/calculator/`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/compare/`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/blog/`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/about`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${SITE_URL}/contact`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/about/`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/privacy/`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/terms/`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/contact/`, changeFrequency: "yearly", priority: 0.3 },
     ...posts.map((p) => ({
       url: `${SITE_URL}/blog/${p.slug}/`,
       changeFrequency: "monthly" as const,
@@ -55,17 +55,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: p.updatedAt ?? p.publishedAt,
     })),
     ...states.map((s) => ({
-      url: `${SITE_URL}/state/${s.slug}`,
+      url: `${SITE_URL}/state/${s.slug}/`,
       changeFrequency: "monthly" as const,
       priority: 0.9,
     })),
     ...counties.map((c) => ({
-      url: `${SITE_URL}/county/${c.slug}`,
+      url: `${SITE_URL}/county/${c.slug}/`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
     ...comparisonSlugs.map((slug) => ({
-      url: `${SITE_URL}/compare/${slug}`,
+      url: `${SITE_URL}/compare/${slug}/`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
@@ -75,4 +75,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     })),
   ];
+
+  // Safety: Google limit is 50,000 URLs per sitemap
+  if (entries.length > 50000) {
+    return entries.slice(0, 50000);
+  }
+
+  return entries;
 }

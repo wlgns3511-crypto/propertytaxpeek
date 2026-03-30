@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { AdSlot } from "@/components/AdSlot";
+import { AuthorBox } from "@/components/AuthorBox";
+
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -67,9 +71,15 @@ export default async function BlogPostPage({
             datePublished: post.publishedAt,
             dateModified: post.updatedAt ?? post.publishedAt,
             author: {
-              "@type": "Organization",
-              name: "PropertyTaxPeek",
-              url: "https://propertytaxpeek.com",
+              "@type": "Person",
+              name: "PropertyTaxPeek Research Team",
+              description: "Property tax data and real estate tax research",
+              url: "https://propertytaxpeek.com/about/",
+              worksFor: {
+                "@type": "Organization",
+                name: "PropertyTaxPeek",
+                url: "https://propertytaxpeek.com",
+              },
             },
             publisher: {
               "@type": "Organization",
@@ -129,6 +139,8 @@ export default async function BlogPostPage({
           prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+      <AuthorBox />
+
 
       <AdSlot id="5678901234" />
 

@@ -14,6 +14,10 @@ import { DataFeedback } from "@/components/DataFeedback";
 import { TaxRateChart } from "@/components/TaxRateChart";
 import { ComparisonBar } from "@/components/ComparisonBar";
 import { CiteButton } from "@/components/CiteButton";
+import { AuthorBox } from "@/components/AuthorBox";
+
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return getAllStates().map((s) => ({ slug: s.slug }));
@@ -350,6 +354,8 @@ export default async function StatePage({
       </div>
 
       <DataFeedback />
+
+      <AuthorBox />
     </>
   );
 }
