@@ -15,6 +15,10 @@ import { TaxRateChart } from "@/components/TaxRateChart";
 import { ComparisonBar } from "@/components/ComparisonBar";
 import { CiteButton } from "@/components/CiteButton";
 import { AuthorBox } from "@/components/AuthorBox";
+import { EditorNote } from "@/components/EditorNote";
+import { DidYouKnow } from "@/components/DidYouKnow";
+import { DataSourceBadge } from "@/components/DataSourceBadge";
+import { CrossSiteLinks } from "@/components/CrossSiteLinks";
 
 export const dynamicParams = true;
 export const revalidate = 86400;
@@ -129,6 +133,8 @@ export default async function StatePage({
             "url": `https://propertytaxpeek.com/state/${slug}`,
             "license": "https://creativecommons.org/publicdomain/zero/1.0/",
             "creator": { "@type": "Organization", "name": "DataPeek Facts", "url": "https://datapeekfacts.com" },
+            "dateModified": "2026-03-31",
+            "author": { "@type": "Organization", "name": "DataPeek" },
             "temporalCoverage": "2024/2026",
             "distribution": { "@type": "DataDownload", "encodingFormat": "text/html" }
           })
@@ -159,6 +165,8 @@ export default async function StatePage({
         the national average of {national.avg_rate.toFixed(2)}%.
       </p>
       <FreshnessTag />
+
+      <EditorNote note={`Property tax rates vary significantly across ${state.state}'s ${counties.length} counties. Your actual bill depends on local assessments, exemptions, and special district levies — not just the statewide average.`} />
 
       <AdSlot id="1234567890" />
 
@@ -250,6 +258,8 @@ export default async function StatePage({
           avg_rate: s.avg_rate,
         }))}
       />
+
+      <DidYouKnow fact={`In ${state.state}, the median homeowner pays ${fmt(state.median_tax)} per year in property taxes — that's about ${fmt(Math.round(state.median_tax / 12))} per month added to housing costs.`} />
 
       {/* Neighboring states comparison */}
       {neighbors.length > 0 && (
@@ -354,6 +364,13 @@ export default async function StatePage({
       </div>
 
       <DataFeedback />
+
+      <DataSourceBadge sources={[
+        { name: "Census Bureau", url: "https://www.census.gov" },
+        { name: "Tax Foundation", url: "https://taxfoundation.org" },
+      ]} />
+
+      <CrossSiteLinks current="PropertyTaxPeek" />
 
       <AuthorBox />
     </>
