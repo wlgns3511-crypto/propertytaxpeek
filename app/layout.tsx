@@ -69,6 +69,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased bg-white text-slate-900 min-h-screen flex flex-col`}
       >
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-blue-600 focus:border focus:rounded">Skip to content</a>
         <header className="border-b border-slate-200">
           <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
             <a href="/" className="text-xl font-bold text-blue-700">
@@ -90,7 +91,7 @@ export default function RootLayout({
             </nav>
           </div>
         </header>
-        <main className="flex-1 max-w-5xl mx-auto px-4 py-8 w-full">
+        <main id="main-content" className="flex-1 max-w-5xl mx-auto px-4 py-8 w-full">
           {children}
         </main>
         <footer className="border-t border-slate-200 mt-16">
