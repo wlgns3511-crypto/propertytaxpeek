@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://propertytaxpeek.com/sitemap.xml
