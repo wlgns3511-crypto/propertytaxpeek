@@ -75,10 +75,10 @@ export default function RootLayout({
               {SITE_NAME}
             </a>
             <nav className="flex gap-6 text-sm">
-              <a href="/calculator" className="hover:text-blue-600">
+              <a href="/calculator/" className="hover:text-blue-600">
                 Calculator
               </a>
-              <a href="/compare" className="hover:text-blue-600">
+              <a href="/compare/" className="hover:text-blue-600">
                 Compare
               </a>
               <a href="/blog/" className="hover:text-blue-600">
@@ -100,22 +100,22 @@ export default function RootLayout({
               and Tax Foundation.
             </p>
             <p className="mt-2">
-              <a href="/about" className="hover:text-blue-600">
+              <a href="/about/" className="hover:text-blue-600">
                 About
               </a>
               {" | "}
-              <a href="/privacy" className="hover:text-blue-600">
+              <a href="/privacy/" className="hover:text-blue-600">
                 Privacy
               </a>
               {" | "}
-              <a href="/terms" className="hover:text-blue-600">
+              <a href="/terms/" className="hover:text-blue-600">
                 Terms
-              <a href="/disclaimer" className="hover:text-blue-600">
+              <a href="/disclaimer/" className="hover:text-blue-600">
                 Disclaimer
               </a>
               </a>
               {" | "}
-              <a href="/contact" className="hover:text-blue-600">
+              <a href="/contact/" className="hover:text-blue-600">
                 Contact
               </a>
             </p>
