@@ -49,14 +49,19 @@ export default function RootLayout({
               "name": "PropertyTaxPeek",
               "url": "https://propertytaxpeek.com",
               "description": "Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.",
-              "inLanguage": "en-US"
+              "inLanguage": "en-US",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://propertytaxpeek.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
             },
             {
               "@type": "Organization",
               "name": "PropertyTaxPeek",
               "url": "https://propertytaxpeek.com",
               "description": "Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.",
-              "sameAs": []
+              "sameAs": ["https://vocabwize.com", "https://vocablibre.com", "https://wortwize.com", "https://kalimawize.com", "https://dicionariowize.com", "https://kotobapeek.com", "https://salarybycity.com", "https://netpaypeek.com", "https://wagepeek.com", "https://costbycity.com", "https://fairrentwize.com", "https://degreewize.com", "https://nameblooms.com", "https://myschoolpeek.com", "https://medcheckwize.com", "https://medcostpeek.com", "https://eldercarepeek.com", "https://ingredipeek.com", "https://caloriewize.com", "https://powerbillpeek.com", "https://sunpowerpeek.com", "https://shipcalcwize.com", "https://tariffpeek.com", "https://visapeek.com", "https://zippeek.com", "https://calcpeek.com", "https://datapeekfacts.com", "https://guidebycity.com"]
             }
           ]
         }) }} />
