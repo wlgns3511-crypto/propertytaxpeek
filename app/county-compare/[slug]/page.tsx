@@ -6,7 +6,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { ComparisonBar } from "@/components/ComparisonBar";
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = false;
 
 export function generateStaticParams() {
   return getAllCountyComparisonSlugs(300).map((c) => ({ slug: c.slug }));

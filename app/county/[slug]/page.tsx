@@ -16,7 +16,7 @@ import { FreshnessTag } from "@/components/FreshnessTag";
 import { DataFeedback } from "@/components/DataFeedback";
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = false;
 
 export function generateStaticParams() {
   return getAllCounties().map((c) => ({ slug: c.slug }));

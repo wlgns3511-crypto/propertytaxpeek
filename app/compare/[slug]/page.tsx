@@ -17,7 +17,7 @@ const TOP_STATES = [
 ];
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = false;
 
 export function generateStaticParams() {
   const params: { slug: string }[] = [];

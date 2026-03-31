@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const SITE_NAME = "PropertyTaxPeek";
 const SITE_URL =
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     "Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.",
   metadataBase: new URL(SITE_URL),
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -32,6 +32,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-GJJ3SJJQ7G" />
         <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-GJJ3SJJQ7G")` }} />
         <script
@@ -103,6 +105,9 @@ export default function RootLayout({
               {" | "}
               <a href="/terms" className="hover:text-blue-600">
                 Terms
+              <a href="/disclaimer" className="hover:text-blue-600">
+                Disclaimer
+              </a>
               </a>
               {" | "}
               <a href="/contact" className="hover:text-blue-600">

@@ -201,3 +201,11 @@ export function countCountyComparisons(): number {
     return (getDb().prepare('SELECT COUNT(*) as c FROM county_comparisons').get() as { c: number }).c;
   } catch { return 0; }
 }
+
+// --- Related counties (same state) ---
+
+export function getRelatedCounties(state: string, excludeSlug: string, limit = 6): County[] {
+  return getDb().prepare(
+    'SELECT * FROM counties WHERE state = ? AND slug != ? ORDER BY population DESC LIMIT ?'
+  ).all(state, excludeSlug, limit) as County[];
+}
