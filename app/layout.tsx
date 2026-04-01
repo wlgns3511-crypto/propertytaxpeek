@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     locale: "en_US",
   },
   twitter: { card: "summary_large_image" },
+  other: { "google-adsense-account": "ca-pub-5724806562146685" },
 };
 
 export default function RootLayout({

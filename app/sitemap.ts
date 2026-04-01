@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
-import { getAllStates, getAllCounties, getAllCountyComparisonSlugs } from "@/lib/db";
+import { getAllStates, getAllCounties, getCountyComparisonCount, getCountyComparisonSlugsPage } from "@/lib/db";
 import { getAllPosts } from "@/lib/blog";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://propertytaxpeek.com";
+const MAX_PER_SITEMAP = 45000;
 
 // Top 20 states for pre-built comparison pages
 const TOP_STATES = [
@@ -28,58 +29,61 @@ function generateComparisonSlugs(): string[] {
   return slugs;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const states = getAllStates();
-  const counties = getAllCounties();
-  const comparisonSlugs = generateComparisonSlugs();
+export async function generateSitemaps() {
+  const totalCountyComparisons = getCountyComparisonCount();
+  const sitemapCount = Math.ceil(totalCountyComparisons / MAX_PER_SITEMAP) + 1;
+  return Array.from({ length: sitemapCount }, (_, i) => ({ id: i }));
+}
 
-  const posts = getAllPosts();
-  // 50K URL 제한 — states + counties 먼저, 나머지 county comparisons으로 채움
-  const baseCount = 7 + posts.length + states.length + counties.length + comparisonSlugs.length;
-  const countyCompLimit = Math.min(45000 - baseCount, 42000);
-  const countyComparisons = getAllCountyComparisonSlugs(countyCompLimit);
+export default async function sitemap(props: { id: Promise<string> }): Promise<MetadataRoute.Sitemap> {
+  const id = Number(await props.id);
 
-  const entries: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1.0 },
-    { url: `${SITE_URL}/calculator/`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/compare/`, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${SITE_URL}/blog/`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/about/`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${SITE_URL}/privacy/`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${SITE_URL}/terms/`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${SITE_URL}/contact/`, changeFrequency: "yearly", priority: 0.3 },
-    ...posts.map((p) => ({
-      url: `${SITE_URL}/blog/${p.slug}/`,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-      lastModified: p.updatedAt ?? p.publishedAt,
-    })),
-    ...states.map((s) => ({
-      url: `${SITE_URL}/state/${s.slug}/`,
-      changeFrequency: "monthly" as const,
-      priority: 0.9,
-    })),
-    ...counties.map((c) => ({
-      url: `${SITE_URL}/county/${c.slug}/`,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
-    ...comparisonSlugs.map((slug) => ({
-      url: `${SITE_URL}/compare/${slug}/`,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
-    ...countyComparisons.map((c) => ({
-      url: `${SITE_URL}/county-compare/${c.slug}/`,
-      changeFrequency: "yearly" as const,
-      priority: 0.5,
-    })),
-  ];
+  if (id === 0) {
+    // Static + states + counties + state comparisons + blog
+    const states = getAllStates();
+    const counties = getAllCounties();
+    const comparisonSlugs = generateComparisonSlugs();
+    const posts = getAllPosts();
 
-  // Safety: Google limit is 50,000 URLs per sitemap
-  if (entries.length > 50000) {
-    return entries.slice(0, 50000);
+    return [
+      { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1.0 },
+      { url: `${SITE_URL}/calculator/`, changeFrequency: "monthly", priority: 0.9 },
+      { url: `${SITE_URL}/compare/`, changeFrequency: "monthly", priority: 0.8 },
+      { url: `${SITE_URL}/blog/`, changeFrequency: "weekly", priority: 0.8 },
+      { url: `${SITE_URL}/about/`, changeFrequency: "yearly", priority: 0.3 },
+      { url: `${SITE_URL}/privacy/`, changeFrequency: "yearly", priority: 0.2 },
+      { url: `${SITE_URL}/terms/`, changeFrequency: "yearly", priority: 0.2 },
+      { url: `${SITE_URL}/contact/`, changeFrequency: "yearly", priority: 0.3 },
+      ...posts.map((p) => ({
+        url: `${SITE_URL}/blog/${p.slug}/`,
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+        lastModified: p.updatedAt ?? p.publishedAt,
+      })),
+      ...states.map((s) => ({
+        url: `${SITE_URL}/state/${s.slug}/`,
+        changeFrequency: "monthly" as const,
+        priority: 0.9,
+      })),
+      ...counties.map((c) => ({
+        url: `${SITE_URL}/county/${c.slug}/`,
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      })),
+      ...comparisonSlugs.map((slug) => ({
+        url: `${SITE_URL}/compare/${slug}/`,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
+    ];
   }
 
-  return entries;
+  // Sitemap 1+: county comparison pages
+  const offset = (id - 1) * MAX_PER_SITEMAP;
+  const countyComparisons = getCountyComparisonSlugsPage(offset, MAX_PER_SITEMAP);
+  return countyComparisons.map((c) => ({
+    url: `${SITE_URL}/county-compare/${c.slug}/`,
+    changeFrequency: "yearly" as const,
+    priority: 0.5,
+  }));
 }
