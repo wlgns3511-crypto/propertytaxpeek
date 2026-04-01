@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Terms of Service",
   description: "PropertyTaxPeek terms of service.",
   alternates: { canonical: "/terms/" },
+  openGraph: { url: "/terms/" },
 };
 
 export default function TermsPage() {

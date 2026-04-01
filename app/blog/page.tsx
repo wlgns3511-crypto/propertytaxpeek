@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     "Expert guides on property taxes: how to appeal assessments, homestead exemptions, state-by-state breakdowns, and strategies to lower your property tax bill.",
   alternates: { canonical: "/blog/" },
+  openGraph: { url: "/blog/" },
 };
 
 function formatDate(dateStr: string) {

@@ -5,6 +5,7 @@ import { getAllStates } from "@/lib/db";
 export const metadata: Metadata = {
   title: "Property Tax Calculator - Embeddable Widget",
   robots: { index: false, follow: false },
+  openGraph: { url: "/embed/tax-calculator/" },
 };
 
 export default function EmbedCalculatorPage() {

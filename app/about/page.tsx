@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     "Learn about PropertyTaxPeek, your source for US property tax data by state and county.",
   alternates: { canonical: "/about/" },
+  openGraph: { url: "/about/" },
 };
 
 export default function AboutPage() {

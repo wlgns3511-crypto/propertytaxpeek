@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "Compare property tax rates across all 50 US states. See median property taxes, effective rates, and home values. Free property tax calculator included.",
   alternates: { canonical: "/" },
+  openGraph: { url: "/" },
 };
 
 function fmt(n: number) {

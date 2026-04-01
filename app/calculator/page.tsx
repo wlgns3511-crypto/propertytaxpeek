@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "Free property tax calculator. Enter your home value and location to estimate annual and monthly property taxes. Compare with state and national averages.",
   alternates: { canonical: "/calculator/" },
+  openGraph: { url: "/calculator/" },
 };
 
 export default function CalculatorPage() {

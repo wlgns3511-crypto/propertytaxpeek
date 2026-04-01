@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "PropertyTaxPeek privacy policy.",
   alternates: { canonical: "/privacy/" },
+  openGraph: { url: "/privacy/" },
 };
 
 export default function PrivacyPage() {

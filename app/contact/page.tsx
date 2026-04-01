@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Contact Us",
   description: "Get in touch with PropertyTaxPeek.",
   alternates: { canonical: "/contact/" },
+  openGraph: { url: "/contact/" },
 };
 
 export default function ContactPage() {
