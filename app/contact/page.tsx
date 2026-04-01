@@ -27,7 +27,7 @@ export default function ContactPage() {
         <p>
           For general questions, partnership opportunities, or press inquiries,
           please email us at{" "}
-          <strong>hello@propertytaxpeek.com</strong>.
+          <strong>datapeekfacts@gmail.com</strong>.
         </p>
         <h2>Technical Issues</h2>
         <p>
