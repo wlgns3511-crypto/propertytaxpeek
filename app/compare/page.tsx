@@ -1,10 +1,3 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  alternates: { canonical: "/compare/" },
-  openGraph: { url: "/compare/" },
-};
-
 "use client";
 
 import { useState, useEffect } from "react";
