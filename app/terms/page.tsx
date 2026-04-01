@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "PropertyTaxPeek terms of service.",
+  alternates: { canonical: "/terms/" },
 };
 
 export default function TermsPage() {

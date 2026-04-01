@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "US Property Tax Rates by State & County (2024 Data)",
   description:
     "Compare property tax rates across all 50 US states. See median property taxes, effective rates, and home values. Free property tax calculator included.",
+  alternates: { canonical: "/" },
 };
 
 function fmt(n: number) {

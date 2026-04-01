@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 export const metadata: Metadata = {
   title: "Contact Us",
   description: "Get in touch with PropertyTaxPeek.",
+  alternates: { canonical: "/contact/" },
 };
 
 export default function ContactPage() {

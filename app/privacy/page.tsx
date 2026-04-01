@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "PropertyTaxPeek privacy policy.",
+  alternates: { canonical: "/privacy/" },
 };
 
 export default function PrivacyPage() {
@@ -25,8 +26,10 @@ export default function PrivacyPage() {
         <h2>Cookies and Advertising</h2>
         <p>
           We use Google AdSense and Google Analytics, which may use cookies to
-          serve ads and analyze traffic. You can manage cookie preferences in your
-          browser settings.
+          serve ads and analyze traffic. You can opt out of personalized advertising by visiting{" "}
+          <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>{" "}
+          or visit <a href="https://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>.
+          You can also manage cookie preferences in your browser settings.
         </p>
         <h2>Third-Party Services</h2>
         <p>

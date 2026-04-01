@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "About PropertyTaxPeek",
   description:
     "Learn about PropertyTaxPeek, your source for US property tax data by state and county.",
+  alternates: { canonical: "/about/" },
 };
 
 export default function AboutPage() {

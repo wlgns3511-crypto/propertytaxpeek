@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Our Methodology",
   description: "Learn how PropertyTaxPeek collects, processes, and verifies property tax rates and assessments by county.",
+  alternates: { canonical: "/methodology/" },
 };
 
 export default function MethodologyPage() {
