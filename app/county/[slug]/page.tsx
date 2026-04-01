@@ -45,6 +45,7 @@ export async function generateMetadata({
       canonical: `/county/${slug}/`,
       languages: { en: `/county/${slug}/`, es: `/es/county/${slug}/`, "x-default": `/county/${slug}/` },
     },
+    openGraph: { url: `/county/${slug}/` },
   };
 }
 

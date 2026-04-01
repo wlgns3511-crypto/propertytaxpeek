@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${a.county_name}, ${a.state} vs ${b.county_name}, ${b.state} Property Tax Comparison`,
     description: `Compare property taxes: ${a.county_name}, ${a.state} (${a.effective_rate.toFixed(2)}% rate, ${fmt(a.median_tax)}/yr) vs ${b.county_name}, ${b.state} (${b.effective_rate.toFixed(2)}% rate, ${fmt(b.median_tax)}/yr).`,
     alternates: { canonical: `/county-compare/${slug}/` },
+    openGraph: { url: `/county-compare/${slug}/` },
   };
 }
 

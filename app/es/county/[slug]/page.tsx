@@ -34,6 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       canonical: `/es/county/${slug}/`,
       languages: { en: `/county/${slug}/`, es: `/es/county/${slug}/`, "x-default": `/county/${slug}/` },
     },
+    openGraph: { url: `/es/county/${slug}/` },
   };
 }
 

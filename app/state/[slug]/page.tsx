@@ -46,6 +46,8 @@ export async function generateMetadata({
   return {
     title: `${state.state} Property Tax Rates - ${state.effective_rate.toFixed(2)}% Average Rate`,
     description: `${state.state} has an effective property tax rate of ${state.effective_rate.toFixed(2)}%. Median annual property tax is ${fmt(state.median_tax)} on a median home value of ${fmt(state.median_home_value)}. See county-level breakdown.`,
+    alternates: { canonical: `/state/${slug}/` },
+    openGraph: { url: `/state/${slug}/` },
   };
 }
 

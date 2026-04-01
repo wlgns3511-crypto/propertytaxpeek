@@ -17,11 +17,9 @@ export const metadata: Metadata = {
     "Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.",
   metadataBase: new URL(SITE_URL),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    url: SITE_URL,
     locale: "en_US",
   },
   twitter: { card: "summary_large_image" },

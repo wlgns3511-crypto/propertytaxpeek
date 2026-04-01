@@ -69,6 +69,8 @@ export async function generateMetadata({
   return {
     title: `${stateA.state} vs ${stateB.state} Property Tax Comparison`,
     description: `Compare property taxes: ${stateA.state} (${stateA.effective_rate.toFixed(2)}%) vs ${stateB.state} (${stateB.effective_rate.toFixed(2)}%). ${higher.state} has ${diff}% higher effective property tax rate than ${lower.state}.`,
+    alternates: { canonical: `/compare/${slug}/` },
+    openGraph: { url: `/compare/${slug}/` },
   };
 }
 

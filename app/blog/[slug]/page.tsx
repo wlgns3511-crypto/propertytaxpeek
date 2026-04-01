@@ -26,6 +26,7 @@ export async function generateMetadata({
       canonical: `/blog/${slug}/`,
     },
     openGraph: {
+      url: `/blog/${slug}/`,
       type: "article",
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt ?? post.publishedAt,
