@@ -16,7 +16,7 @@ const TOP_STATES = [
   "tennessee", "indiana", "maryland", "colorado", "minnesota",
 ];
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 export const revalidate = false;
 
 export function generateStaticParams() {

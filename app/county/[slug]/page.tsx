@@ -15,7 +15,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { DataFeedback } from "@/components/DataFeedback";
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 export const revalidate = false;
 
 export function generateStaticParams() {
