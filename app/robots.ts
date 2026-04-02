@@ -18,6 +18,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: 'GPTBot', disallow: ['/'] },
       { userAgent: 'CCBot', disallow: ['/'] },
     ],
-    sitemap: 'https://propertytaxpeek.com/sitemap.xml',
+    sitemap: 'https://propertytaxpeek.com/sitemap/0.xml',
   };
 }
