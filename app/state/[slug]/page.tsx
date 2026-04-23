@@ -19,9 +19,17 @@ import { EditorNote } from "@/components/EditorNote";
 import { DidYouKnow } from "@/components/DidYouKnow";
 import { DataSourceBadge } from "@/components/DataSourceBadge";
 import { CrossSiteLinks } from "@/components/CrossSiteLinks";
+import { FeedbackButton } from "@/components/FeedbackButton";
+import { DownloadReport } from "@/components/DownloadReport";
+import { generateStateInsights } from "@/lib/state-insights";
+import { AnswerHero } from "@/components/upgrades/AnswerHero";
+import { TrustBlock } from "@/components/upgrades/TrustBlock";
+import { DecisionNext } from "@/components/upgrades/DecisionNext";
+import { StateRich } from '@/components/state/StateRich';
+import { DB_UPDATED } from "@/lib/authorship";
 
-export const dynamicParams = false;
-export const revalidate = false;
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return getAllStates().map((s) => ({ slug: s.slug }));
@@ -121,6 +129,7 @@ export default async function StatePage({
   const neighbors = allStates.filter((s) => neighborAbbrs.includes(s.abbr));
 
   const diffRate = state.effective_rate - national.avg_rate;
+  const insights = generateStateInsights(state, allStates);
 
   return (
     <>
@@ -135,10 +144,10 @@ export default async function StatePage({
             "url": `https://propertytaxpeek.com/state/${slug}`,
             "license": "https://creativecommons.org/publicdomain/zero/1.0/",
             "creator": { "@type": "Organization", "name": "DataPeek Facts", "url": "https://datapeekfacts.com" },
-            "dateModified": "2026-03-31",
+            "dateModified": DB_UPDATED,
             "author": { "@type": "Organization", "name": "DataPeek" },
-            "temporalCoverage": "2024/2026",
-            "distribution": { "@type": "DataDownload", "encodingFormat": "text/html" }
+            "temporalCoverage": "2022/2022",
+            "distribution": { "@type": "DataDownload", "encodingFormat": "text/html", "contentUrl": `https://propertytaxpeek.com/state/${slug}/` }
           })
         }}
       />
@@ -149,26 +158,128 @@ export default async function StatePage({
         ]}
       />
 
-      <h1 className="text-3xl font-bold text-slate-900 mb-2">
-        {state.state} Property Tax Rates
-      </h1>
-      <p className="text-slate-600 mb-2">
-        {state.state} ({state.abbr}) has an effective property tax rate of{" "}
-        <strong>{state.effective_rate.toFixed(2)}%</strong>, which is{" "}
-        {diffRate > 0 ? (
-          <span className="text-red-600 font-medium">
-            {diffRate.toFixed(2)}% above
-          </span>
-        ) : (
-          <span className="text-emerald-600 font-medium">
-            {Math.abs(diffRate).toFixed(2)}% below
-          </span>
-        )}{" "}
-        the national average of {national.avg_rate.toFixed(2)}%.
-      </p>
-      <FreshnessTag />
+      <AnswerHero
+        title={`${state.state} property tax`}
+        subtitle={state.abbr}
+        tagline={`${state.state} has a ${state.effective_rate.toFixed(
+          2
+        )}% effective property tax rate \u2014 ${
+          diffRate > 0
+            ? `${diffRate.toFixed(2)}% above`
+            : `${Math.abs(diffRate).toFixed(2)}% below`
+        } the US average. Median annual bill: ${fmt(state.median_tax)} on a ${fmt(
+          state.median_home_value
+        )} home across ${counties.length} counties.`}
+        badges={[
+          {
+            label:
+              diffRate > 0
+                ? `${diffRate.toFixed(2)}% above US`
+                : `${Math.abs(diffRate).toFixed(2)}% below US`,
+            tone: diffRate > 0 ? "amber" : "emerald",
+          },
+          { label: `${counties.length} counties`, tone: "slate" },
+        ]}
+        alternatives={neighbors.slice(0, 3).map((n) => ({
+          label: n.state,
+          href: `/state/${n.slug}/`,
+          sublabel: `${n.effective_rate.toFixed(2)}%`,
+        }))}
+        alternativesLabel="Neighboring states"
+      />
+
+      <div className="mb-4">
+        <DownloadReport />
+      </div>
+
+      <TrustBlock
+        sources={[
+          {
+            name: "US Census ACS",
+            url: "https://www.census.gov/programs-surveys/acs/",
+          },
+          {
+            name: "Census S&L Finances",
+            url: "https://www.census.gov/programs-surveys/gov-finances.html",
+          },
+          {
+            name: "Tax Foundation",
+            url: "https://taxfoundation.org/data/all/state/property-taxes-by-state/",
+          },
+          {
+            name: "Lincoln Institute",
+            url: "https://www.lincolninst.edu/research-data/data-toolkits/significant-features-property-tax",
+          },
+          {
+            name: "IRS Publication 530",
+            url: "https://www.irs.gov/publications/p530",
+          },
+        ]}
+        updated="2022 ACS data, reviewed April 2026"
+      />
 
       <EditorNote note={`Property tax rates vary significantly across ${state.state}'s ${counties.length} counties. Your actual bill depends on local assessments, exemptions, and special district levies — not just the statewide average.`} />
+
+      {/* Deep-dive cross-links — added as part of Tier S HCU expansion 2026-04-21 */}
+      <section className="my-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a
+          href={`/state/${slug}/homestead-exemption/`}
+          className="block p-5 bg-emerald-50 border border-emerald-200 rounded-xl hover:border-emerald-400 hover:shadow-sm transition"
+        >
+          <div className="text-xs text-emerald-700 uppercase tracking-wider font-semibold mb-1">
+            Deep Dive · Exemptions
+          </div>
+          <div className="text-base font-bold text-slate-900 mb-1">
+            {state.state} homestead exemption 2026 →
+          </div>
+          <div className="text-sm text-slate-600">
+            Dollar amounts, senior / disabled veteran relief, assessment caps,
+            and step-by-step filing instructions.
+          </div>
+        </a>
+        <a
+          href={`/state/${slug}/senior-exemption/`}
+          className="block p-5 bg-gradient-to-br from-amber-50 to-rose-50 border border-amber-200 rounded-xl hover:border-amber-400 hover:shadow-sm transition"
+        >
+          <div className="text-xs text-amber-700 uppercase tracking-wider font-semibold mb-1">
+            Deep Dive · Age 65+
+          </div>
+          <div className="text-base font-bold text-slate-900 mb-1">
+            {state.state} senior property tax exemption →
+          </div>
+          <div className="text-sm text-slate-600">
+            Age thresholds, income caps, assessment freezes, deferral programs,
+            and tax credits for homeowners 65 and older.
+          </div>
+        </a>
+        <a
+          href="/calculator/"
+          className="block p-5 bg-indigo-50 border border-indigo-200 rounded-xl hover:border-indigo-400 hover:shadow-sm transition"
+        >
+          <div className="text-xs text-indigo-700 uppercase tracking-wider font-semibold mb-1">
+            Tool · Calculator
+          </div>
+          <div className="text-base font-bold text-slate-900 mb-1">
+            Run your {state.state} home value →
+          </div>
+          <div className="text-sm text-slate-600">
+            Plug in your exact home value at the {state.effective_rate.toFixed(2)}%
+            effective rate to see the annual bill.
+          </div>
+        </a>
+      </section>
+
+      <section className="my-8 p-6 bg-gradient-to-r from-blue-50 to-slate-50 rounded-xl border border-blue-100">
+        <h2 className="text-lg font-bold text-slate-900 mb-3">Key Insights for {state.state}</h2>
+        <ul className="space-y-2">
+          {insights.map((insight, i) => (
+            <li key={i} className="flex gap-2 text-sm text-slate-700">
+              <span className="text-blue-500 font-bold shrink-0">&bull;</span>
+              <span>{insight}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <AdSlot id="1234567890" />
 
@@ -262,6 +373,100 @@ export default async function StatePage({
       />
 
       <DidYouKnow fact={`In ${state.state}, the median homeowner pays ${fmt(state.median_tax)} per year in property taxes — that's about ${fmt(Math.round(state.median_tax / 12))} per month added to housing costs.`} />
+
+      {/* Why this matters — US homeowner context */}
+      <section className="mb-8 mt-10" data-upgrade="why-it-matters">
+        <h2 className="text-xl font-bold mb-3">
+          Why {state.state} property tax matters
+        </h2>
+        <div className="rounded-lg border border-slate-200 bg-white p-5 text-slate-700 leading-relaxed space-y-3">
+          {(() => {
+            const rate = state.effective_rate;
+            const annual = state.median_tax;
+            const monthly = Math.round(annual / 12);
+            const highTax = rate >= 1.5;
+            const midTax = rate >= 0.8 && rate < 1.5;
+
+            const primary = highTax
+              ? `${state.state} is among the higher-tax states for property owners. At an effective rate of ${rate.toFixed(
+                  2
+                )}%, the median bill here (${fmt(
+                  annual
+                )}/year, about ${fmt(
+                  monthly
+                )}/month) is more than many mortgage escrow accounts budget by default. If you are moving from a low-tax state, expect a real monthly cost shock.`
+              : midTax
+              ? `${state.state} sits in the mid-range of US property tax. The ${rate.toFixed(
+                  2
+                )}% effective rate yields a median annual bill of ${fmt(
+                  annual
+                )} \u2014 roughly ${fmt(
+                  monthly
+                )}/month for the typical homeowner. Predictable, neither a bargain nor a burden.`
+              : `${state.state} is on the low-tax side for US property owners. The ${rate.toFixed(
+                  2
+                )}% effective rate keeps the median annual bill to around ${fmt(
+                  annual
+                )} (${fmt(
+                  monthly
+                )}/month). Low rates often come paired with other revenue models \u2014 check sales and income tax for the full picture.`;
+
+            const countyNote = `Rates vary significantly across ${state.state}'s ${counties.length} counties. The state average is a starting point, not a prediction for your specific address \u2014 always check county-level data before making a decision.`;
+
+            const saltNote = `State and local property taxes are deductible on your federal return as part of the SALT deduction, capped at $10,000 per return (IRS Publication 530). In higher-tax ${state.state} counties, most homeowners hit this cap quickly.`;
+
+            const exemptionNote = `Every state offers some form of homestead exemption for primary residences. ${state.state} homeowners should confirm eligibility with their county assessor \u2014 the application often needs to be filed once and stays active.`;
+
+            return (
+              <>
+                <p>{primary}</p>
+                <p>{countyNote}</p>
+                <p>{exemptionNote}</p>
+                <p className="text-sm text-slate-500">{saltNote}</p>
+              </>
+            );
+          })()}
+        </div>
+      </section>
+
+      {/* DecisionNext — 3 opinionated next steps */}
+      <DecisionNext
+        cards={[
+          {
+            title: `Drill into ${state.state} counties`,
+            blurb: `County rates vary a lot within a state. Pick your county to see the actual bill, not just the state average.`,
+            href: counties[0] ? `/county/${counties[0].slug}/` : `/state/${slug}/`,
+            cta: `See county breakdown`,
+            tone: "indigo" as const,
+          },
+          {
+            title: `Run your home value`,
+            blurb: `Plug in your actual home value at the ${state.state} effective rate to get your expected annual bill.`,
+            href: `/calculator/`,
+            cta: `Open calculator`,
+            tone: "emerald" as const,
+          },
+          ...(neighbors.length > 0
+            ? [
+                {
+                  title: `vs ${neighbors[0].state}`,
+                  blurb: `See how ${state.state} stacks up against ${neighbors[0].state} \u2014 useful if you're weighing a cross-border move.`,
+                  href: `/state/${neighbors[0].slug}/`,
+                  cta: `Compare states`,
+                  tone: "amber" as const,
+                },
+              ]
+            : [
+                {
+                  title: `Federal SALT cap`,
+                  blurb: `Learn how the $10,000 SALT deduction limit interacts with your ${state.state} property tax bill.`,
+                  href: `https://www.irs.gov/publications/p530`,
+                  cta: `Read IRS Pub 530`,
+                  tone: "amber" as const,
+                },
+              ]),
+        ].slice(0, 3)}
+      />
 
       {/* Neighboring states comparison */}
       {neighbors.length > 0 && (
@@ -367,12 +572,20 @@ export default async function StatePage({
 
       <DataFeedback />
 
+      <FeedbackButton pageId={slug} />
+
       <DataSourceBadge sources={[
-        { name: "Census Bureau", url: "https://www.census.gov" },
-        { name: "Tax Foundation", url: "https://taxfoundation.org" },
+        { name: "US Census ACS 2022", url: "https://www.census.gov/programs-surveys/acs/" },
+        { name: "Census S&L Finances", url: "https://www.census.gov/programs-surveys/gov-finances.html" },
+        { name: "Tax Foundation", url: "https://taxfoundation.org/data/all/state/property-taxes-by-state/" },
+        { name: "Lincoln Institute", url: "https://www.lincolninst.edu/research-data/data-toolkits/significant-features-property-tax" },
+        { name: "IRS Publication 530", url: "https://www.irs.gov/publications/p530" },
       ]} />
 
       <CrossSiteLinks current="PropertyTaxPeek" />
+
+
+      <StateRich slug={slug} state={state} />
 
       <AuthorBox />
     </>

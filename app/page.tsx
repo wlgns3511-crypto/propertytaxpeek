@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { getAllStates, getHighestTaxStates, getLowestTaxStates, getNationalAverage } from "@/lib/db";
+import { getAllStates, getHighestTaxStates, getLowestTaxStates, getNationalAverage, getHighestTaxCounties } from "@/lib/db";
 import { getAllPosts } from "@/lib/blog";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { AdSlot } from "@/components/AdSlot";
 import { FreshnessTag } from "@/components/FreshnessTag";
+import { PopularEntities } from "@/components/upgrades/PopularEntities";
 
 export const metadata: Metadata = {
   title: "US Property Tax Rates by State & County (2024 Data)",
@@ -26,6 +27,7 @@ export default function HomePage() {
   const highest = getHighestTaxStates(10);
   const lowest = getLowestTaxStates(10);
   const national = getNationalAverage();
+  const topCounties = getHighestTaxCounties(12);
 
   const latestPosts = getAllPosts().slice(0, 3);
   const calcStates = states.map((s) => ({
@@ -50,11 +52,17 @@ export default function HomePage() {
             creator: {
               "@type": "Organization",
               name: "PropertyTaxPeek",
+              url: "https://propertytaxpeek.com",
             },
             temporalCoverage: "2024",
             spatialCoverage: {
               "@type": "Place",
               name: "United States",
+            },
+            distribution: {
+              "@type": "DataDownload",
+              encodingFormat: "text/html",
+              contentUrl: "https://propertytaxpeek.com",
             },
           }),
         }}
@@ -70,6 +78,20 @@ export default function HomePage() {
         property tax of <strong>{fmt(national.avg_median_tax)}</strong>.
       </p>
       <FreshnessTag />
+
+      <PopularEntities
+        heading="Most Searched Counties"
+        subheading="Counties with the highest property tax rates"
+        items={topCounties.map(c => ({
+          name: c.county_name,
+          href: `/county/${c.slug}/`,
+          stat: `${c.effective_rate.toFixed(2)}%`,
+        }))}
+        viewAllHref="/rankings"
+        viewAllLabel="View all rankings →"
+      />
+
+      <PropertyTaxCalculator states={calcStates} />
 
       <AdSlot id="7890123456" />
 
@@ -205,8 +227,6 @@ export default function HomePage() {
           </tbody>
         </table>
       </div>
-
-      <PropertyTaxCalculator states={calcStates} />
 
       <AdSlot id="9012345678" />
 

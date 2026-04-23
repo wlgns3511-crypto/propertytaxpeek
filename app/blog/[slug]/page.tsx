@@ -4,8 +4,8 @@ import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { AdSlot } from "@/components/AdSlot";
 import { AuthorBox } from "@/components/AuthorBox";
 
-export const dynamicParams = false;
-export const revalidate = false;
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -72,15 +72,9 @@ export default async function BlogPostPage({
             datePublished: post.publishedAt,
             dateModified: post.updatedAt ?? post.publishedAt,
             author: {
-              "@type": "Person",
-              name: "PropertyTaxPeek Research Team",
-              description: "Property tax data and real estate tax research",
+              "@type": "Organization",
+              name: "PropertyTaxPeek Editorial Team",
               url: "https://propertytaxpeek.com/about/",
-              worksFor: {
-                "@type": "Organization",
-                name: "PropertyTaxPeek",
-                url: "https://propertytaxpeek.com",
-              },
             },
             publisher: {
               "@type": "Organization",

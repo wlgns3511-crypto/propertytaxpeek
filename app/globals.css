@@ -9,3 +9,15 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+@media print {
+  nav, footer, .print\:hidden, [data-ad], .adsbygoogle { display: none !important; }
+  body { font-size: 12pt; color: #000; background: #fff; }
+  main { max-width: 100%; padding: 0; }
+  a { color: #000; text-decoration: none; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #666; }
+  h1 { font-size: 18pt; margin-bottom: 8pt; }
+  h2 { font-size: 14pt; margin-top: 16pt; }
+  .rounded-lg, .rounded-xl, .rounded-2xl { border-radius: 0 !important; }
+  .shadow, .shadow-md, .shadow-lg { box-shadow: none !important; }
+}

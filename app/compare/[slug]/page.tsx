@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getAllStates, getStateBySlug, getNationalAverage } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -7,32 +7,31 @@ import { ComparisonBar } from "@/components/ComparisonBar";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { DataFeedback } from "@/components/DataFeedback";
+import { CompareRich } from '@/components/compare/CompareRich';
 
-// Top 20 states by population/interest for pre-rendering
-const TOP_STATES = [
-  "california", "texas", "florida", "new-york", "pennsylvania",
-  "illinois", "ohio", "georgia", "north-carolina", "michigan",
-  "new-jersey", "virginia", "washington", "arizona", "massachusetts",
-  "tennessee", "indiana", "maryland", "colorado", "minnesota",
-];
-
-export const dynamicParams = false;
-export const revalidate = false;
-
-export function generateStaticParams() {
-  const params: { slug: string }[] = [];
-  const seen = new Set<string>();
-  // Generate top 200+ comparisons from top 20 states
-  for (let i = 0; i < TOP_STATES.length; i++) {
-    for (let j = i + 1; j < TOP_STATES.length; j++) {
-      const slug = `${TOP_STATES[i]}-vs-${TOP_STATES[j]}`;
-      if (!seen.has(slug)) {
-        seen.add(slug);
-        params.push({ slug });
-      }
+const STATIC_COMPARISON_SLUGS = (() => {
+  const allStates = getAllStates().map(s => s.slug).sort();
+  const slugs: string[] = [];
+  const CAP = 100;
+  for (let i = 0; i < allStates.length && slugs.length < CAP; i++) {
+    for (let j = i + 1; j < allStates.length && slugs.length < CAP; j++) {
+      slugs.push(`${allStates[i]}-vs-${allStates[j]}`);
     }
   }
-  return params;
+  return slugs;
+})();
+const STATIC_COMPARISON_SET = new Set(STATIC_COMPARISON_SLUGS);
+
+export const dynamicParams = false;
+export const revalidate = 86400;
+
+export function generateStaticParams() {
+  return STATIC_COMPARISON_SLUGS.flatMap((slug) => {
+    const parsed = parseComparisonSlug(slug);
+    if (!parsed) return [{ slug }];
+    const reverse = `${parsed.slugB}-vs-${parsed.slugA}`;
+    return reverse === slug ? [{ slug }] : [{ slug }, { slug: reverse }];
+  });
 }
 
 function parseComparisonSlug(slug: string): { slugA: string; slugB: string } | null {
@@ -57,6 +56,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const parsed = parseComparisonSlug(slug);
   if (!parsed) return {};
+  const canonical = [parsed.slugA, parsed.slugB].sort().join("-vs-");
+  if (!STATIC_COMPARISON_SET.has(canonical)) return {};
 
   const stateA = getStateBySlug(parsed.slugA);
   const stateB = getStateBySlug(parsed.slugB);
@@ -69,8 +70,8 @@ export async function generateMetadata({
   return {
     title: `${stateA.state} vs ${stateB.state} Property Tax Comparison`,
     description: `Compare property taxes: ${stateA.state} (${stateA.effective_rate.toFixed(2)}%) vs ${stateB.state} (${stateB.effective_rate.toFixed(2)}%). ${higher.state} has ${diff}% higher effective property tax rate than ${lower.state}.`,
-    alternates: { canonical: `/compare/${slug}/` },
-    openGraph: { url: `/compare/${slug}/` },
+    alternates: { canonical: `/compare/${canonical}/` },
+    openGraph: { url: `/compare/${canonical}/` },
   };
 }
 
@@ -82,6 +83,9 @@ export default async function ComparisonPage({
   const { slug } = await params;
   const parsed = parseComparisonSlug(slug);
   if (!parsed) notFound();
+  const canonical = [parsed.slugA, parsed.slugB].sort().join("-vs-");
+  if (canonical !== slug) redirect(`/compare/${canonical}/`);
+  if (!STATIC_COMPARISON_SET.has(canonical)) notFound();
 
   const stateA = getStateBySlug(parsed.slugA);
   const stateB = getStateBySlug(parsed.slugB);
@@ -374,6 +378,9 @@ export default async function ComparisonPage({
 
       <AdSlot id="8901234567" />
       <DataFeedback />
+
+      <CompareRich slug={canonical} a={stateA} b={stateB} />
+
     </>
   );
 }

@@ -4,19 +4,29 @@ import {
   getAllCounties,
   getCountyBySlug,
   getCountiesByState,
+  getRelatedCounties,
   getStateByAbbr,
   getNationalAverage,
   getAllStates,
 } from "@/lib/db";
+import { generateAutoFaqs } from "@/lib/auto-faqs";
 import { ComparisonBar } from "@/components/ComparisonBar";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
+import { PropertyTaxEstimator } from "@/components/tools/PropertyTaxEstimator";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { DataFeedback } from "@/components/DataFeedback";
+import { AnswerHero } from "@/components/upgrades/AnswerHero";
+import { TrustBlock } from "@/components/upgrades/TrustBlock";
+import { InsightBlock } from "@/components/upgrades/InsightBlock";
+import { DecisionNext } from "@/components/upgrades/DecisionNext";
+import { getCountyInsights } from "@/lib/insights";
+import { RelatedEntities } from "@/components/upgrades/RelatedEntities";
+import { TableOfContents } from '@/components/upgrades/TableOfContents';
 
-export const dynamicParams = false;
-export const revalidate = false;
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return getAllCounties().map((c) => ({ slug: c.slug }));
@@ -38,14 +48,37 @@ export async function generateMetadata({
   const { slug } = await params;
   const county = getCountyBySlug(slug);
   if (!county) return {};
+
+  // Peer: same-state different county, prefer meaningfully different rate
+  const sameState = getCountiesByState(county.state).filter((c) => c.slug !== slug);
+  const peer = sameState.find((p) => {
+    const d = Math.abs((p.effective_rate - county.effective_rate) / Math.max(county.effective_rate, 0.01));
+    return d > 0.05 && d < 0.8;
+  }) || sameState[0];
+
+  let title: string;
+  let description: string;
+  const dataVintage = "2022 ACS";
+  if (peer) {
+    const diff = peer.effective_rate - county.effective_rate;
+    const pct = Math.round((diff / Math.max(peer.effective_rate, 0.01)) * 100);
+    const absPct = Math.abs(pct);
+    const dir = pct > 0 ? 'lower' : 'higher';
+    title = `${county.county_name}, ${county.state} Property Tax Rate: ${county.effective_rate.toFixed(2)}% vs ${peer.county_name} ${peer.effective_rate.toFixed(2)}%`;
+    description = `${county.county_name}, ${county.state} effective property tax rate ${county.effective_rate.toFixed(2)}% — ${absPct}% ${dir} than ${peer.county_name}. Median tax ${fmt(county.median_tax)} on ${fmt(county.median_home_value)} home, pop ${county.population.toLocaleString()}. ${dataVintage} source data.`;
+  } else {
+    title = `${county.county_name}, ${county.state} Property Tax Rate: ${county.effective_rate.toFixed(2)}%`;
+    description = `${county.county_name}, ${county.state}: effective property tax rate ${county.effective_rate.toFixed(2)}%. Median annual tax ${fmt(county.median_tax)} on ${fmt(county.median_home_value)} home value. ${dataVintage} source data.`;
+  }
+
   return {
-    title: `${county.county_name}, ${county.state} Property Tax Rate - ${county.effective_rate.toFixed(2)}%`,
-    description: `${county.county_name}, ${county.state} has an effective property tax rate of ${county.effective_rate.toFixed(2)}%. Median annual property tax is ${fmt(county.median_tax)} on a median home value of ${fmt(county.median_home_value)}.`,
+    title,
+    description,
     alternates: {
       canonical: `/county/${slug}/`,
       languages: { en: `/county/${slug}/`, es: `/es/county/${slug}/`, "x-default": `/county/${slug}/` },
     },
-    openGraph: { url: `/county/${slug}/` },
+    openGraph: { title, description, url: `/county/${slug}/` },
   };
 }
 
@@ -66,6 +99,7 @@ export default async function CountyPage({
     ? county.effective_rate - stateData.effective_rate
     : 0;
   const diffFromNational = county.effective_rate - national.avg_rate;
+  const faqs = generateAutoFaqs(county, stateData ?? null, national);
 
   return (
     <>
@@ -79,24 +113,73 @@ export default async function CountyPage({
         ]}
       />
 
-      <h1 className="text-3xl font-bold text-slate-900 mb-2">
-        {county.county_name}, {county.state} Property Tax Rate
-      </h1>
-      <p className="text-slate-600 mb-2">
-        {county.county_name} has an effective property tax rate of{" "}
-        <strong>{county.effective_rate.toFixed(2)}%</strong>, which is{" "}
-        {diffFromNational > 0 ? (
-          <span className="text-red-600 font-medium">
-            {diffFromNational.toFixed(2)}% above
-          </span>
-        ) : (
-          <span className="text-emerald-600 font-medium">
-            {Math.abs(diffFromNational).toFixed(2)}% below
-          </span>
-        )}{" "}
-        the national average.
-      </p>
-      <FreshnessTag />
+      <AnswerHero
+        title={`${county.county_name}, ${county.state}`}
+        subtitle="Property tax"
+        tagline={`Effective property tax rate ${county.effective_rate.toFixed(2)}% \u2014 ${
+          diffFromNational > 0
+            ? `${diffFromNational.toFixed(2)}% above`
+            : `${Math.abs(diffFromNational).toFixed(2)}% below`
+        } the national average. Median annual tax ${fmt(county.median_tax)} on a ${fmt(
+          county.median_home_value
+        )} home.`}
+        badges={[
+          {
+            label:
+              diffFromNational > 0
+                ? `${diffFromNational.toFixed(2)}% above US`
+                : `${Math.abs(diffFromNational).toFixed(2)}% below US`,
+            tone: diffFromNational > 0 ? "amber" : "emerald",
+          },
+          ...(stateData
+            ? [
+                {
+                  label: `${stateData.state} state`,
+                  tone: "indigo" as const,
+                },
+              ]
+            : []),
+        ]}
+        alternatives={getCountiesByState(county.state)
+          .filter((c) => c.slug !== county.slug)
+          .slice(0, 3)
+          .map((c) => ({
+            label: c.county_name,
+            href: `/county/${c.slug}/`,
+            sublabel: `${c.effective_rate.toFixed(2)}%`,
+          }))}
+        alternativesLabel={`Other ${county.state} counties`}
+      />
+
+      <TrustBlock
+        sources={[
+          {
+            name: "US Census ACS",
+            url: "https://www.census.gov/programs-surveys/acs/",
+          },
+          {
+            name: "Census S&L Finances",
+            url: "https://www.census.gov/programs-surveys/gov-finances.html",
+          },
+          {
+            name: "Tax Foundation",
+            url: "https://taxfoundation.org/data/all/state/property-taxes-by-state/",
+          },
+          {
+            name: "Lincoln Institute",
+            url: "https://www.lincolninst.edu/research-data/data-toolkits/significant-features-property-tax",
+          },
+          {
+            name: "IRS Publication 530",
+            url: "https://www.irs.gov/publications/p530",
+          },
+        ]}
+        updated="2022 ACS data, reviewed April 2026"
+      />
+
+      <InsightBlock entityName={county.county_name} insights={getCountyInsights(county, stateData ?? null, national)} />
+
+      <TableOfContents />
 
       <AdSlot id="4567890123" />
 
@@ -228,6 +311,13 @@ export default async function CountyPage({
 
       <AdSlot id="5678901234" />
 
+      <PropertyTaxEstimator
+        countyName={county.county_name}
+        state={county.state}
+        effectiveRate={county.effective_rate}
+        stateAvgRate={stateData?.effective_rate ?? null}
+      />
+
       <PropertyTaxCalculator
         defaultState={county.state}
         defaultRate={county.effective_rate}
@@ -235,6 +325,110 @@ export default async function CountyPage({
           abbr: s.abbr,
           state: s.state,
           avg_rate: s.avg_rate,
+        }))}
+      />
+
+      {/* Why this matters — US homeowner context */}
+      <section className="mb-8 mt-10" data-upgrade="why-it-matters">
+        <h2 className="text-xl font-bold mb-3">
+          Why {county.county_name} property tax matters
+        </h2>
+        <div className="rounded-lg border border-slate-200 bg-white p-5 text-slate-700 leading-relaxed space-y-3">
+          {(() => {
+            const rate = county.effective_rate;
+            const annual = county.median_tax;
+            const monthly = Math.round(annual / 12);
+            const decade = annual * 10;
+            const highTax = rate >= 1.5;
+            const midTax = rate >= 0.8 && rate < 1.5;
+            const lowTax = rate < 0.8;
+
+            const primary = highTax
+              ? `${county.county_name} sits in the higher band of US property taxes. At ${rate.toFixed(
+                  2
+                )}%, a homeowner here pays roughly ${fmt(
+                  monthly
+                )}/month on a ${fmt(
+                  county.median_home_value
+                )} home \u2014 about ${fmt(
+                  decade
+                )} across a decade. If you are shopping for a home or relocating, this is a line item that deserves the same weight as mortgage principal and interest.`
+              : midTax
+              ? `${county.county_name}'s effective rate of ${rate.toFixed(
+                  2
+                )}% is close to the US middle \u2014 not a bargain, not punitive. On a ${fmt(
+                  county.median_home_value
+                )} home that works out to about ${fmt(
+                  monthly
+                )}/month, or ${fmt(
+                  annual
+                )}/year. Mortgage lenders will typically roll this into your escrow, so your monthly payment will reflect it.`
+              : `${county.county_name} is on the lower end of US property taxes at ${rate.toFixed(
+                  2
+                )}%. A ${fmt(
+                  county.median_home_value
+                )} home runs about ${fmt(
+                  monthly
+                )}/month in property tax \u2014 meaningful, but likely smaller than your insurance or HOA line. Lower rates also mean smaller fluctuation when the county reassesses values.`;
+
+            const escrowNote = `If your mortgage is escrowed, the servicer collects one-twelfth of your annual property tax each month along with your payment. A shift in the county rate shows up on your monthly bill one or two months later.`;
+
+            const actionableNote = `Homeowners who believe their assessed value is too high can file an assessment appeal with the county assessor's office. Every state also offers some form of homestead exemption or senior exemption \u2014 checking eligibility can trim your bill materially.`;
+
+            const irsNote = `For federal income tax, state and local property taxes are deductible as part of the SALT deduction, capped at $10,000 per return (IRS Publication 530). High-tax counties hit this cap faster.`;
+
+            return (
+              <>
+                <p>{primary}</p>
+                <p>{escrowNote}</p>
+                <p>{actionableNote}</p>
+                <p className="text-sm text-slate-500">{irsNote}</p>
+              </>
+            );
+          })()}
+        </div>
+      </section>
+
+      {/* DecisionNext — 3 opinionated next steps */}
+      <DecisionNext
+        cards={[
+          ...(stateData
+            ? [
+                {
+                  title: `${stateData.state} statewide view`,
+                  blurb: `Step back and see how ${county.county_name} compares to every other county in ${stateData.state}.`,
+                  href: `/state/${stateData.slug}/`,
+                  cta: `See ${stateData.state} rankings`,
+                  tone: "indigo" as const,
+                },
+              ]
+            : []),
+          {
+            title: `Run your own numbers`,
+            blurb: `Plug in your home value to see the exact annual and monthly property tax you'd owe at the ${county.county_name} rate.`,
+            href: `/calculator/`,
+            cta: `Open calculator`,
+            tone: "emerald" as const,
+          },
+          {
+            title: `Salary-to-tax sanity check`,
+            blurb: `Is your income high enough for this county's housing and tax load? Compare against local wage data.`,
+            href: `https://salarybycity.com`,
+            cta: `Check salary data`,
+            tone: "amber" as const,
+          },
+        ].slice(0, 3)}
+        heading="Next, check…"
+      />
+
+      <RelatedEntities
+        entityName={county.county_name}
+        heading={`Other ${county.state} counties`}
+        statLabel="Tax rate"
+        items={getRelatedCounties(county.state, slug, 8).map((r) => ({
+          name: r.county_name,
+          href: `/county/${r.slug}/`,
+          stat: `${r.effective_rate.toFixed(2)}%`,
         }))}
       />
 
@@ -315,6 +509,20 @@ export default async function CountyPage({
         );
       })()}
 
+      {/* FAQ Section */}
+      {faqs.length > 0 && (
+        <section className="mt-8 mb-8">
+          <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqs.map((faq) => (
+              <details key={faq.question} className="border border-slate-200 rounded-lg">
+                <summary className="px-4 py-3 font-medium cursor-pointer hover:bg-slate-50">{faq.question}</summary>
+                <p className="px-4 pb-3 text-sm text-slate-600">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
       <DataFeedback />
     </>
   );

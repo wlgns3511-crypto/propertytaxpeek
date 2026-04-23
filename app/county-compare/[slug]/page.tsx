@@ -5,11 +5,11 @@ import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ComparisonBar } from "@/components/ComparisonBar";
 
-export const dynamicParams = false;
-export const revalidate = false;
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
-  return getAllCountyComparisonSlugs(300).map((c) => ({ slug: c.slug }));
+  return getAllCountyComparisonSlugs(100).map((c) => ({ slug: c.slug }));
 }
 
 function fmt(n: number) {

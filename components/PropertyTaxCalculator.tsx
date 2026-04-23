@@ -131,15 +131,10 @@ export function PropertyTaxCalculator({ defaultState, defaultRate, states = [] }
         </div>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-blue-100">
-        <p className="text-xs text-slate-500 leading-relaxed">
-          Looking to reduce your housing costs? Compare{" "}
-          <span className="font-medium">mortgage refinancing rates</span> to lower your monthly payment.
-          Check <span className="font-medium">homeowners insurance quotes</span> for potential savings.
-          Explore <span className="font-medium">home equity loan offers</span> for home improvements.
-          Consider <span className="font-medium">property tax appeal services</span> if your assessment seems too high.
-        </p>
-      </div>
+      <p className="text-xs text-slate-400 mt-4">
+        Estimates only. Actual tax may vary based on local assessments, exemptions, and
+        special districts. Consult a professional for exact figures.
+      </p>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Search Property Tax Rates - PropertyTaxPeek",
   description: "Search states and counties for property tax rates, median taxes, and home value data in the PropertyTaxPeek database.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "https://propertytaxpeek.com/search/" },
   openGraph: { url: "/search/" },
 };
