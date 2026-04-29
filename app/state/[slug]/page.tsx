@@ -27,6 +27,9 @@ import { TrustBlock } from "@/components/upgrades/TrustBlock";
 import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { StateRich } from '@/components/state/StateRich';
 import { DB_UPDATED } from "@/lib/authorship";
+import { getStateAcs, getBurdenDistribution } from "@/lib/state-facts";
+import { getCountyAcs } from "@/lib/county-facts";
+import { VINTAGE_LABEL, VINTAGE_SHORT } from "@/lib/data-vintage";
 
 // dynamicParams=false (2026-04-23): unknown state slugs → real HTTP 404.
 export const dynamicParams = false;
@@ -52,9 +55,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const state = getStateBySlug(slug);
   if (!state) return {};
+  // Prefer ACS 2024 5-Year values when available; fall back to legacy DB row.
+  const acs = getStateAcs(state.abbr.toUpperCase());
+  const rate = acs?.effective_rate ?? state.effective_rate;
+  const tax = acs?.median_real_estate_taxes ?? state.median_tax;
+  const home = acs?.median_home_value ?? state.median_home_value;
   return {
-    title: `${state.state} Property Tax Rates - ${state.effective_rate.toFixed(2)}% Average Rate`,
-    description: `${state.state} has an effective property tax rate of ${state.effective_rate.toFixed(2)}%. Median annual property tax is ${fmt(state.median_tax)} on a median home value of ${fmt(state.median_home_value)}. See county-level breakdown.`,
+    title: `${state.state} Property Tax Rates - ${rate.toFixed(2)}% Average Rate`,
+    description: `${state.state} has an effective property tax rate of ${rate.toFixed(2)}%. Median annual property tax is ${fmt(tax)} on a median home value of ${fmt(home)}. See county-level breakdown.`,
     alternates: { canonical: `/state/${slug}/` },
     openGraph: { url: `/state/${slug}/` },
   };
@@ -129,7 +137,40 @@ export default async function StatePage({
   const neighborAbbrs = NEIGHBORS[state.abbr] || [];
   const neighbors = allStates.filter((s) => neighborAbbrs.includes(s.abbr));
 
-  const diffRate = state.effective_rate - national.avg_rate;
+  // ACS 2024 5-Year state-level data (replaces synthetic ACS 2022 estimates).
+  const stateAcs = getStateAcs(state.abbr.toUpperCase());
+  const effectiveRate = stateAcs?.effective_rate ?? state.effective_rate;
+  const medianTax = stateAcs?.median_real_estate_taxes ?? state.median_tax;
+  const medianHomeValue = stateAcs?.median_home_value ?? state.median_home_value;
+  const seniorIncome = stateAcs?.median_income_age65_plus ?? null;
+  const seniorBurdenPct = stateAcs?.senior_burden_pct ?? null;
+
+  // County-level burden distribution histogram for this state.
+  const burdenDist = getBurdenDistribution(
+    state.abbr.toUpperCase(),
+    counties.map((c) => c.slug),
+  );
+  const burdenHigh =
+    burdenDist.byStatus["extreme-high"] + burdenDist.byStatus["high"];
+  const burdenAboveAvg = burdenDist.byStatus["above-avg"];
+  const burdenAvg = burdenDist.byStatus["avg"] + burdenDist.byStatus["below-avg"];
+  const burdenLow = burdenDist.byStatus["low"];
+  const burdenSuppressed = burdenDist.byStatus["suppressed"];
+  const countyNameBySlug = new Map(counties.map((c) => [c.slug, c.county_name]));
+  const highestCounty = burdenDist.highest
+    ? {
+        ...burdenDist.highest,
+        name: countyNameBySlug.get(burdenDist.highest.slug) ?? burdenDist.highest.slug,
+      }
+    : null;
+  const lowestCounty = burdenDist.lowest
+    ? {
+        ...burdenDist.lowest,
+        name: countyNameBySlug.get(burdenDist.lowest.slug) ?? burdenDist.lowest.slug,
+      }
+    : null;
+
+  const diffRate = effectiveRate - national.avg_rate;
   const insights = generateStateInsights(state, allStates);
 
   return (
@@ -141,13 +182,13 @@ export default async function StatePage({
             "@context": "https://schema.org",
             "@type": "Dataset",
             "name": `${state.state} Property Tax Rates`,
-            "description": `Property tax rates, median annual tax, and county-level breakdown for ${state.state}. Effective rate: ${state.effective_rate.toFixed(2)}%.`,
+            "description": `Property tax rates, median annual tax, and county-level breakdown for ${state.state}. Effective rate: ${effectiveRate.toFixed(2)}%.`,
             "url": `https://propertytaxpeek.com/state/${slug}`,
             "license": "https://creativecommons.org/publicdomain/zero/1.0/",
             "creator": { "@type": "Organization", "name": "DataPeek Facts", "url": "https://datapeekfacts.com" },
             "dateModified": DB_UPDATED,
             "author": { "@type": "Organization", "name": "DataPeek" },
-            "temporalCoverage": "2022/2022",
+            "temporalCoverage": "2020/2024",
             "distribution": { "@type": "DataDownload", "encodingFormat": "text/html", "contentUrl": `https://propertytaxpeek.com/state/${slug}/` }
           })
         }}
@@ -162,14 +203,14 @@ export default async function StatePage({
       <AnswerHero
         title={`${state.state} property tax`}
         subtitle={state.abbr}
-        tagline={`${state.state} has a ${state.effective_rate.toFixed(
+        tagline={`${state.state} has a ${effectiveRate.toFixed(
           2
         )}% effective property tax rate \u2014 ${
           diffRate > 0
             ? `${diffRate.toFixed(2)}% above`
             : `${Math.abs(diffRate).toFixed(2)}% below`
-        } the US average. Median annual bill: ${fmt(state.median_tax)} on a ${fmt(
-          state.median_home_value
+        } the US average. Median annual bill: ${fmt(medianTax)} on a ${fmt(
+          medianHomeValue
         )} home across ${counties.length} counties.`}
         badges={[
           {
@@ -216,7 +257,7 @@ export default async function StatePage({
             url: "https://www.irs.gov/publications/p530",
           },
         ]}
-        updated="2022 ACS data, reviewed April 2026"
+        updated={`${VINTAGE_LABEL}, reviewed April 2026`}
       />
 
       <EditorNote note={`Property tax rates vary significantly across ${state.state}'s ${counties.length} counties. Your actual bill depends on local assessments, exemptions, and special district levies — not just the statewide average.`} />
@@ -264,7 +305,7 @@ export default async function StatePage({
             Run your {state.state} home value →
           </div>
           <div className="text-sm text-slate-600">
-            Plug in your exact home value at the {state.effective_rate.toFixed(2)}%
+            Plug in your exact home value at the {effectiveRate.toFixed(2)}%
             effective rate to see the annual bill.
           </div>
         </a>
@@ -282,9 +323,131 @@ export default async function StatePage({
         </ul>
       </section>
 
+      {/* County burden distribution — ACS 2024 5-Year MOE-filtered */}
+      {burdenDist.totalCounties > 0 && (
+        <section className="my-8">
+          <h2 className="text-lg font-bold text-slate-900 mb-2">
+            County burden distribution across {state.state}
+          </h2>
+          <p className="text-sm text-slate-600 mb-4">
+            Across {burdenDist.totalCounties} counties in {state.state}, here is
+            how the {VINTAGE_SHORT} effective property tax rates sort.
+            {burdenSuppressed > 0
+              ? ` ${burdenSuppressed} ${
+                  burdenSuppressed === 1 ? "county had its estimate" : "counties had estimates"
+                } too wide to publish a county-level rate; ${
+                  burdenSuppressed === 1 ? "its page shows" : "their pages show"
+                } state-level context only.`
+              : ""}
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 p-4">
+              <div className="text-xs uppercase tracking-wider text-rose-700 font-semibold">
+                High burden
+              </div>
+              <div className="text-xs text-rose-700/80 mb-1">≥ 1.5%</div>
+              <div className="text-2xl font-bold text-rose-900">
+                {burdenHigh}
+              </div>
+              <div className="text-xs text-rose-800/80">counties</div>
+            </div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <div className="text-xs uppercase tracking-wider text-amber-700 font-semibold">
+                Above average
+              </div>
+              <div className="text-xs text-amber-700/80 mb-1">1.2 – 1.5%</div>
+              <div className="text-2xl font-bold text-amber-900">
+                {burdenAboveAvg}
+              </div>
+              <div className="text-xs text-amber-800/80">counties</div>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="text-xs uppercase tracking-wider text-slate-600 font-semibold">
+                Average
+              </div>
+              <div className="text-xs text-slate-600/80 mb-1">0.6 – 1.2%</div>
+              <div className="text-2xl font-bold text-slate-900">
+                {burdenAvg}
+              </div>
+              <div className="text-xs text-slate-700/80">counties</div>
+            </div>
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+              <div className="text-xs uppercase tracking-wider text-emerald-700 font-semibold">
+                Low burden
+              </div>
+              <div className="text-xs text-emerald-700/80 mb-1">&lt; 0.6%</div>
+              <div className="text-2xl font-bold text-emerald-900">
+                {burdenLow}
+              </div>
+              <div className="text-xs text-emerald-800/80">counties</div>
+            </div>
+          </div>
+          {(highestCounty || lowestCounty) && (
+            <p className="text-sm text-slate-600 mt-4">
+              {highestCounty && (
+                <>
+                  Highest:{" "}
+                  <a
+                    href={`/county/${highestCounty.slug}/`}
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    {highestCounty.name}
+                  </a>{" "}
+                  at {highestCounty.rate.toFixed(2)}%
+                </>
+              )}
+              {highestCounty && lowestCounty && " · "}
+              {lowestCounty && (
+                <>
+                  Lowest:{" "}
+                  <a
+                    href={`/county/${lowestCounty.slug}/`}
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    {lowestCounty.name}
+                  </a>{" "}
+                  at {lowestCounty.rate.toFixed(2)}%
+                </>
+              )}
+              {burdenDist.median != null && (
+                <>
+                  {" "}· Median: <strong>{burdenDist.median.toFixed(2)}%</strong>
+                </>
+              )}
+            </p>
+          )}
+        </section>
+      )}
+
+      {/* Senior tax context — ACS B19049_005E (median household income age 65+) */}
+      {seniorIncome != null && seniorBurdenPct != null && (
+        <section className="my-8 rounded-xl border border-amber-200 bg-amber-50/60 p-6">
+          <h2 className="text-lg font-bold text-slate-900 mb-2">
+            Senior homeowner context for {state.state}
+          </h2>
+          <p className="text-sm text-slate-700 leading-relaxed">
+            The median household income for residents age 65 and older in{" "}
+            {state.state} is {fmt(seniorIncome)}. At the state's effective property
+            tax rate of {effectiveRate.toFixed(2)}%, the median annual bill of{" "}
+            {fmt(medianTax)} represents about{" "}
+            <strong>{seniorBurdenPct.toFixed(1)}%</strong> of senior household
+            income.
+            {seniorBurdenPct >= 10
+              ? " That is a meaningful share — confirm whether your county's senior or homestead exemption can reduce the assessed value before budgeting at the headline rate."
+              : seniorBurdenPct >= 5
+              ? " That is a moderate share for a fixed-income household — a senior or homestead exemption can still trim it noticeably in many counties."
+              : " That is a manageable share for most fixed-income households, though your specific county may run higher."}
+          </p>
+          <p className="text-xs text-slate-500 mt-3">
+            Senior income figure: ACS Table B19049, age-of-householder 65+, median
+            household income, {VINTAGE_SHORT}.
+          </p>
+        </section>
+      )}
+
       <AdSlot id="1234567890" />
 
-      <TaxRateChart stateRate={state.effective_rate} nationalRate={national.avg_rate} stateName={state.state} />
+      <TaxRateChart stateRate={effectiveRate} nationalRate={national.avg_rate} stateName={state.state} />
 
       {/* State Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8">
@@ -293,7 +456,7 @@ export default async function StatePage({
             Effective Rate
           </div>
           <div className="text-2xl font-bold text-blue-800">
-            {state.effective_rate.toFixed(2)}%
+            {effectiveRate.toFixed(2)}%
           </div>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
@@ -301,7 +464,7 @@ export default async function StatePage({
             Median Annual Tax
           </div>
           <div className="text-2xl font-bold text-blue-800">
-            {fmt(state.median_tax)}
+            {fmt(medianTax)}
           </div>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
@@ -309,7 +472,7 @@ export default async function StatePage({
             Median Home Value
           </div>
           <div className="text-2xl font-bold text-blue-800">
-            {fmt(state.median_home_value)}
+            {fmt(medianHomeValue)}
           </div>
         </div>
       </div>
@@ -331,30 +494,51 @@ export default async function StatePage({
                     Median Home Value
                   </th>
                   <th className="px-4 py-2 font-medium text-slate-600 text-right hidden md:table-cell">
+                    Senior Median Income
+                  </th>
+                  <th className="px-4 py-2 font-medium text-slate-600 text-right hidden md:table-cell">
                     Population
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {counties.map((c) => (
-                  <tr key={c.slug} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="px-4 py-2">
-                      <a href={`/county/${c.slug}/`} className="text-blue-600 hover:underline">
-                        {c.county_name}
-                      </a>
-                    </td>
-                    <td className="px-4 py-2 text-right font-medium">
-                      {c.effective_rate.toFixed(2)}%
-                    </td>
-                    <td className="px-4 py-2 text-right">{fmt(c.median_tax)}</td>
-                    <td className="px-4 py-2 text-right hidden sm:table-cell">
-                      {fmt(c.median_home_value)}
-                    </td>
-                    <td className="px-4 py-2 text-right hidden md:table-cell">
-                      {c.population.toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
+                {counties.map((c) => {
+                  const acs = getCountyAcs(c.slug);
+                  const kept = acs?.status === "kept";
+                  const rate = kept ? acs.effective_rate : null;
+                  const tax = kept ? acs.median_real_estate_taxes : null;
+                  const home = kept ? acs.median_home_value : null;
+                  const seniorInc = kept ? acs.median_income_age65_plus : null;
+                  return (
+                    <tr key={c.slug} className="border-t border-slate-100 hover:bg-slate-50">
+                      <td className="px-4 py-2">
+                        <a href={`/county/${c.slug}/`} className="text-blue-600 hover:underline">
+                          {c.county_name}
+                        </a>
+                        {!kept && (
+                          <span className="ml-2 text-xs text-amber-700">
+                            (estimate held)
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-right font-medium">
+                        {rate != null ? `${rate.toFixed(2)}%` : "—"}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {tax != null ? fmt(tax) : "—"}
+                      </td>
+                      <td className="px-4 py-2 text-right hidden sm:table-cell">
+                        {home != null ? fmt(home) : "—"}
+                      </td>
+                      <td className="px-4 py-2 text-right hidden md:table-cell">
+                        {seniorInc != null ? fmt(seniorInc) : "—"}
+                      </td>
+                      <td className="px-4 py-2 text-right hidden md:table-cell">
+                        {c.population.toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -365,7 +549,7 @@ export default async function StatePage({
 
       <PropertyTaxCalculator
         defaultState={state.abbr}
-        defaultRate={state.effective_rate}
+        defaultRate={effectiveRate}
         states={allStates.map((s) => ({
           abbr: s.abbr,
           state: s.state,
@@ -373,7 +557,7 @@ export default async function StatePage({
         }))}
       />
 
-      <DidYouKnow fact={`In ${state.state}, the median homeowner pays ${fmt(state.median_tax)} per year in property taxes — that's about ${fmt(Math.round(state.median_tax / 12))} per month added to housing costs.`} />
+      <DidYouKnow fact={`In ${state.state}, the median homeowner pays ${fmt(medianTax)} per year in property taxes — that's about ${fmt(Math.round(medianTax / 12))} per month added to housing costs.`} />
 
       {/* Why this matters — US homeowner context */}
       <section className="mb-8 mt-10" data-upgrade="why-it-matters">
@@ -382,8 +566,8 @@ export default async function StatePage({
         </h2>
         <div className="rounded-lg border border-slate-200 bg-white p-5 text-slate-700 leading-relaxed space-y-3">
           {(() => {
-            const rate = state.effective_rate;
-            const annual = state.median_tax;
+            const rate = effectiveRate;
+            const annual = medianTax;
             const monthly = Math.round(annual / 12);
             const highTax = rate >= 1.5;
             const midTax = rate >= 0.8 && rate < 1.5;
@@ -488,12 +672,12 @@ export default async function StatePage({
               <tbody>
                 <tr className="border-t border-slate-100 bg-blue-50">
                   <td className="px-4 py-2 font-medium">{state.state}</td>
-                  <td className="px-4 py-2 text-right font-medium">{state.effective_rate.toFixed(2)}%</td>
-                  <td className="px-4 py-2 text-right">{fmt(state.median_tax)}</td>
+                  <td className="px-4 py-2 text-right font-medium">{effectiveRate.toFixed(2)}%</td>
+                  <td className="px-4 py-2 text-right">{fmt(medianTax)}</td>
                   <td className="px-4 py-2 text-right">-</td>
                 </tr>
                 {neighbors.map((n) => {
-                  const diff = n.effective_rate - state.effective_rate;
+                  const diff = n.effective_rate - effectiveRate;
                   return (
                     <tr key={n.slug} className="border-t border-slate-100 hover:bg-slate-50">
                       <td className="px-4 py-2">
@@ -519,11 +703,11 @@ export default async function StatePage({
           <div className="mt-4">
             <ComparisonBar
               bars={[
-                { label: state.state, value: state.effective_rate },
+                { label: state.state, value: effectiveRate },
                 ...neighbors.map((n) => ({ label: n.state, value: n.effective_rate })),
               ]}
               format={(v) => v.toFixed(2) + "%"}
-              referenceValue={state.effective_rate}
+              referenceValue={effectiveRate}
             />
           </div>
         </section>
@@ -536,9 +720,9 @@ export default async function StatePage({
         <h2>{state.state} Property Tax Overview</h2>
         <p>
           The effective property tax rate in {state.state} is{" "}
-          {state.effective_rate.toFixed(2)}%, meaning a homeowner with a property
-          valued at {fmt(state.median_home_value)} would pay approximately{" "}
-          {fmt(state.median_tax)} annually. Understanding your{" "}
+          {effectiveRate.toFixed(2)}%, meaning a homeowner with a property
+          valued at {fmt(medianHomeValue)} would pay approximately{" "}
+          {fmt(medianTax)} annually. Understanding your{" "}
           <strong>property tax deduction</strong> eligibility can help offset this
           cost on your federal return.
         </p>
@@ -576,7 +760,7 @@ export default async function StatePage({
       <FeedbackButton pageId={slug} />
 
       <DataSourceBadge sources={[
-        { name: "US Census ACS 2022", url: "https://www.census.gov/programs-surveys/acs/" },
+        { name: "US Census ACS 2024 5-Year", url: "https://www.census.gov/programs-surveys/acs/" },
         { name: "Census S&L Finances", url: "https://www.census.gov/programs-surveys/gov-finances.html" },
         { name: "Tax Foundation", url: "https://taxfoundation.org/data/all/state/property-taxes-by-state/" },
         { name: "Lincoln Institute", url: "https://www.lincolninst.edu/research-data/data-toolkits/significant-features-property-tax" },

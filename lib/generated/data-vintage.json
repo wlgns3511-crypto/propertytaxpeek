@@ -1,0 +1,17 @@
+{
+  "source": "ACS 2024 5-Year",
+  "variables": [
+    "B25103_001E (median real estate taxes)",
+    "B25077_001E (median home value)",
+    "B19013_001E (median household income)",
+    "B19049_005E (median household income, age 65+)"
+  ],
+  "fetched_at": "2026-04-29",
+  "counties_total_local": 2780,
+  "counties_covered_by_census": 2761,
+  "counties_kept": 2705,
+  "counties_suppressed": 75,
+  "counties_unmatched_in_census": 19,
+  "moe_threshold_relative_pct": 30,
+  "states_count": 51
+}
