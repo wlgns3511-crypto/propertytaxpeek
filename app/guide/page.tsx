@@ -72,10 +72,6 @@ export default function GuidesIndex() {
             <Link href="/compare/" className="text-blue-700 hover:underline font-medium">Compare any two states →</Link>
             <span className="text-slate-500"> side-by-side rates, exemptions, median bills</span>
           </li>
-          <li>
-            <Link href="/state/" className="text-blue-700 hover:underline font-medium">Browse all 50 states →</Link>
-            <span className="text-slate-500"> current effective rates and exemptions</span>
-          </li>
         </ul>
       </section>
     </div>

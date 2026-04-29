@@ -180,7 +180,6 @@ export default async function GuidePage({ params }: Props) {
         <div className="flex flex-wrap gap-3">
           <Link href="/calculator/" className="text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Tax Calculator</Link>
           <Link href="/compare/" className="text-sm px-4 py-2 bg-white border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 font-medium">Compare States</Link>
-          <Link href="/state/" className="text-sm px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-medium">All 50 States</Link>
         </div>
       </div>
 
