@@ -12,11 +12,15 @@ import { ComparisonBar } from "@/components/ComparisonBar";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
-export const dynamicParams = true;
+// HCU 2026-04-24: was prerendering all 2,780 Spanish county pages — thin
+// translation mirror over identical USDA data, zero GSC signal, already
+// dropped from sitemap on 2026-04-23. Empty generateStaticParams + 410 via
+// middleware deindexes the dead weight. /es/ landing stays (singleton).
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {
-  return getAllCounties().map((c) => ({ slug: c.slug }));
+  return [];
 }
 
 function fmt(n: number) {

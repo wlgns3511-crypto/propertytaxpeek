@@ -10,7 +10,8 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamicParams = true;
+// dynamicParams=false (2026-04-23): unknown guide slugs → real HTTP 404.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {

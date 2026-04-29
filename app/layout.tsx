@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { UpgradeAnalytics } from "@/components/upgrades/UpgradeAnalytics";
+
+// 2026-04-23 structural fix — do NOT reintroduce `headers()` in this layout.
+// Any dynamic API (headers, cookies, draftMode, searchParams) in the root
+// layout forces EVERY route in the tree to render dynamically (ƒ). That
+// silently:
+//   1. Disables SSG — no prerendered HTML for any dynamic route
+//   2. Emits `cache-control: private,no-cache,no-store` → CF edge cache 0.86%
+//   3. Bypasses `dynamicParams=false` validation → Next.js 16 returns
+//      HTTP 200 + 404 HTML body (soft-404) for unknown slugs
+// costbycity fix (35d1dde) restored SSG portfolio-wide. Keep `<html lang>`
+// static — /es/ subtree loses dynamic lang attribute; acceptable because
+// hreflang alternates still signal the Spanish URL to Google.
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -25,7 +36,12 @@ export const metadata: Metadata = {
       "x-default": `${SITE_URL}/`,
     },
   },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
+  // robots metadata intentionally omitted at root (2026-04-23 portfolio fix).
+  // Default behavior (index, follow) is already Google's assumption — making
+  // it explicit at root caused a DUPLICATE `<meta name="robots">` tag on
+  // notFound() pages: Next.js 16 adds `content="noindex"` for 404 responses
+  // but fails to override the root's `content="index, follow"`, leaving BOTH
+  // in the HTML. Google picks the first → pruned/404 URLs stay indexable.
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -35,13 +51,11 @@ export const metadata: Metadata = {
   other: { "google-adsense-account": "ca-pub-5724806562146685" },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = (await headers()).get("x-pathname") ?? "/";
-  const htmlLang = pathname === "/es" || pathname.startsWith("/es/") ? "es" : "en";
   const schemaGraph = [
     {
       "@type": "WebSite",
@@ -69,7 +83,7 @@ export default async function RootLayout({
   ];
 
   return (
-    <html lang={htmlLang}>
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />

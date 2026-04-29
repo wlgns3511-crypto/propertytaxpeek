@@ -4,7 +4,8 @@ import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { AdSlot } from "@/components/AdSlot";
 import { AuthorBox } from "@/components/AuthorBox";
 
-export const dynamicParams = true;
+// dynamicParams=false (2026-04-23): unknown blog slugs → real HTTP 404.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {

@@ -39,10 +39,13 @@ import Database from 'better-sqlite3';
 const db = new Database(path.resolve(__dirname, '..', 'data', 'taxes.db'), { readonly: true });
 
 const counties = (db.prepare('SELECT slug FROM counties').all() as { slug: string }[]).map(r => r.slug);
-// county-compare: prerender hot set, sitemap includes full valid set
-const countyComparisons = (db.prepare('SELECT slug FROM county_comparisons').all() as { slug: string }[]).map(r => r.slug);
 
 db.close();
+
+// HCU 2026-04-24: county-compare keep-set is the ONLY compare tree we
+// announce. Everything else in county_comparisons (124,550 slugs) is
+// 410'd via middleware — announcing it would be self-defeating.
+import countyCompareKeep from '../lib/generated/county-compare-keep.json';
 
 // ── States (51 entries — from lib/states-data.ts) ────────────────────────────
 const states = [
@@ -154,6 +157,17 @@ for (const c of counties) add({ url: `${SITE_URL}/county/${c}/`, priority: '0.7'
 // ── State/County compare pages excluded from sitemap (2026-04-17) ────────────
 // Thin synthetic matrix removed — see top-of-file NOTE.
 // Pages still render; just not announced to Google to prevent doorway flag.
+
+// ── County-compare keep-set (HCU 2026-04-24) ─────────────────────────────────
+// 100 canonical same-state pairs (both counties >=100K pop, 5-per-state cap).
+// Only canonical direction (a < b lexicographically) to avoid duplicate
+// submissions — reverses render but aren't announced.
+const countyCompareSet = countyCompareKeep as string[];
+const canonicalPairs = countyCompareSet.filter((slug) => {
+  const m = slug.match(/^(.+)-vs-(.+)$/);
+  return m && m[1] < m[2];
+});
+for (const s of canonicalPairs) add({ url: `${SITE_URL}/county-compare/${s}/`, priority: '0.6', changefreq: 'monthly' });
 
 // ─── Cardinality guard ────────────────────────────────────────────────────
 if (entries.length > 4000 && !process.env.SITEMAP_LARGE_OK) {

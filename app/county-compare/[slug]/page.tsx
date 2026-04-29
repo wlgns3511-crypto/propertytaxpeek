@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllCountyComparisonSlugs, getCountyComparisonBySlug, getNationalAverage, getCountiesByState, getAllCounties } from "@/lib/db";
+import { getCountyComparisonBySlug, getNationalAverage, getCountiesByState, getAllCounties } from "@/lib/db";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ComparisonBar } from "@/components/ComparisonBar";
+import countyCompareKeep from "@/lib/generated/county-compare-keep.json";
 
-export const dynamicParams = true;
+// HCU 2026-04-24: was `dynamicParams = true` over a 124,750-row compare
+// table → Google discovered ~34k of these as thin/duplicate, producing the
+// 28k "duplicate no canonical" + 5.5k "crawled not indexed" + 5.5k 5xx
+// signals in GSC. Flipped to dynamicParams=false + a curated 100-pair
+// keep-set (same-state, both counties >= 100K pop, 5-per-state cap).
+// Middleware.ts 410s anything outside the keep-set for fast deindex.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {
-  return getAllCountyComparisonSlugs(100).map((c) => ({ slug: c.slug }));
+  return (countyCompareKeep as string[]).map((slug) => ({ slug }));
 }
 
 function fmt(n: number) {

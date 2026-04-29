@@ -28,7 +28,8 @@ import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { StateRich } from '@/components/state/StateRich';
 import { DB_UPDATED } from "@/lib/authorship";
 
-export const dynamicParams = true;
+// dynamicParams=false (2026-04-23): unknown state slugs → real HTTP 404.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {

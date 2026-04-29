@@ -24,8 +24,16 @@ import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { getCountyInsights } from "@/lib/insights";
 import { RelatedEntities } from "@/components/upgrades/RelatedEntities";
 import { TableOfContents } from '@/components/upgrades/TableOfContents';
+import countyCompareKeep from "@/lib/generated/county-compare-keep.json";
 
-export const dynamicParams = true;
+// HCU 2026-04-24: gate internal "Compare with other counties" links so we
+// only emit anchors that resolve to a page in the 100-slug county-compare
+// keep-set. Before this gate, each /county/* page emitted up to 16 compare
+// links, which seeded Google's crawl of ~34k non-keep slugs (now 410'd).
+const COUNTY_COMPARE_KEEP_SET = new Set<string>(countyCompareKeep as string[]);
+
+// dynamicParams=false (2026-04-23): unknown county slugs → real HTTP 404.
+export const dynamicParams = false;
 export const revalidate = 86400;
 
 export function generateStaticParams() {
@@ -460,14 +468,22 @@ export default async function CountyPage({
         </p>
       </section>
 
-      {/* Compare with other counties — internal links for crawling */}
+      {/* Compare with other counties — HCU 2026-04-24: filtered to the
+          100-slug county-compare keep-set. Most /county/* pages will have 0
+          links here (keep-set only covers ~27 states × 5 pairs). That's
+          correct — linking to a 410 page would waste Google's crawl and
+          dilute the /county/* signal we're protecting. */}
       {(() => {
+        const inKeep = (otherSlug: string) =>
+          COUNTY_COMPARE_KEEP_SET.has(`${county.slug}-vs-${otherSlug}`) ||
+          COUNTY_COMPARE_KEEP_SET.has(`${otherSlug}-vs-${county.slug}`);
         const sameState = getCountiesByState(county.state)
-          .filter((c) => c.slug !== county.slug)
+          .filter((c) => c.slug !== county.slug && inKeep(c.slug))
           .slice(0, 8);
         const topCounties = getAllCounties()
-          .filter((c) => c.state !== county.state)
+          .filter((c) => c.state !== county.state && inKeep(c.slug))
           .slice(0, 8);
+        if (sameState.length === 0 && topCounties.length === 0) return null;
         return (
           <section className="mt-12 mb-8">
             <h2 className="text-xl font-bold mb-4">
@@ -491,20 +507,24 @@ export default async function CountyPage({
                 </div>
               </>
             )}
-            <h3 className="text-sm font-semibold text-slate-500 uppercase mb-2">
-              vs Popular Counties Nationwide
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {topCounties.map((c) => (
-                <a
-                  key={c.slug}
-                  href={`/county-compare/${county.slug}-vs-${c.slug}/`}
-                  className="text-sm px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 rounded-full"
-                >
-                  vs {c.county_name}, {c.state}
-                </a>
-              ))}
-            </div>
+            {topCounties.length > 0 && (
+              <>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase mb-2">
+                  vs Popular Counties Nationwide
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {topCounties.map((c) => (
+                    <a
+                      key={c.slug}
+                      href={`/county-compare/${county.slug}-vs-${c.slug}/`}
+                      className="text-sm px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 rounded-full"
+                    >
+                      vs {c.county_name}, {c.state}
+                    </a>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
         );
       })()}
