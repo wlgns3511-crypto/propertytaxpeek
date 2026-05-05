@@ -3,6 +3,7 @@ import {
   EDITORIAL_TEAM,
   PUBLISHER,
   REVIEWER_DISCLAIMER,
+  SOURCE_AUTHORITIES,
   SOURCE_VINTAGES,
 } from "@/lib/authorship";
 
@@ -56,10 +57,24 @@ export function AuthorBox({ vintage, source, showDisclaimer }: AuthorBoxProps = 
         </div>
       </div>
       <p className="text-xs text-slate-600 leading-relaxed mb-3">
-        PropertyTaxPeek publishes as an organization — no individual bylines. Our editorial
-        workflow audits public data sources, reconciles county-level estimates with state
-        and national context, and discloses every dataset&apos;s vintage on the page where
-        it appears.
+        Each county and state property tax record is cross-referenced against{" "}
+        {SOURCE_AUTHORITIES.map((s, i) => (
+          <span key={s.name}>
+            {i > 0 &&
+              (i === SOURCE_AUTHORITIES.length - 1 ? ", and " : ", ")}
+            <a
+              href={s.url}
+              className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
+              rel="noopener"
+              target="_blank"
+            >
+              {s.name}
+            </a>
+          </span>
+        ))}{" "}
+        before publication. Our editorial workflow audits effective tax rate
+        calculations, MOE-filtered ACS estimates, assessment ratios, and per-source
+        vintage on every release cycle.
       </p>
       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mb-2">
         <span>
