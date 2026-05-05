@@ -5,6 +5,7 @@ import { getStateExemptionData } from "@/lib/state-exemption-data";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { AuthorBox } from "@/components/AuthorBox";
+import { EXEMPTION_VINTAGE } from "@/lib/authorship";
 import { DataSourceBadge } from "@/components/DataSourceBadge";
 import { EditorNote } from "@/components/EditorNote";
 import { AdSlot } from "@/components/AdSlot";
@@ -1109,7 +1110,11 @@ export default async function SeniorExemptionPage({
         />
       </div>
 
-      <AuthorBox />
+      <AuthorBox
+        vintage={EXEMPTION_VINTAGE}
+        source={`${state.state} senior property tax exemption guide`}
+        showDisclaimer
+      />
     </>
   );
 }

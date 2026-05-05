@@ -26,7 +26,8 @@ import { AnswerHero } from "@/components/upgrades/AnswerHero";
 import { TrustBlock } from "@/components/upgrades/TrustBlock";
 import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { StateRich } from '@/components/state/StateRich';
-import { DB_UPDATED } from "@/lib/authorship";
+import { STATE_VINTAGE } from "@/lib/authorship";
+import { datasetSchema } from "@/lib/schema";
 import { getStateAcs, getBurdenDistribution } from "@/lib/state-facts";
 import { getCountyAcs } from "@/lib/county-facts";
 import { VINTAGE_LABEL, VINTAGE_SHORT } from "@/lib/data-vintage";
@@ -178,19 +179,22 @@ export default async function StatePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Dataset",
-            "name": `${state.state} Property Tax Rates`,
-            "description": `Property tax rates, median annual tax, and county-level breakdown for ${state.state}. Effective rate: ${effectiveRate.toFixed(2)}%.`,
-            "url": `https://propertytaxpeek.com/state/${slug}`,
-            "license": "https://creativecommons.org/publicdomain/zero/1.0/",
-            "creator": { "@type": "Organization", "name": "DataPeek Facts", "url": "https://datapeekfacts.com" },
-            "dateModified": DB_UPDATED,
-            "author": { "@type": "Organization", "name": "DataPeek" },
-            "temporalCoverage": "2020/2024",
-            "distribution": { "@type": "DataDownload", "encodingFormat": "text/html", "contentUrl": `https://propertytaxpeek.com/state/${slug}/` }
-          })
+          __html: JSON.stringify(
+            datasetSchema(
+              `${state.state} Property Tax Rates`,
+              `Property tax rates, median annual tax, and county-level breakdown for ${state.state}. Effective rate: ${effectiveRate.toFixed(2)}%.`,
+              {
+                url: `/state/${slug}/`,
+                dateModified: STATE_VINTAGE,
+                spatialCoverage: `${state.state}, USA`,
+                variableMeasured: [
+                  "effective_property_tax_rate_pct",
+                  "median_real_estate_taxes_usd",
+                  "median_home_value_usd",
+                ],
+              },
+            ),
+          ),
         }}
       />
       <Breadcrumb
@@ -772,7 +776,11 @@ export default async function StatePage({
 
       <StateRich slug={slug} state={state} />
 
-      <AuthorBox />
+      <AuthorBox
+        vintage={STATE_VINTAGE}
+        source={`${state.state} state-level property tax dataset`}
+        showDisclaimer
+      />
     </>
   );
 }

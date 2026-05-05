@@ -30,6 +30,37 @@ import * as path from 'path';
 const DB_PATH = path.join(process.cwd(), 'data', 'taxes.db');
 const OUT_DIR = path.join(process.cwd(), 'lib', 'generated');
 
+// HCU 2026-05-04 — Bing impressions auto-union (separate index from Google).
+const BING_JSON_DIR = path.resolve(process.cwd(), '..', '_shared', 'data', 'bing_analyze');
+const BING_DOMAIN = 'propertytaxpeek.com';
+const BING_MIN_IMP = 1;
+
+function loadBingSlugs(routeRe: RegExp): string[] {
+  if (!fs.existsSync(BING_JSON_DIR)) return [];
+  const files = fs.readdirSync(BING_JSON_DIR)
+    .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+    .sort();
+  if (!files.length) return [];
+  try {
+    const json = JSON.parse(fs.readFileSync(path.join(BING_JSON_DIR, files[files.length - 1]), 'utf8'));
+    const site = json[BING_DOMAIN];
+    if (!site || !Array.isArray(site.pages)) return [];
+    const out = new Map<string, number>();
+    for (const pg of site.pages) {
+      const url = String(pg.url || '');
+      const pathOnly = url.replace(/^https?:\/\/[^/]+/, '');
+      const m = routeRe.exec(pathOnly);
+      if (!m) continue;
+      const slug = decodeURIComponent(m[1]);
+      const imp = Number(pg.impressions) || 0;
+      out.set(slug, (out.get(slug) || 0) + imp);
+    }
+    return [...out.entries()].filter(([, i]) => i >= BING_MIN_IMP).map(([s]) => s);
+  } catch {
+    return [];
+  }
+}
+
 const COMPARE_CAP = 100;
 const PER_STATE_CAP = 5;
 const MIN_POP = 100_000;
@@ -98,6 +129,21 @@ function main() {
       if (!keepSet.has(reverse)) { keepSet.add(reverse); gscAdded++; }
     }
   }
+  // Bing union — DB existence check on county_comparisons.slug.
+  // NOTE: route is /county-compare/ (not /compare/ — that's the state-vs-state
+  // page with its own inline STATIC_COMPARISON_SLUGS in app/compare/[slug]/page.tsx).
+  const bingCompares = loadBingSlugs(/^\/county-compare\/([^/]+)\/?$/);
+  let bingAdded = 0;
+  for (const slug of bingCompares) {
+    const exists = db.prepare(`SELECT 1 FROM county_comparisons WHERE slug = ?`).get(slug);
+    if (!exists) continue;
+    if (!keepSet.has(slug)) { keepSet.add(slug); bingAdded++; }
+    const m = slug.match(/^(.+)-vs-(.+)$/);
+    if (m) {
+      const reverse = `${m[2]}-vs-${m[1]}`;
+      if (!keepSet.has(reverse)) { keepSet.add(reverse); bingAdded++; }
+    }
+  }
   const keepSlugs = Array.from(keepSet).sort();
 
   if (rows.length < 50) {
@@ -112,7 +158,7 @@ function main() {
   fs.writeFileSync(out, JSON.stringify(keepSlugs, null, 0) + '\n');
 
   // Audit log
-  console.log(`[keep-sets] county-compare-keep.json: ${keepSlugs.length} slugs (${rows.length} forward + reverses + ${gscAdded} GSC-evidence)`);
+  console.log(`[keep-sets] county-compare-keep.json: ${keepSlugs.length} slugs (${rows.length} forward + reverses + ${gscAdded} GSC + ${bingAdded} Bing)`);
   const stateHist = new Map<string, number>();
   for (const r of rows) stateHist.set(r.state, (stateHist.get(r.state) ?? 0) + 1);
   console.log(`[keep-sets] state coverage: ${stateHist.size} states`);

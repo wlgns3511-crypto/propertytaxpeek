@@ -8,7 +8,7 @@ import { AuthorBox } from "@/components/AuthorBox";
 import { DataSourceBadge } from "@/components/DataSourceBadge";
 import { EditorNote } from "@/components/EditorNote";
 import { AdSlot } from "@/components/AdSlot";
-import { DB_UPDATED } from "@/lib/authorship";
+import { EXEMPTION_VINTAGE } from "@/lib/authorship";
 
 export const dynamicParams = false;
 export const revalidate = false;
@@ -157,7 +157,7 @@ export default async function HomesteadExemptionPage({
             name: `${state.state} Homestead Exemption 2026`,
             url: `${SITE_URL}/state/${slug}/homestead-exemption/`,
             description: `${state.state} homestead exemption, senior relief, disabled veteran exemption, assessment cap, and filing process. 2026 values.`,
-            dateModified: DB_UPDATED,
+            dateModified: EXEMPTION_VINTAGE,
             isPartOf: {
               "@type": "WebSite",
               name: "PropertyTaxPeek",
@@ -662,7 +662,11 @@ export default async function HomesteadExemptionPage({
         />
       </div>
 
-      <AuthorBox />
+      <AuthorBox
+        vintage={EXEMPTION_VINTAGE}
+        source={`${state.state} homestead exemption guide`}
+        showDisclaimer
+      />
     </>
   );
 }

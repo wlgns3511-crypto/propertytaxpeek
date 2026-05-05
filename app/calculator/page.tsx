@@ -4,6 +4,8 @@ import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { EmbedButton } from "@/components/EmbedButton";
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { AuthorBox } from "@/components/AuthorBox";
+import { COUNTY_VINTAGE } from "@/lib/authorship";
 
 export const metadata: Metadata = {
   title: "Property Tax Calculator - Estimate Your Annual Property Tax",
@@ -78,6 +80,12 @@ export default function CalculatorPage() {
           additional savings.
         </p>
       </section>
+
+      <AuthorBox
+        vintage={COUNTY_VINTAGE}
+        source="Property tax calculator (state-rate based)"
+        showDisclaimer
+      />
     </>
   );
 }

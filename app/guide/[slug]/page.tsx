@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllGuides, getGuideBySlug } from '@/lib/guides';
 import { AuthorBox } from '@/components/AuthorBox';
+import { GUIDES_VINTAGE } from '@/lib/authorship';
 import { AdSlot } from '@/components/AdSlot';
 import { TrustBlock } from '@/components/upgrades/TrustBlock';
 
@@ -183,7 +184,7 @@ export default async function GuidePage({ params }: Props) {
         </div>
       </div>
 
-      <AuthorBox />
+      <AuthorBox vintage={GUIDES_VINTAGE} source="PropertyTaxPeek property tax guide" />
 
       {others.length > 0 && (
         <section className="mt-12">

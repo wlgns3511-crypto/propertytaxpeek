@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { LEGAL_VINTAGES } from "@/lib/authorship";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -18,7 +19,10 @@ export default function TermsPage() {
         Terms of Service
       </h1>
       <div className="prose prose-slate max-w-none">
-        <p>Last updated: March 2026</p>
+        <p>
+          Last updated:{" "}
+          <time dateTime={LEGAL_VINTAGES.terms}>{LEGAL_VINTAGES.terms}</time>
+        </p>
         <h2>Acceptance of Terms</h2>
         <p>
           By accessing and using PropertyTaxPeek, you agree to be bound by these

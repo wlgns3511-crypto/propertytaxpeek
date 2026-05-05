@@ -4,6 +4,9 @@ import { getCountyComparisonBySlug, getNationalAverage, getCountiesByState, getA
 import { AdSlot } from "@/components/AdSlot";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ComparisonBar } from "@/components/ComparisonBar";
+import { AuthorBox } from "@/components/AuthorBox";
+import { COMPARE_VINTAGE } from "@/lib/authorship";
+import { datasetSchema } from "@/lib/schema";
 import countyCompareKeep from "@/lib/generated/county-compare-keep.json";
 
 // HCU 2026-04-24: was `dynamicParams = true` over a 124,750-row compare
@@ -234,6 +237,32 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
           </section>
         );
       })()}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            datasetSchema(
+              `${a.county_name}, ${a.state} vs ${b.county_name}, ${b.state} Property Tax Comparison`,
+              `Side-by-side comparison of effective property tax rates, median annual tax, and median home value for ${a.county_name}, ${a.state} and ${b.county_name}, ${b.state}.`,
+              {
+                url: `/county-compare/${slug}/`,
+                dateModified: COMPARE_VINTAGE,
+                spatialCoverage: `${a.county_name}, ${a.state} & ${b.county_name}, ${b.state}, USA`,
+                variableMeasured: [
+                  "effective_property_tax_rate_pct",
+                  "median_real_estate_taxes_usd",
+                  "median_home_value_usd",
+                ],
+              },
+            ),
+          ),
+        }}
+      />
+      <AuthorBox
+        vintage={COMPARE_VINTAGE}
+        source={`${a.county_name} vs ${b.county_name} property tax comparison`}
+        showDisclaimer
+      />
     </div>
   );
 }

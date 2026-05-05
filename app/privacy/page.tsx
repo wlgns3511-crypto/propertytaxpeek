@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { LEGAL_VINTAGES } from "@/lib/authorship";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -16,7 +17,10 @@ export default function PrivacyPage() {
       />
       <h1 className="text-3xl font-bold text-slate-900 mb-6">Privacy Policy</h1>
       <div className="prose prose-slate max-w-none">
-        <p>Last updated: March 2026</p>
+        <p>
+          Last updated:{" "}
+          <time dateTime={LEGAL_VINTAGES.privacy}>{LEGAL_VINTAGES.privacy}</time>
+        </p>
         <h2>Information We Collect</h2>
         <p>
           PropertyTaxPeek does not collect personally identifiable information

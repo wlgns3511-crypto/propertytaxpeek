@@ -19,6 +19,29 @@ const NOW = new Date().toISOString().split('T')[0];
 const SHARD_SIZE = 40000;
 const OUT_DIR = path.resolve(__dirname, '..', 'public');
 
+// Phase 6 v6.2 (2026-05-05): per-entity vintages instead of single NOW.
+// Single sitewide lastmod across thousands of URLs reads as a freshness lie
+// to Google — every dataset has its own cycle, and the sitemap should
+// reflect that. Each entity family below uses its own vintage.
+//
+// Keep these in sync with lib/authorship.ts. They live here as constants
+// (not imports) because the sitemap script runs in tsx node, not Next.
+const COUNTY_VINTAGE = '2026-04-29';
+const STATE_VINTAGE = '2026-04-29';
+const EXEMPTION_VINTAGE = '2026-04-15';
+const COMPARE_VINTAGE = '2026-04-29';
+const ABOUT_VINTAGE = '2026-04-12';
+const METHODOLOGY_VINTAGE = '2026-04-08';
+const SITE_VINTAGE = '2026-03-15';
+const GUIDES_VINTAGE = '2026-04-15';
+const BLOG_VINTAGE = '2026-04-22';
+const INSIGHTS_VINTAGE = '2026-04-22';
+const LEGAL = {
+  privacy: '2026-04-22',
+  terms: '2026-02-18',
+  disclaimer: '2025-11-04',
+};
+
 interface Entry { url: string; lastmod?: string; priority?: string; changefreq?: string; }
 
 function urlTag(e: Entry): string {
@@ -113,42 +136,42 @@ const blogSlugs = [
   'property-tax-vs-income-tax-comparison',
 ];
 
-// ── Static pages ─────────────────────────────────────────────────────────────
-add({ url: `${SITE_URL}/`, priority: '1.0', changefreq: 'monthly' });
-add({ url: `${SITE_URL}/es/`, priority: '0.7', changefreq: 'monthly' });
-add({ url: `${SITE_URL}/calculator/`, priority: '0.9', changefreq: 'monthly' });
-add({ url: `${SITE_URL}/compare/`, priority: '0.8', changefreq: 'monthly' });
-add({ url: `${SITE_URL}/guide/`, priority: '0.8', changefreq: 'weekly' });
-add({ url: `${SITE_URL}/blog/`, priority: '0.8', changefreq: 'weekly' });
-add({ url: `${SITE_URL}/insights/`, priority: '0.8', changefreq: 'weekly' });
-add({ url: `${SITE_URL}/about/`, priority: '0.3', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/privacy/`, priority: '0.2', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/terms/`, priority: '0.2', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/contact/`, priority: '0.3', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/editorial-policy/`, priority: '0.3', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/corrections-policy/`, priority: '0.3', changefreq: 'yearly' });
+// ── Static pages (per-entity vintages, not sitewide NOW) ──────────────────────
+add({ url: `${SITE_URL}/`, lastmod: SITE_VINTAGE, priority: '1.0', changefreq: 'monthly' });
+add({ url: `${SITE_URL}/calculator/`, lastmod: COUNTY_VINTAGE, priority: '0.9', changefreq: 'monthly' });
+add({ url: `${SITE_URL}/compare/`, lastmod: COMPARE_VINTAGE, priority: '0.8', changefreq: 'monthly' });
+add({ url: `${SITE_URL}/guide/`, lastmod: GUIDES_VINTAGE, priority: '0.8', changefreq: 'weekly' });
+add({ url: `${SITE_URL}/blog/`, lastmod: BLOG_VINTAGE, priority: '0.8', changefreq: 'weekly' });
+add({ url: `${SITE_URL}/insights/`, lastmod: INSIGHTS_VINTAGE, priority: '0.8', changefreq: 'weekly' });
+add({ url: `${SITE_URL}/about/`, lastmod: ABOUT_VINTAGE, priority: '0.3', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/methodology/`, lastmod: METHODOLOGY_VINTAGE, priority: '0.5', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/privacy/`, lastmod: LEGAL.privacy, priority: '0.2', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/terms/`, lastmod: LEGAL.terms, priority: '0.2', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/disclaimer/`, lastmod: LEGAL.disclaimer, priority: '0.2', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/contact/`, lastmod: SITE_VINTAGE, priority: '0.3', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/editorial-policy/`, lastmod: METHODOLOGY_VINTAGE, priority: '0.3', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/corrections-policy/`, lastmod: METHODOLOGY_VINTAGE, priority: '0.3', changefreq: 'yearly' });
 
 // ── Guides ───────────────────────────────────────────────────────────────────
-for (const g of guideSlugs) add({ url: `${SITE_URL}/guide/${g}/`, priority: '0.7', changefreq: 'monthly' });
+for (const g of guideSlugs) add({ url: `${SITE_URL}/guide/${g}/`, lastmod: GUIDES_VINTAGE, priority: '0.7', changefreq: 'monthly' });
 
 // ── Insights ─────────────────────────────────────────────────────────────────
-for (const s of insightSlugs) add({ url: `${SITE_URL}/insights/${s}/`, priority: '0.8', changefreq: 'monthly' });
+for (const s of insightSlugs) add({ url: `${SITE_URL}/insights/${s}/`, lastmod: INSIGHTS_VINTAGE, priority: '0.8', changefreq: 'monthly' });
 
 // ── Blog ─────────────────────────────────────────────────────────────────────
-for (const s of blogSlugs) add({ url: `${SITE_URL}/blog/${s}/`, priority: '0.7', changefreq: 'monthly' });
+for (const s of blogSlugs) add({ url: `${SITE_URL}/blog/${s}/`, lastmod: BLOG_VINTAGE, priority: '0.7', changefreq: 'monthly' });
 
-// ── State pages (dynamicParams=true → ISR, all states safe to include) ───────
-for (const s of states) add({ url: `${SITE_URL}/state/${s}/`, priority: '0.9', changefreq: 'monthly' });
+// ── State pages ──────────────────────────────────────────────────────────────
+for (const s of states) add({ url: `${SITE_URL}/state/${s}/`, lastmod: STATE_VINTAGE, priority: '0.9', changefreq: 'monthly' });
 
-// ── State homestead-exemption pages (51, generateStaticParams dynamicParams=false) ─
-for (const s of states) add({ url: `${SITE_URL}/state/${s}/homestead-exemption/`, priority: '0.8', changefreq: 'monthly' });
+// ── State homestead-exemption pages ──────────────────────────────────────────
+for (const s of states) add({ url: `${SITE_URL}/state/${s}/homestead-exemption/`, lastmod: EXEMPTION_VINTAGE, priority: '0.8', changefreq: 'monthly' });
 
-// ── State senior-exemption pages (51, Tier S HCU Batch 8 2026-04-21) ──────────
-for (const s of states) add({ url: `${SITE_URL}/state/${s}/senior-exemption/`, priority: '0.8', changefreq: 'monthly' });
+// ── State senior-exemption pages ─────────────────────────────────────────────
+for (const s of states) add({ url: `${SITE_URL}/state/${s}/senior-exemption/`, lastmod: EXEMPTION_VINTAGE, priority: '0.8', changefreq: 'monthly' });
 
-// ── County pages (dynamicParams=true → ISR, all 2780 counties) ───────────────
-// EN matrix = the product. Keep all.
-for (const c of counties) add({ url: `${SITE_URL}/county/${c}/`, priority: '0.7', changefreq: 'monthly' });
+// ── County pages ─────────────────────────────────────────────────────────────
+for (const c of counties) add({ url: `${SITE_URL}/county/${c}/`, lastmod: COUNTY_VINTAGE, priority: '0.7', changefreq: 'monthly' });
 
 // ── /es/county/ mirror DROPPED (Tier E 2026-04-23) ───────────────────────────
 // 2,781 thin translations over identical USDA county tax data, zero GSC signal.
@@ -167,7 +190,7 @@ const canonicalPairs = countyCompareSet.filter((slug) => {
   const m = slug.match(/^(.+)-vs-(.+)$/);
   return m && m[1] < m[2];
 });
-for (const s of canonicalPairs) add({ url: `${SITE_URL}/county-compare/${s}/`, priority: '0.6', changefreq: 'monthly' });
+for (const s of canonicalPairs) add({ url: `${SITE_URL}/county-compare/${s}/`, lastmod: COMPARE_VINTAGE, priority: '0.6', changefreq: 'monthly' });
 
 // ─── Cardinality guard ────────────────────────────────────────────────────
 if (entries.length > 4000 && !process.env.SITEMAP_LARGE_OK) {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LEGAL_VINTAGES } from "@/lib/authorship";
 
 export const metadata: Metadata = {
   title: "Disclaimer",
@@ -11,7 +12,10 @@ export default function DisclaimerPage() {
   return (
     <article className="prose prose-slate max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-blue-700 mb-6">Disclaimer</h1>
-      <p className="text-sm text-slate-500 mb-8">Last updated: March 25, 2026</p>
+      <p className="text-sm text-slate-500 mb-8">
+        Last updated:{" "}
+        <time dateTime={LEGAL_VINTAGES.disclaimer}>{LEGAL_VINTAGES.disclaimer}</time>
+      </p>
 
       <h2 className="text-xl font-semibold mt-8 mb-3">General Information</h2>
       <p>

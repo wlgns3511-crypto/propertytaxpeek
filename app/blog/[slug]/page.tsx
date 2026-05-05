@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { AdSlot } from "@/components/AdSlot";
 import { AuthorBox } from "@/components/AuthorBox";
+import { BLOG_VINTAGE } from "@/lib/authorship";
 
 // dynamicParams=false (2026-04-23): unknown blog slugs → real HTTP 404.
 export const dynamicParams = false;
@@ -135,7 +136,7 @@ export default async function BlogPostPage({
           prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
-      <AuthorBox />
+      <AuthorBox vintage={BLOG_VINTAGE} source="PropertyTaxPeek blog" />
 
 
       <AdSlot id="5678901234" />

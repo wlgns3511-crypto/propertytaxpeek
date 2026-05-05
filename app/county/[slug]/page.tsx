@@ -34,6 +34,9 @@ import {
   type TemplateCtx,
 } from "@/lib/county-commentary";
 import { VINTAGE_LABEL, VINTAGE_SHORT } from "@/lib/data-vintage";
+import { AuthorBox } from "@/components/AuthorBox";
+import { COUNTY_VINTAGE } from "@/lib/authorship";
+import { datasetSchema } from "@/lib/schema";
 import countyCompareKeep from "@/lib/generated/county-compare-keep.json";
 
 // HCU 2026-04-24: gate internal "Compare with other counties" links so we
@@ -189,6 +192,11 @@ export default async function CountyPage({
           state={county.state}
           reason={reason}
         />
+        <AuthorBox
+          vintage={COUNTY_VINTAGE}
+          source={`${county.county_name}, ${county.state} (estimate held)`}
+          showDisclaimer
+        />
         {stateAcs && (
           <section className="my-8">
             <h2 className="text-xl font-bold text-slate-800 mb-3">
@@ -305,6 +313,34 @@ export default async function CountyPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            datasetSchema(
+              `${county.county_name}, ${county.state} Property Tax Rate`,
+              `Effective property tax rate ${effectiveRatePct.toFixed(
+                2,
+              )}%, median annual tax ${fmt(taxesAnnual)} on a ${fmt(
+                homeValue,
+              )} median home value, for ${county.county_name}, ${county.state}.`,
+              {
+                url: `/county/${slug}/`,
+                dateModified: COUNTY_VINTAGE,
+                spatialCoverage: `${county.county_name}, ${
+                  stateData?.state ?? county.state
+                }, USA`,
+                variableMeasured: [
+                  "effective_property_tax_rate_pct",
+                  "median_real_estate_taxes_usd",
+                  "median_home_value_usd",
+                  "population",
+                ],
+              },
+            ),
+          ),
+        }}
+      />
       <Breadcrumb
         items={[
           { label: "Home", href: "/" },
@@ -685,6 +721,11 @@ export default async function CountyPage({
         </section>
       )}
       <DataFeedback />
+      <AuthorBox
+        vintage={COUNTY_VINTAGE}
+        source={`${county.county_name}, ${county.state} property tax dataset`}
+        showDisclaimer
+      />
     </>
   );
 }
