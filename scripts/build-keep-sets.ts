@@ -11,9 +11,20 @@
 // Also covers the /es/county/ mirror — 2,780 thin Spanish pages that were
 // already dropped from sitemap but still render 200 (dead weight).
 //
+// 2026-05-21 extension — /compare/[slug] (state-vs-state) parallel:
+// app/compare/[slug]/page.tsx has its own inline CAP-100 STATIC_COMPARISON_SLUGS
+// (alphabetical sorted state pairs). All other slugs were notFound() → 404.
+// GSC has 34,602 "duplicate no canonical" because 404 is a weaker deindex
+// signal than 410 — Google reprocesses slowly. We reproduce the same CAP-100
+// deterministic logic here so middleware can 410 unknown /compare/ slugs.
+// Pattern mirrors wagepeek/degreewize/nameblooms/myschoolpeek which already
+// 410 unmatched /compare/<slug>/.
+//
 // Emits:
-//   - lib/generated/county-compare-keep.json — array of ~100 slugs
+//   - lib/generated/county-compare-keep.json — array of ~100 county pair slugs
 //     (forward + reverse both included for middleware keep-check)
+//   - lib/generated/state-compare-keep.json — array of ~200 state pair slugs
+//     (100 canonical + reverses, matches page.tsx STATIC_COMPARISON_SLUGS)
 //
 // Selection rules for county-compare:
 //   - Same state only (realistic property-tax search intent — e.g.
@@ -42,8 +53,16 @@ function loadBingSlugs(routeRe: RegExp): string[] {
     .sort();
   if (!files.length) return [];
   try {
-    const json = JSON.parse(fs.readFileSync(path.join(BING_JSON_DIR, files[files.length - 1]), 'utf8'));
-    const site = json[BING_DOMAIN];
+    // 2026-06-11 partial-run shadow fix (kalimawize 2026-05-15 pattern): the
+    // absolute-latest snapshot may be a partial run without this domain —
+    // scan newest-first and use the first file that actually contains us.
+    // Source-side carry-forward also added to analyze_bing_pages.py same day;
+    // this is defense-in-depth for historical partial files.
+    let site: any;
+    for (let i = files.length - 1; i >= 0; i--) {
+      const json = JSON.parse(fs.readFileSync(path.join(BING_JSON_DIR, files[i]), 'utf8'));
+      if (json[BING_DOMAIN] && Array.isArray(json[BING_DOMAIN].pages)) { site = json[BING_DOMAIN]; break; }
+    }
     if (!site || !Array.isArray(site.pages)) return [];
     const out = new Map<string, number>();
     for (const pg of site.pages) {
@@ -130,8 +149,8 @@ function main() {
     }
   }
   // Bing union — DB existence check on county_comparisons.slug.
-  // NOTE: route is /county-compare/ (not /compare/ — that's the state-vs-state
-  // page with its own inline STATIC_COMPARISON_SLUGS in app/compare/[slug]/page.tsx).
+  // (state-vs-state /compare/ keep-set is emitted separately below; see
+  // STATIC_COMPARISON_SLUGS replication in buildStateCompareKeep().)
   const bingCompares = loadBingSlugs(/^\/county-compare\/([^/]+)\/?$/);
   let bingAdded = 0;
   for (const slug of bingCompares) {
@@ -166,7 +185,66 @@ function main() {
   console.log(`[keep-sets] top states in keep-set:`);
   for (const [s, c] of topStates) console.log(`  ${c.toString().padStart(2)} ${s}`);
 
+  // 2026-05-21 — state-compare keep-set for /compare/[slug] middleware.
+  buildStateCompareKeep(db);
+
   db.close();
+}
+
+// Mirrors STATIC_COMPARISON_SLUGS in app/compare/[slug]/page.tsx exactly:
+// sorted state slugs, all i<j pairs, capped at 100, then forward+reverse
+// included so the middleware lookup works for both canonical and reverse
+// forms (page.tsx redirects reverse → canonical, so the reverse must also
+// pass the middleware gate so the redirect can fire).
+function buildStateCompareKeep(db: Database.Database) {
+  const STATE_COMPARE_CAP = 100;
+  const stateSlugs = (db
+    .prepare(`SELECT slug FROM states ORDER BY slug ASC`)
+    .all() as { slug: string }[]
+  ).map((r) => r.slug);
+
+  const canonicalPairs: string[] = [];
+  for (let i = 0; i < stateSlugs.length && canonicalPairs.length < STATE_COMPARE_CAP; i++) {
+    for (let j = i + 1; j < stateSlugs.length && canonicalPairs.length < STATE_COMPARE_CAP; j++) {
+      canonicalPairs.push(`${stateSlugs[i]}-vs-${stateSlugs[j]}`);
+    }
+  }
+
+  const keepSet = new Set<string>();
+  for (const slug of canonicalPairs) {
+    keepSet.add(slug);
+    const m = slug.match(/^(.+)-vs-(.+)$/);
+    if (m) {
+      const reverse = `${m[2]}-vs-${m[1]}`;
+      if (reverse !== slug) keepSet.add(reverse);
+    }
+  }
+
+  // GSC/Bing evidence union for /compare/<slug>/ (state pairs).
+  let gscBingAdded = 0;
+  const bingSlugs = loadBingSlugs(/^\/compare\/([^/]+)\/?$/);
+  for (const slug of bingSlugs) {
+    if (!keepSet.has(slug)) { keepSet.add(slug); gscBingAdded++; }
+    const m = slug.match(/^(.+)-vs-(.+)$/);
+    if (m) {
+      const reverse = `${m[2]}-vs-${m[1]}`;
+      if (!keepSet.has(reverse)) { keepSet.add(reverse); gscBingAdded++; }
+    }
+  }
+
+  const keepSlugs = Array.from(keepSet).sort();
+
+  if (canonicalPairs.length < 50) {
+    throw new Error(
+      `state-compare keep-set only has ${canonicalPairs.length} canonical pairs (expected ~100). ` +
+      `Aborting to avoid accidental mass-410.`
+    );
+  }
+
+  const out = path.join(OUT_DIR, 'state-compare-keep.json');
+  fs.writeFileSync(out, JSON.stringify(keepSlugs, null, 0) + '\n');
+
+  console.log(`[keep-sets] state-compare-keep.json: ${keepSlugs.length} slugs (${canonicalPairs.length} canonical + reverses + ${gscBingAdded} Bing)`);
 }
 
 main();
