@@ -23,7 +23,7 @@ export function AuthorBox({ vintage, source, showDisclaimer }: AuthorBoxProps = 
     .join(" · ");
 
   return (
-    <div className="mt-10 p-5 bg-slate-50 border border-slate-200 rounded-xl">
+    <div className="mt-10 p-5 bg-stone-50 border border-stone-200 rounded-xl">
       <div className="flex items-start gap-3 mb-3">
         <div
           className="flex-shrink-0 w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700"
@@ -44,19 +44,19 @@ export function AuthorBox({ vintage, source, showDisclaimer }: AuthorBoxProps = 
           </svg>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-slate-900 text-sm">
+          <div className="font-semibold text-stone-900 text-sm">
             Reviewed by {EDITORIAL_TEAM.name}
           </div>
-          <div className="text-xs text-slate-500 mt-0.5">
+          <div className="text-xs text-stone-500 mt-0.5">
             Part of the{" "}
-            <a href={PUBLISHER.url} className="text-slate-700 hover:underline" rel="noopener">
+            <a href={PUBLISHER.url} className="text-stone-700 hover:underline" rel="noopener">
               {PUBLISHER.name}
             </a>
             {source ? <> · {source}</> : null}
           </div>
         </div>
       </div>
-      <p className="text-xs text-slate-600 leading-relaxed mb-3">
+      <p className="text-xs text-stone-600 leading-relaxed mb-3">
         Each county and state property tax record is cross-referenced against{" "}
         {SOURCE_AUTHORITIES.map((s, i) => (
           <span key={s.name}>
@@ -64,7 +64,7 @@ export function AuthorBox({ vintage, source, showDisclaimer }: AuthorBoxProps = 
               (i === SOURCE_AUTHORITIES.length - 1 ? ", and " : ", ")}
             <a
               href={s.url}
-              className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
+              className="text-stone-700 underline underline-offset-2 hover:text-stone-900"
               rel="noopener"
               target="_blank"
             >
@@ -76,33 +76,33 @@ export function AuthorBox({ vintage, source, showDisclaimer }: AuthorBoxProps = 
         calculations, MOE-filtered ACS estimates, assessment ratios, and per-source
         vintage on every release cycle.
       </p>
-      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mb-2">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500 mb-2">
         <span>
           Last reviewed: <time dateTime={reviewedAt}>{reviewedAt}</time>
         </span>
-        <span className="text-slate-300">·</span>
+        <span className="text-stone-300">·</span>
         <a
           href="https://datapeekfacts.com/editorial-policy/"
-          className="underline underline-offset-2 hover:text-slate-900"
+          className="underline underline-offset-2 hover:text-stone-900"
           rel="noopener"
         >
           Editorial policy
         </a>
-        <span className="text-slate-300">·</span>
-        <a href="/methodology/" className="underline underline-offset-2 hover:text-slate-900">
+        <span className="text-stone-300">·</span>
+        <a href="/methodology/" className="underline underline-offset-2 hover:text-stone-900">
           Methodology
         </a>
-        <span className="text-slate-300">·</span>
-        <a href="/contact/" className="underline underline-offset-2 hover:text-slate-900">
+        <span className="text-stone-300">·</span>
+        <a href="/contact/" className="underline underline-offset-2 hover:text-stone-900">
           Send a correction
         </a>
       </div>
-      <div className="text-xs text-slate-500">
+      <div className="text-xs text-stone-500">
         Source vintages: {sourceVintageLine}
       </div>
       {showDisclaimer ? (
-        <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-600 leading-relaxed">
-          <strong className="text-slate-700">Important.</strong> {REVIEWER_DISCLAIMER}
+        <div className="mt-3 pt-3 border-t border-stone-200 text-xs text-stone-600 leading-relaxed">
+          <strong className="text-stone-700">Important.</strong> {REVIEWER_DISCLAIMER}
         </div>
       ) : null}
     </div>

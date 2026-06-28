@@ -8,6 +8,15 @@ import { AuthorBox } from "@/components/AuthorBox";
 import { COMPARE_VINTAGE } from "@/lib/authorship";
 import { datasetSchema } from "@/lib/schema";
 import countyCompareKeep from "@/lib/generated/county-compare-keep.json";
+import { getStateByAbbr } from "@/lib/db";
+import { getStateExemptionData } from "@/lib/state-exemption-data";
+import {
+  decodeEffectiveRate,
+  tierLabel as rateTierLabel,
+  tierBlurb as rateTierBlurb,
+  tierToneColor as rateTierToneColor,
+  RATE_TIER_CUTOFF_SUMMARY,
+} from "@/lib/effective-rate-decoder";
 
 // HCU 2026-04-24: was `dynamicParams = true` over a 124,750-row compare
 // table → Google discovered ~34k of these as thin/duplicate, producing the
@@ -46,6 +55,26 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
   const { a, b } = data;
   const national = getNationalAverage();
 
+  // Phase 6 v6.4 PSU — paired EffectiveRateVsAssessmentDecoder reads for A vs B.
+  const aState = getStateByAbbr(a.state);
+  const bState = getStateByAbbr(b.state);
+  const aExemption = aState ? getStateExemptionData(aState.slug) : undefined;
+  const bExemption = bState ? getStateExemptionData(bState.slug) : undefined;
+  const aDecoder = decodeEffectiveRate({
+    effectiveRatePct: a.effective_rate,
+    nationalAvgPct: national.avg_rate,
+    stateAvgPct: null,
+    stateExemption: aExemption,
+  });
+  const bDecoder = decodeEffectiveRate({
+    effectiveRatePct: b.effective_rate,
+    nationalAvgPct: national.avg_rate,
+    stateAvgPct: null,
+    stateExemption: bExemption,
+  });
+  const aTone = rateTierToneColor(aDecoder.tier);
+  const bTone = rateTierToneColor(bDecoder.tier);
+
   const breadcrumbs = [
     { label: "Home", href: "/" },
     { label: "Compare Counties", href: "/county-compare/" },
@@ -80,18 +109,18 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
       <h1 className="text-3xl font-bold mb-2 mt-4">
         {a.county_name}, {a.state} vs {b.county_name}, {b.state}
       </h1>
-      <p className="text-slate-600 mb-8">Property Tax Rate Comparison 2025</p>
+      <p className="text-stone-600 mb-8">Property Tax Rate Comparison 2025</p>
 
       <AdSlot id="county-compare-top" />
 
       <section className="mb-8">
-        <div className="bg-blue-50 rounded-xl p-6 mb-6">
+        <div className="bg-amber-50 rounded-xl p-6 mb-6">
           <h2 className="text-lg font-semibold mb-3">Quick Answer</h2>
-          <p className="text-slate-700">
+          <p className="text-stone-700">
             <strong>{a.county_name}, {a.state}</strong>: {a.effective_rate.toFixed(2)}% effective rate · {fmt(a.median_tax)}/yr median tax ·
             median home {fmt(a.median_home_value)}
           </p>
-          <p className="text-slate-700 mt-2">
+          <p className="text-stone-700 mt-2">
             <strong>{b.county_name}, {b.state}</strong>: {b.effective_rate.toFixed(2)}% effective rate · {fmt(b.median_tax)}/yr median tax ·
             median home {fmt(b.median_home_value)}
           </p>
@@ -101,20 +130,20 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-slate-100">
-                <th className="p-3 text-left border border-slate-200">Metric</th>
-                <th className="p-3 text-left border border-slate-200 text-blue-700">{a.county_name}, {a.state}</th>
-                <th className="p-3 text-left border border-slate-200 text-blue-700">{b.county_name}, {b.state}</th>
-                <th className="p-3 text-left border border-slate-200 text-slate-500">National Avg</th>
+              <tr className="bg-stone-100">
+                <th className="p-3 text-left border border-stone-200">Metric</th>
+                <th className="p-3 text-left border border-stone-200 text-amber-800">{a.county_name}, {a.state}</th>
+                <th className="p-3 text-left border border-stone-200 text-amber-800">{b.county_name}, {b.state}</th>
+                <th className="p-3 text-left border border-stone-200 text-stone-500">National Avg</th>
               </tr>
             </thead>
             <tbody>
               {metrics.map((m, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                  <td className="p-3 border border-slate-200 font-medium">{m.label}</td>
-                  <td className="p-3 border border-slate-200">{m.aVal}</td>
-                  <td className="p-3 border border-slate-200">{m.bVal}</td>
-                  <td className="p-3 border border-slate-200 text-slate-500">{m.national}</td>
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-stone-50"}>
+                  <td className="p-3 border border-stone-200 font-medium">{m.label}</td>
+                  <td className="p-3 border border-stone-200">{m.aVal}</td>
+                  <td className="p-3 border border-stone-200">{m.bVal}</td>
+                  <td className="p-3 border border-stone-200 text-stone-500">{m.national}</td>
                 </tr>
               ))}
             </tbody>
@@ -124,7 +153,7 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
         {/* Visual comparison bars */}
         <div className="mt-6 space-y-4">
           <div>
-            <h3 className="text-sm font-medium text-slate-600 mb-2">Effective Tax Rate</h3>
+            <h3 className="text-sm font-medium text-stone-600 mb-2">Effective Tax Rate</h3>
             <ComparisonBar
               bars={[
                 { label: a.county_name, value: a.effective_rate },
@@ -136,7 +165,7 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
             />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-slate-600 mb-2">Median Annual Tax</h3>
+            <h3 className="text-sm font-medium text-stone-600 mb-2">Median Annual Tax</h3>
             <ComparisonBar
               bars={[
                 { label: a.county_name, value: a.median_tax },
@@ -148,7 +177,7 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
             />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-slate-600 mb-2">Median Home Value</h3>
+            <h3 className="text-sm font-medium text-stone-600 mb-2">Median Home Value</h3>
             <ComparisonBar
               bars={[
                 { label: a.county_name, value: a.median_home_value },
@@ -163,27 +192,27 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
       </section>
 
       <section className="mb-8 grid md:grid-cols-2 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
+        <div className="bg-white border border-stone-200 rounded-xl p-5">
           <h3 className="font-bold text-lg mb-3">{a.county_name}, {a.state}</h3>
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-slate-600">Effective Rate</dt><dd className="font-semibold">{a.effective_rate.toFixed(2)}%</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">Median Annual Tax</dt><dd className="font-semibold">{fmt(a.median_tax)}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">Median Home Value</dt><dd className="font-semibold">{fmt(a.median_home_value)}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">Population</dt><dd className="font-semibold">{a.population.toLocaleString()}</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Effective Rate</dt><dd className="font-semibold">{a.effective_rate.toFixed(2)}%</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Median Annual Tax</dt><dd className="font-semibold">{fmt(a.median_tax)}</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Median Home Value</dt><dd className="font-semibold">{fmt(a.median_home_value)}</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Population</dt><dd className="font-semibold">{a.population.toLocaleString()}</dd></div>
           </dl>
-          <a href={`/county/${a.slug}`} className="mt-4 block text-center text-sm text-blue-600 hover:underline">
+          <a href={`/county/${a.slug}`} className="mt-4 block text-center text-sm text-amber-700 hover:underline">
             Full profile →
           </a>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
+        <div className="bg-white border border-stone-200 rounded-xl p-5">
           <h3 className="font-bold text-lg mb-3">{b.county_name}, {b.state}</h3>
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-slate-600">Effective Rate</dt><dd className="font-semibold">{b.effective_rate.toFixed(2)}%</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">Median Annual Tax</dt><dd className="font-semibold">{fmt(b.median_tax)}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">Median Home Value</dt><dd className="font-semibold">{fmt(b.median_home_value)}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">Population</dt><dd className="font-semibold">{b.population.toLocaleString()}</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Effective Rate</dt><dd className="font-semibold">{b.effective_rate.toFixed(2)}%</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Median Annual Tax</dt><dd className="font-semibold">{fmt(b.median_tax)}</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Median Home Value</dt><dd className="font-semibold">{fmt(b.median_home_value)}</dd></div>
+            <div className="flex justify-between"><dt className="text-stone-600">Population</dt><dd className="font-semibold">{b.population.toLocaleString()}</dd></div>
           </dl>
-          <a href={`/county/${b.slug}`} className="mt-4 block text-center text-sm text-blue-600 hover:underline">
+          <a href={`/county/${b.slug}`} className="mt-4 block text-center text-sm text-amber-700 hover:underline">
             Full profile →
           </a>
         </div>
@@ -191,12 +220,100 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
 
       <AdSlot id="county-compare-mid" />
 
+      {/* Paired EffectiveRateVsAssessmentDecoder — editorial reading per county */}
+      {(aDecoder.tier || bDecoder.tier) && (
+        <section className="mb-10" data-upgrade="effective-rate-decoder-compare">
+          <h2 className="text-xl font-bold mb-4">
+            Effective-rate decoder: side-by-side reading
+          </h2>
+          <p className="text-sm text-stone-600 mb-4">
+            The Census ACS effective rate alone does not tell you why one county is more
+            expensive than the other. The PropertyTaxPeek decoder bands each rate into
+            five tiers and surfaces the drivers — assessment-cap dynamics, school-district
+            funding model, and SALT cap pressure — that typically explain the gap.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {aDecoder.tier && (
+              <div className={`rounded-xl border ${aTone.border} ${aTone.bg} p-5`}>
+                <div className="flex items-baseline justify-between gap-2 mb-1">
+                  <h3 className={`font-bold ${aTone.text}`}>
+                    {a.county_name}: {rateTierLabel(aDecoder.tier)}
+                  </h3>
+                  <span className="text-xs text-stone-500">
+                    {a.effective_rate.toFixed(2)}%
+                  </span>
+                </div>
+                <p className={`text-sm ${aTone.text} mb-2`}>
+                  {rateTierBlurb(aDecoder.tier)}
+                </p>
+                <p className="text-xs text-stone-600">
+                  <strong>Assessment cap:</strong>{" "}
+                  {aDecoder.assessmentCapLabel ?? "No statewide cap"} ·{" "}
+                  <strong>vs US:</strong>{" "}
+                  {aDecoder.nationalGapPp != null
+                    ? `${aDecoder.nationalGapPp > 0 ? "+" : ""}${aDecoder.nationalGapPp.toFixed(2)} pp`
+                    : "—"}
+                </p>
+                <details className="mt-2 bg-white/40 rounded-md px-3 py-2 border border-stone-200">
+                  <summary className="text-sm font-medium cursor-pointer text-stone-800">
+                    Drivers
+                  </summary>
+                  <ul className="mt-2 text-sm text-stone-700 list-disc pl-5 space-y-1">
+                    {aDecoder.drivers.map((d, i) => (
+                      <li key={i}>{d}</li>
+                    ))}
+                  </ul>
+                </details>
+              </div>
+            )}
+            {bDecoder.tier && (
+              <div className={`rounded-xl border ${bTone.border} ${bTone.bg} p-5`}>
+                <div className="flex items-baseline justify-between gap-2 mb-1">
+                  <h3 className={`font-bold ${bTone.text}`}>
+                    {b.county_name}: {rateTierLabel(bDecoder.tier)}
+                  </h3>
+                  <span className="text-xs text-stone-500">
+                    {b.effective_rate.toFixed(2)}%
+                  </span>
+                </div>
+                <p className={`text-sm ${bTone.text} mb-2`}>
+                  {rateTierBlurb(bDecoder.tier)}
+                </p>
+                <p className="text-xs text-stone-600">
+                  <strong>Assessment cap:</strong>{" "}
+                  {bDecoder.assessmentCapLabel ?? "No statewide cap"} ·{" "}
+                  <strong>vs US:</strong>{" "}
+                  {bDecoder.nationalGapPp != null
+                    ? `${bDecoder.nationalGapPp > 0 ? "+" : ""}${bDecoder.nationalGapPp.toFixed(2)} pp`
+                    : "—"}
+                </p>
+                <details className="mt-2 bg-white/40 rounded-md px-3 py-2 border border-stone-200">
+                  <summary className="text-sm font-medium cursor-pointer text-stone-800">
+                    Drivers
+                  </summary>
+                  <ul className="mt-2 text-sm text-stone-700 list-disc pl-5 space-y-1">
+                    {bDecoder.drivers.map((d, i) => (
+                      <li key={i}>{d}</li>
+                    ))}
+                  </ul>
+                </details>
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-stone-500 mt-3">
+            Band cutoffs: {RATE_TIER_CUTOFF_SUMMARY}. Editorial reading — not endorsed by
+            the US Census Bureau, the IRS, or any state Department of Revenue.{" "}
+            Full methodology →
+          </p>
+        </section>
+      )}
+
       <section className="mb-8">
         <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
         {faqs.map((faq, i) => (
-          <details key={i} className="border border-slate-200 rounded-lg mb-2" open={i === 0}>
+          <details key={i} className="border border-stone-200 rounded-lg mb-2" open={i === 0}>
             <summary className="p-4 cursor-pointer font-medium">{faq.q}</summary>
-            <div className="px-4 pb-4 text-slate-600 text-sm">{faq.a}</div>
+            <div className="px-4 pb-4 text-stone-600 text-sm">{faq.a}</div>
           </details>
         ))}
       </section>
@@ -220,14 +337,14 @@ export default async function CountyComparePage({ params }: { params: Promise<{ 
                 <div key={c.slug} className="flex gap-2">
                   <a
                     href={`/county-compare/${a.slug}-vs-${c.slug}/`}
-                    className="text-sm text-blue-600 hover:underline"
+                    className="text-sm text-amber-700 hover:underline"
                   >
                     {a.county_name} vs {c.county_name}, {c.state}
                   </a>
-                  <span className="text-slate-300">|</span>
+                  <span className="text-stone-300">|</span>
                   <a
                     href={`/county-compare/${b.slug}-vs-${c.slug}/`}
-                    className="text-sm text-blue-600 hover:underline"
+                    className="text-sm text-amber-700 hover:underline"
                   >
                     {b.county_name} vs {c.county_name}, {c.state}
                   </a>

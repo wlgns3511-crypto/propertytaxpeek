@@ -622,10 +622,10 @@ export default async function SeniorExemptionPage({
       />
 
       <header className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+        <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 mb-3">
           {state.state} Senior Property Tax Exemption — 2026
         </h1>
-        <p className="text-lg text-slate-600 leading-relaxed">
+        <p className="text-lg text-stone-600 leading-relaxed">
           <strong>{senior.programName}</strong> for homeowners age{" "}
           <strong>{senior.ageThreshold}+</strong>
           {senior.incomeCapUsd
@@ -685,16 +685,16 @@ export default async function SeniorExemptionPage({
               : `Above median threshold`}
           </div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
-          <div className="text-xs text-blue-700 uppercase tracking-wider font-semibold mb-1">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+          <div className="text-xs text-amber-800 uppercase tracking-wider font-semibold mb-1">
             Income Cap
           </div>
-          <div className="text-3xl font-bold text-blue-900 mb-2">
+          <div className="text-3xl font-bold text-amber-900 mb-2">
             {senior.incomeCapUsd
               ? fmtUSD(senior.incomeCapUsd)
               : "No Cap"}
           </div>
-          <div className="text-xs text-blue-800 leading-snug">
+          <div className="text-xs text-amber-900 leading-snug">
             {senior.incomeCapUsd
               ? `Household income ceiling for eligibility`
               : `Qualification is age-only — no income test`}
@@ -733,15 +733,15 @@ export default async function SeniorExemptionPage({
 
       {/* Detailed program explanation */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           {senior.programName} — How It Works
         </h2>
-        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-          <p className="text-sm text-slate-700 leading-relaxed mb-3">
+        <div className="bg-white border border-stone-200 rounded-xl p-5 mb-6">
+          <p className="text-sm text-stone-700 leading-relaxed mb-3">
             <strong>Key point:</strong> {senior.keyPoint}
           </p>
           {exemption?.seniorExemption && (
-            <p className="text-sm text-slate-700 leading-relaxed border-t border-slate-100 pt-3">
+            <p className="text-sm text-stone-700 leading-relaxed border-t border-stone-100 pt-3">
               <strong>State description:</strong> {exemption.seniorExemption}
             </p>
           )}
@@ -753,13 +753,13 @@ export default async function SeniorExemptionPage({
             className={`p-4 rounded-lg border ${
               senior.additionalExemption > 0
                 ? "bg-emerald-50 border-emerald-200"
-                : "bg-slate-50 border-slate-200 opacity-60"
+                : "bg-stone-50 border-stone-200 opacity-60"
             }`}
           >
-            <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+            <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
               Dollar Exemption
             </div>
-            <div className="text-lg font-bold text-slate-900">
+            <div className="text-lg font-bold text-stone-900">
               {senior.additionalExemption > 0
                 ? fmtUSD(senior.additionalExemption)
                 : "None"}
@@ -769,13 +769,13 @@ export default async function SeniorExemptionPage({
             className={`p-4 rounded-lg border ${
               senior.hasFreeze
                 ? "bg-indigo-50 border-indigo-200"
-                : "bg-slate-50 border-slate-200 opacity-60"
+                : "bg-stone-50 border-stone-200 opacity-60"
             }`}
           >
-            <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+            <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
               Value Freeze
             </div>
-            <div className="text-lg font-bold text-slate-900">
+            <div className="text-lg font-bold text-stone-900">
               {senior.hasFreeze ? "Available" : "Not offered"}
             </div>
           </div>
@@ -783,13 +783,13 @@ export default async function SeniorExemptionPage({
             className={`p-4 rounded-lg border ${
               senior.creditUsd
                 ? "bg-amber-50 border-amber-200"
-                : "bg-slate-50 border-slate-200 opacity-60"
+                : "bg-stone-50 border-stone-200 opacity-60"
             }`}
           >
-            <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+            <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
               Tax Credit
             </div>
-            <div className="text-lg font-bold text-slate-900">
+            <div className="text-lg font-bold text-stone-900">
               {senior.creditUsd ? `Up to ${fmtUSD(senior.creditUsd)}` : "None"}
             </div>
           </div>
@@ -797,13 +797,13 @@ export default async function SeniorExemptionPage({
             className={`p-4 rounded-lg border ${
               senior.hasDeferral
                 ? "bg-rose-50 border-rose-200"
-                : "bg-slate-50 border-slate-200 opacity-60"
+                : "bg-stone-50 border-stone-200 opacity-60"
             }`}
           >
-            <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+            <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
               Deferral
             </div>
-            <div className="text-lg font-bold text-slate-900">
+            <div className="text-lg font-bold text-stone-900">
               {senior.hasDeferral ? "Available" : "Not offered"}
             </div>
           </div>
@@ -812,10 +812,10 @@ export default async function SeniorExemptionPage({
 
       {/* National comparison table — top 15 + current state */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           National Ranking — Senior Property Tax Benefits (by dollar exemption)
         </h2>
-        <p className="text-sm text-slate-600 mb-4">
+        <p className="text-sm text-stone-600 mb-4">
           Top 15 states by additional senior exemption amount. {state.state}{" "}
           highlighted for reference. States without dollar exemptions may still
           offer freezes, credits, or deferrals.
@@ -823,7 +823,7 @@ export default async function SeniorExemptionPage({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-100 text-slate-800">
+              <tr className="bg-stone-100 text-stone-800">
                 <th className="text-left px-3 py-2">Rank</th>
                 <th className="text-left px-3 py-2">State</th>
                 <th className="text-right px-3 py-2">Age</th>
@@ -851,7 +851,7 @@ export default async function SeniorExemptionPage({
                           ? "bg-amber-50 font-semibold"
                           : i % 2 === 0
                           ? "bg-white"
-                          : "bg-slate-50"
+                          : "bg-stone-50"
                       }
                     >
                       <td className="px-3 py-2">#{rank}</td>
@@ -878,13 +878,13 @@ export default async function SeniorExemptionPage({
 
       {/* Tax savings calculation */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           {state.state} Senior Tax Savings — 3 Home Value Scenarios
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-100 text-slate-800">
+              <tr className="bg-stone-100 text-stone-800">
                 <th className="text-left px-3 py-2">Home Value</th>
                 <th className="text-right px-3 py-2">
                   Tax Before Senior Exemption
@@ -916,11 +916,11 @@ export default async function SeniorExemptionPage({
                 return (
                   <tr
                     key={i}
-                    className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}
+                    className={i % 2 === 0 ? "bg-white" : "bg-stone-50"}
                   >
                     <td className="px-3 py-2">
                       {fmtUSD(hv)}{" "}
-                      <span className="text-xs text-slate-500">({label})</span>
+                      <span className="text-xs text-stone-500">({label})</span>
                     </td>
                     <td className="px-3 py-2 text-right font-mono">
                       {fmtUSD(beforeTax)}
@@ -937,7 +937,7 @@ export default async function SeniorExemptionPage({
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-slate-500 mt-3 italic">
+        <p className="text-xs text-stone-500 mt-3 italic">
           Calculation: Home value × effective rate ({state.effective_rate.toFixed(
             2,
           )}%) = tax before. Senior benefit assumes dollar exemption applied to
@@ -954,10 +954,10 @@ export default async function SeniorExemptionPage({
       {/* Same-age-threshold peer states */}
       {sameAgeStates.length > 0 && (
         <section className="my-10">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">
+          <h2 className="text-xl font-bold text-stone-800 mb-4">
             Other States with Age {senior.ageThreshold}+ Threshold
           </h2>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-stone-600 mb-4">
             States using the same age threshold as {state.state} —{" "}
             {sameAgeStates.length} others. Benefit structures vary widely.
           </p>
@@ -966,12 +966,12 @@ export default async function SeniorExemptionPage({
               <a
                 key={p.slug}
                 href={`/state/${p.slug}/senior-exemption/`}
-                className="block p-3 bg-white border border-slate-200 rounded-lg hover:border-amber-400 hover:shadow-sm transition"
+                className="block p-3 bg-white border border-stone-200 rounded-lg hover:border-amber-400 hover:shadow-sm transition"
               >
-                <div className="text-sm font-bold text-slate-900 mb-1">
+                <div className="text-sm font-bold text-stone-900 mb-1">
                   {p.state}
                 </div>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-stone-500">
                   {p.additionalExemption > 0
                     ? fmtUSD(p.additionalExemption)
                     : p.hasFreeze
@@ -990,7 +990,7 @@ export default async function SeniorExemptionPage({
       {/* Neighboring states */}
       {neighbors.length > 0 && (
         <section className="my-10">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">
+          <h2 className="text-xl font-bold text-stone-800 mb-4">
             Compare {state.state} to Neighboring States
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -1000,15 +1000,15 @@ export default async function SeniorExemptionPage({
                 <a
                   key={n.slug}
                   href={`/state/${n.slug}/senior-exemption/`}
-                  className="block p-4 bg-white border border-slate-200 rounded-lg hover:border-blue-400 hover:shadow-sm transition"
+                  className="block p-4 bg-white border border-stone-200 rounded-lg hover:border-amber-500 hover:shadow-sm transition"
                 >
-                  <div className="text-base font-bold text-slate-900 mb-1">
+                  <div className="text-base font-bold text-stone-900 mb-1">
                     {n.state}
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-stone-500">
                     Age {np?.ageThreshold ?? 65}+ threshold
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-stone-500">
                     {np?.additionalExemption
                       ? fmtUSD(np.additionalExemption) + " exempt"
                       : np?.hasFreeze
@@ -1017,7 +1017,7 @@ export default async function SeniorExemptionPage({
                       ? fmtUSD(np.creditUsd) + " credit"
                       : "Deferral-based"}
                   </div>
-                  <div className="text-xs text-blue-600 mt-1">
+                  <div className="text-xs text-amber-700 mt-1">
                     Senior exemption →
                   </div>
                 </a>
@@ -1031,15 +1031,15 @@ export default async function SeniorExemptionPage({
       <section className="my-10 grid grid-cols-1 md:grid-cols-2 gap-4">
         <a
           href={`/state/${slug}/`}
-          className="block p-5 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-sm transition"
+          className="block p-5 bg-white border border-stone-200 rounded-xl hover:border-amber-500 hover:shadow-sm transition"
         >
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             State Overview
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             ← {state.state} property tax rates + full overview
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Effective rate, median tax, county breakdowns, calculator, and full
             property tax guide for {state.state}.
           </div>
@@ -1051,10 +1051,10 @@ export default async function SeniorExemptionPage({
           <div className="text-xs text-emerald-700 uppercase tracking-wider mb-1">
             Sibling Deep Dive
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             {state.state} general homestead exemption →
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Homestead base amount, assessment caps, disabled veteran rules, and
             filing process for {state.state}&apos;s primary-residence exemption.
           </div>
@@ -1063,22 +1063,22 @@ export default async function SeniorExemptionPage({
 
       {/* FAQ */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           Frequently Asked Questions: {state.state} Senior Property Tax Exemption
         </h2>
         <div className="space-y-3">
           {faqs.map((f, i) => (
             <details
               key={i}
-              className="group bg-white border border-slate-200 rounded-xl p-4 open:border-amber-300"
+              className="group bg-white border border-stone-200 rounded-xl p-4 open:border-amber-300"
             >
-              <summary className="cursor-pointer font-semibold text-slate-900 text-sm list-none flex items-start gap-2">
+              <summary className="cursor-pointer font-semibold text-stone-900 text-sm list-none flex items-start gap-2">
                 <span className="text-amber-500 group-open:rotate-90 transition-transform">
                   ▸
                 </span>
                 <span>{f.q}</span>
               </summary>
-              <p className="mt-3 ml-5 text-sm text-slate-700 leading-relaxed">
+              <p className="mt-3 ml-5 text-sm text-stone-700 leading-relaxed">
                 {f.a}
               </p>
             </details>

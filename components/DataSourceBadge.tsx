@@ -51,7 +51,7 @@ export function DataSourceBadge({ sources, updatedAt, verifiedLabel = 'Data veri
             href={s.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-xs text-slate-600 rounded-full hover:bg-slate-200 transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 bg-stone-100 text-xs text-stone-600 rounded-full hover:bg-stone-200 transition-colors"
           >
             <LinkIcon />
             {s.name}

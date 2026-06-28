@@ -7,15 +7,15 @@ export function CrossSiteLinks({ current }: { current: string }) {
   const href = isHub ? HUB_GUIDE_PATH : HUB_URL;
 
   return (
-    <div className="mt-10 border-t border-slate-100 pt-6">
-      <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+    <div className="mt-10 border-t border-stone-100 pt-6">
+      <p className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-400">
         Explore More Data Tools
       </p>
-      <p className="text-sm leading-6 text-slate-600">
+      <p className="text-sm leading-6 text-stone-600">
         For adjacent public-data tools, methodology notes, and network updates, visit{' '}
         <a
           href={href}
-          className="font-medium text-slate-700 hover:text-blue-600 hover:underline"
+          className="font-medium text-stone-700 hover:text-amber-700 hover:underline"
           target={isHub ? undefined : '_blank'}
           rel={isHub ? undefined : 'nofollow noopener noreferrer'}
         >

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { UpgradeAnalytics } from "@/components/upgrades/UpgradeAnalytics";
+import RelatedSites from "@/components/RelatedSites";
 
 // 2026-04-23 structural fix — do NOT reintroduce `headers()` in this layout.
 // Any dynamic API (headers, cookies, draftMode, searchParams) in the root
@@ -32,7 +33,6 @@ export const metadata: Metadata = {
   alternates: {
     languages: {
       en: `${SITE_URL}/`,
-      es: `${SITE_URL}/es/`,
       "x-default": `${SITE_URL}/`,
     },
   },
@@ -100,89 +100,79 @@ export default function RootLayout({
         }) }} />
       </head>
       <body
-        className={`${inter.className} antialiased bg-white text-slate-900 min-h-screen flex flex-col`}
+        className={`${inter.className} antialiased bg-white text-stone-900 min-h-screen flex flex-col`}
       >
         <UpgradeAnalytics />
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-blue-600 focus:border focus:rounded">Skip to content</a>
-        <header className="border-b border-slate-200">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-amber-700 focus:border focus:rounded">Skip to content</a>
+        <header className="border-b border-stone-200">
           <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/" className="text-xl font-bold text-blue-700">
+            <a href="/" className="text-xl font-bold text-amber-800">
               {SITE_NAME}
             </a>
-            <nav className="flex gap-6 text-sm">
-              <a href="/calculator/" className="hover:text-blue-600">
+            <nav className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+              <a href="/appeal-simulator/" className="font-semibold text-amber-800 hover:text-amber-900">
+                Appeal Simulator
+              </a>
+              <a href="/calculator/" className="hover:text-amber-700">
                 Calculator
               </a>
-              <a href="/compare/" className="hover:text-blue-600">
+              <a href="/compare/" className="hover:text-amber-700">
                 Compare
               </a>
-              <a href="/insights/" className="hover:text-blue-600">
+              <a href="/insights/" className="hover:text-amber-700">
                 Insights
               </a>
-              <a href="/guide/" className="hover:text-blue-600">
-                Guides
-              </a>
-              <a href="/blog/" className="hover:text-blue-600">
-                Articles
-              </a>
-              <a href="/es/" className="text-slate-400 hover:text-blue-600 text-xs">
-                ES
-              </a>
+              
+              
             </nav>
           </div>
         </header>
         <main id="main-content" className="flex-1 max-w-5xl mx-auto px-4 py-8 w-full">
           {children}
         </main>
-        <footer className="border-t border-slate-200 mt-16">
-          <div className="max-w-5xl mx-auto px-4 py-6 text-sm text-slate-500">
+        <footer className="border-t border-stone-200 mt-16">
+          <div className="max-w-5xl mx-auto px-4 py-6 text-sm text-stone-500">
             <p>
               Built with public data from the U.S. Census Bureau, American Community Survey (ACS)
               and Tax Foundation.
             </p>
             <p className="mt-2">
-              <a href="/about/" className="hover:text-blue-600">
+              <a href="/about/" className="hover:text-amber-700">
                 About
               </a>
               {" | "}
-              <a href="/privacy/" className="hover:text-blue-600">
+              <a href="/methodology/" className="hover:text-amber-700">
+                Methodology
+              </a>
+              {" | "}
+              <a href="/privacy/" className="hover:text-amber-700">
                 Privacy
               </a>
               {" | "}
-              <a href="/terms/" className="hover:text-blue-600">
+              <a href="/terms/" className="hover:text-amber-700">
                 Terms
               </a>
               {" | "}
-              <a href="/disclaimer/" className="hover:text-blue-600">
+              <a href="/disclaimer/" className="hover:text-amber-700">
                 Disclaimer
               </a>
               {" | "}
-              <a href="/editorial-policy/" className="hover:text-blue-600">
+              <a href="/editorial-policy/" className="hover:text-amber-700">
                 Editorial Policy
               </a>
               {" | "}
-              <a href="/corrections-policy/" className="hover:text-blue-600">
+              <a href="/corrections-policy/" className="hover:text-amber-700">
                 Corrections
               </a>
               {" | "}
-              <a href="/contact/" className="hover:text-blue-600">
+              <a href="/contact/" className="hover:text-amber-700">
                 Contact
               </a>
             </p>
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
-                Explore More Tools
-              </p>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                <a href="https://costbycity.com" rel="nofollow" className="hover:text-blue-600">Cost of Living</a>
-                <a href="https://fairrentwize.com" rel="nofollow" className="hover:text-blue-600">Fair Rents</a>
-                <a href="https://zippeek.com" rel="nofollow" className="hover:text-blue-600">ZIP Codes</a>
-                <a href="https://guidebycity.com" rel="nofollow" className="hover:text-blue-600">City Guides</a>
-              </div>
-            </div>
-            <p className="mt-3 text-xs italic text-slate-400">Helping homeowners understand property tax burden with source-labeled county and ACS data.</p>
+            <RelatedSites currentSite="PropertyTaxPeek" accentClass="hover:text-amber-700" label="Explore More Tools" />
+            <p className="mt-3 text-xs italic text-stone-400">Helping homeowners understand property tax burden with source-labeled county and ACS data.</p>
             <p className="mt-1">
-              &copy; {new Date().getFullYear()} {SITE_NAME}. Not affiliated with any government agency.
+              &copy; {new Date().getFullYear()} {SITE_NAME}. Independent reference for Census ACS property tax data; sources cited inline on every page.
             </p>
           </div>
         </footer>

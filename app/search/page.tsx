@@ -38,12 +38,12 @@ export default async function SearchPage({ searchParams }: Props) {
             name="q"
             defaultValue={query}
             placeholder="e.g. California, Cook County, Texas, New Jersey..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             autoFocus
           />
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+            className="bg-amber-700 hover:bg-amber-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
           >
             Search
           </button>
@@ -69,15 +69,15 @@ export default async function SearchPage({ searchParams }: Props) {
 
           {results.states.length > 0 && (
             <section>
-              <h2 className="text-base font-semibold text-blue-700 mb-3 uppercase tracking-wider">States</h2>
+              <h2 className="text-base font-semibold text-amber-800 mb-3 uppercase tracking-wider">States</h2>
               <div className="grid sm:grid-cols-2 gap-2">
                 {results.states.map((s) => (
                   <Link
                     key={s.abbr}
                     href={`/state/${s.slug}/`}
-                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xs font-bold text-amber-800 flex-shrink-0">
                       {s.abbr}
                     </div>
                     <div>
@@ -94,15 +94,15 @@ export default async function SearchPage({ searchParams }: Props) {
 
           {results.counties.length > 0 && (
             <section>
-              <h2 className="text-base font-semibold text-blue-700 mb-3 uppercase tracking-wider">Counties</h2>
+              <h2 className="text-base font-semibold text-amber-800 mb-3 uppercase tracking-wider">Counties</h2>
               <div className="grid sm:grid-cols-2 gap-2">
                 {results.counties.map((c) => (
                   <Link
                     key={c.slug}
                     href={`/county/${c.slug}/`}
-                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xs font-bold text-amber-800 flex-shrink-0">
                       {c.state}
                     </div>
                     <div>
@@ -127,7 +127,7 @@ export default async function SearchPage({ searchParams }: Props) {
               <Link
                 key={term}
                 href={`/search/?q=${encodeURIComponent(term)}`}
-                className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm hover:bg-blue-100 transition-colors border border-blue-200"
+                className="px-3 py-1.5 bg-amber-50 text-amber-800 rounded-full text-sm hover:bg-amber-100 transition-colors border border-amber-200"
               >
                 {term}
               </Link>

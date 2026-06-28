@@ -19,13 +19,13 @@ export default function EmbedCalculatorPage() {
   return (
     <div className="p-4">
       <PropertyTaxCalculator states={calcStates} />
-      <p className="text-xs text-center text-slate-400 mt-2">
+      <p className="text-xs text-center text-stone-400 mt-2">
         Powered by{" "}
         <a
           href="https://propertytaxpeek.com"
           target="_blank"
           rel="noopener"
-          className="text-blue-500 hover:underline"
+          className="text-amber-600 hover:underline"
         >
           PropertyTaxPeek
         </a>

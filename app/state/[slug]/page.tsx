@@ -5,6 +5,7 @@ import {
   getStateBySlug,
   getCountiesByState,
   getNationalAverage,
+  getAllCounties,
 } from "@/lib/db";
 import { PropertyTaxCalculator } from "@/components/PropertyTaxCalculator";
 import { AdSlot } from "@/components/AdSlot";
@@ -26,11 +27,49 @@ import { AnswerHero } from "@/components/upgrades/AnswerHero";
 import { TrustBlock } from "@/components/upgrades/TrustBlock";
 import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { StateRich } from '@/components/state/StateRich';
-import { STATE_VINTAGE } from "@/lib/authorship";
-import { datasetSchema } from "@/lib/schema";
+import { STATE_VINTAGE, EXEMPTION_VINTAGE } from "@/lib/authorship";
+import { TableOfContents } from "@/components/upgrades/TableOfContents";
+import { InsightBlock } from "@/components/upgrades/InsightBlock";
+import { FAQ } from "@/components/FAQ";
+import { datasetSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { getStateAcs, getBurdenDistribution } from "@/lib/state-facts";
 import { getCountyAcs } from "@/lib/county-facts";
 import { VINTAGE_LABEL, VINTAGE_SHORT } from "@/lib/data-vintage";
+import { getStateExemptionData } from "@/lib/state-exemption-data";
+import {
+  classifyHomesteadExemptionMatrix,
+  tierLabel as matrixTierLabel,
+  tierBlurb as matrixTierBlurb,
+  tierToneColor as matrixTierToneColor,
+  TIER_AXIS_SUMMARY,
+  TIER_CUTOFF_SUMMARY,
+} from "@/lib/homestead-exemption-matrix";
+import {
+  decodeEffectiveRate,
+  tierLabel as rateTierLabel,
+  tierBlurb as rateTierBlurb,
+  tierToneColor as rateTierToneColor,
+  RATE_TIER_CUTOFF_SUMMARY,
+} from "@/lib/effective-rate-decoder";
+import {
+  classifyIncomeBurden,
+  tierLabel as burdenTierLabel,
+  tierBlurb as burdenTierBlurb,
+  tierToneColor as burdenTierToneColor,
+  INCOME_BURDEN_CUTOFF_SUMMARY,
+} from "@/lib/proptax-income-burden-band";
+import {
+  classifyAssessmentAppealSuccess,
+  tierLabel as appealTierLabel,
+  tierBlurb as appealTierBlurb,
+  tierToneColor as appealTierToneColor,
+  APPEAL_TIER_CUTOFF_SUMMARY,
+} from "@/lib/assessment-appeal-success-tier";
+import { interpretPropertyTax } from "@/lib/propertytax-interpretation";
+import { PropertyTaxInterpretation } from "@/components/upgrades/PropertyTaxInterpretation";
+import { CountyChoropleth } from "@/components/CountyChoropleth";
+import { StateHeroImage } from '@/components/StateHeroImage';
+import { getStateImageByName } from '@/lib/state-images';
 
 // dynamicParams=false (2026-04-23): unknown state slugs → real HTTP 404.
 export const dynamicParams = false;
@@ -62,7 +101,9 @@ export async function generateMetadata({
   const tax = acs?.median_real_estate_taxes ?? state.median_tax;
   const home = acs?.median_home_value ?? state.median_home_value;
   return {
-    title: `${state.state} Property Tax Rates - ${rate.toFixed(2)}% Average Rate`,
+    title: {
+      absolute: `${state.state} Property Tax — ${rate.toFixed(2)}% Effective Rate`,
+    },
     description: `${state.state} has an effective property tax rate of ${rate.toFixed(2)}%. Median annual property tax is ${fmt(tax)} on a median home value of ${fmt(home)}. See county-level breakdown.`,
     alternates: { canonical: `/state/${slug}/` },
     openGraph: { url: `/state/${slug}/` },
@@ -133,6 +174,7 @@ export default async function StatePage({
   if (!state) notFound();
 
   const counties = getCountiesByState(state.abbr);
+  const allCounties = getAllCounties();
   const national = getNationalAverage();
   const allStates = getAllStates();
   const neighborAbbrs = NEIGHBORS[state.abbr] || [];
@@ -174,6 +216,51 @@ export default async function StatePage({
   const diffRate = effectiveRate - national.avg_rate;
   const insights = generateStateInsights(state, allStates);
 
+  // Phase 6 v6.4 PSU dual-lever readings — editorial layers on top of
+  // Census ACS / state DOR exemption data. Both lever modules return
+  // tier=null when the underlying data is missing, so the renders
+  // gracefully no-op rather than fabricating.
+  const stateExemption = getStateExemptionData(slug);
+  const matrixResult = classifyHomesteadExemptionMatrix(stateExemption);
+  const rateDecoder = decodeEffectiveRate({
+    effectiveRatePct: effectiveRate,
+    nationalAvgPct: national.avg_rate,
+    stateAvgPct: null,
+    stateExemption,
+  });
+  const stateBurdenResult = classifyIncomeBurden({
+    taxesAnnual: medianTax,
+    medianIncome: stateAcs?.median_household_income ?? null,
+  });
+  const stateAppealResult = classifyAssessmentAppealSuccess(state.abbr);
+  const stateInterpretation = interpretPropertyTax({
+    countyName: state.state,
+    stateName: state.state,
+    rate: rateDecoder,
+    burden: stateBurdenResult,
+    matrix: matrixResult,
+    appeal: stateAppealResult,
+  });
+  const matrixTone = matrixTierToneColor(matrixResult.tier);
+  const rateTone = rateTierToneColor(rateDecoder.tier);
+  const burdenTone = burdenTierToneColor(stateBurdenResult.tier);
+  const appealTone = appealTierToneColor(stateAppealResult.tier);
+
+  const faqs = [
+    {
+      question: `What is the effective property tax rate in ${state.state}?`,
+      answer: `The effective property tax rate in ${state.state} is ${effectiveRate.toFixed(2)}%, which is ${diffRate > 0 ? `${diffRate.toFixed(2)}% above` : `${Math.abs(diffRate).toFixed(2)}% below`} the US national average.`,
+    },
+    {
+      question: `What is the median annual property tax bill in ${state.state}?`,
+      answer: `The median annual property tax in ${state.state} is ${fmt(medianTax)} based on a median home value of ${fmt(medianHomeValue)}.`,
+    },
+    {
+      question: `How many counties are in ${state.state} for property tax analysis?`,
+      answer: `There are ${counties.length} counties analyzed in ${state.state}, with property tax rates and median bills varying across different local jurisdictions.`,
+    },
+  ];
+
   return (
     <>
       <script
@@ -197,12 +284,22 @@ export default async function StatePage({
           ),
         }}
       />
-      <Breadcrumb
-        items={[
-          { label: "Home", href: "/" },
-          { label: state.state },
-        ]}
-      />
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }}
+        />
+      )}
+      <main>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: state.state },
+          ]}
+        />
+
+
+      {(() => { const stateImage = getStateImageByName(state.state); return stateImage ? <StateHeroImage img={stateImage} /> : null; })()}
 
       <AnswerHero
         title={`${state.state} property tax`}
@@ -264,6 +361,216 @@ export default async function StatePage({
         updated={`${VINTAGE_LABEL}, reviewed April 2026`}
       />
 
+      <TableOfContents />
+
+      <CountyChoropleth
+        counties={allCounties.map((c) => ({
+          slug: c.slug,
+          county_name: c.county_name,
+          state: c.state,
+          effective_rate: c.effective_rate,
+          median_tax: c.median_tax,
+          median_home_value: c.median_home_value,
+          population: c.population,
+        }))}
+        currentStateCode={state.abbr}
+        variant="compact"
+      />
+
+      {/* PSU 1차 composite verdict — four-lever interpretation atop the
+          rate / burden / matrix / appeal classifiers. */}
+      <PropertyTaxInterpretation interpretation={stateInterpretation} />
+
+      {/* EffectiveRateVsAssessmentDecoder — editorial reading on Census ACS rate */}
+      {rateDecoder.tier && (
+        <section
+          className={`my-8 rounded-xl border ${rateTone.border} ${rateTone.bg} p-6`}
+          data-upgrade="effective-rate-decoder"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+            <h2 className={`text-lg font-bold ${rateTone.text}`}>
+              {state.state} effective-rate band: {rateTierLabel(rateDecoder.tier)}
+            </h2>
+            <span className="text-xs text-stone-500">
+              Editorial reading · Census {VINTAGE_SHORT}
+            </span>
+          </div>
+          <p className={`text-sm leading-relaxed ${rateTone.text} mb-3`}>
+            {rateTierBlurb(rateDecoder.tier)}
+          </p>
+          <div className="text-sm text-stone-700 grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <div className="bg-white/60 rounded-md px-3 py-2 border border-stone-200">
+              <div className="text-xs uppercase tracking-wider text-stone-500">Effective rate</div>
+              <div className="text-lg font-bold text-stone-900">
+                {rateDecoder.effectiveRatePct?.toFixed(2)}%
+              </div>
+            </div>
+            <div className="bg-white/60 rounded-md px-3 py-2 border border-stone-200">
+              <div className="text-xs uppercase tracking-wider text-stone-500">vs US</div>
+              <div className="text-lg font-bold text-stone-900">
+                {rateDecoder.nationalGapPp != null
+                  ? `${rateDecoder.nationalGapPp > 0 ? "+" : ""}${rateDecoder.nationalGapPp.toFixed(2)} pp`
+                  : "—"}
+              </div>
+            </div>
+            <div className="bg-white/60 rounded-md px-3 py-2 border border-stone-200">
+              <div className="text-xs uppercase tracking-wider text-stone-500">Assessment cap</div>
+              <div className="text-sm font-bold text-stone-900">
+                {rateDecoder.assessmentCapLabel ?? "No statewide cap"}
+              </div>
+            </div>
+          </div>
+          <details className="bg-white/40 rounded-md px-3 py-2 border border-stone-200 mb-2">
+            <summary className="text-sm font-medium cursor-pointer text-stone-800">
+              Drivers that typically explain this band
+            </summary>
+            <ul className="mt-2 text-sm text-stone-700 list-disc pl-5 space-y-1">
+              {rateDecoder.drivers.map((d, i) => (
+                <li key={i}>{d}</li>
+              ))}
+            </ul>
+          </details>
+          <details className="bg-white/40 rounded-md px-3 py-2 border border-stone-200">
+            <summary className="text-sm font-medium cursor-pointer text-stone-800">
+              Caveats — Census ACS limits and what is NOT included
+            </summary>
+            <ul className="mt-2 text-sm text-stone-700 list-disc pl-5 space-y-1">
+              {rateDecoder.caveats.map((c, i) => (
+                <li key={i}>{c}</li>
+              ))}
+            </ul>
+          </details>
+          <p className="text-xs text-stone-500 mt-3">
+            Band cutoffs: {RATE_TIER_CUTOFF_SUMMARY}. Editorial reading — not endorsed by the
+            US Census Bureau, the IRS, or any state Department of Revenue. See{" "}
+            the methodology guide{" "}
+            for the full computation.
+          </p>
+        </section>
+      )}
+
+      {/* HomesteadExemptionMatrix — editorial classifier on state statutory rules */}
+      {matrixResult.tier && stateExemption && (
+        <section
+          className={`my-8 rounded-xl border ${matrixTone.border} ${matrixTone.bg} p-6`}
+          data-upgrade="homestead-exemption-matrix"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+            <h2 className={`text-lg font-bold ${matrixTone.text}`}>
+              {state.state} homestead-exemption matrix tier: {matrixTierLabel(matrixResult.tier)}
+            </h2>
+            <span className="text-xs text-stone-500">
+              Editorial classifier · Exemption vintage {EXEMPTION_VINTAGE}
+            </span>
+          </div>
+          <p className={`text-sm leading-relaxed ${matrixTone.text} mb-3`}>
+            {matrixTierBlurb(matrixResult.tier)}
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-3 text-sm">
+            {(
+              [
+                ["Basic", matrixResult.axes.basic],
+                ["Senior", matrixResult.axes.senior],
+                ["Veteran", matrixResult.axes.veteran],
+                ["Disability", matrixResult.axes.disability],
+                ["Cap/Freeze", matrixResult.axes.assessmentCap],
+              ] as const
+            ).map(([label, score]) => (
+              <div
+                key={label}
+                className="bg-white/60 rounded-md px-3 py-2 border border-stone-200 text-center"
+              >
+                <div className="text-xs uppercase tracking-wider text-stone-500">{label}</div>
+                <div className="text-lg font-bold text-stone-900">{score}/2</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-stone-700">
+            <strong>Cohort:</strong> {matrixResult.cohort}.{" "}
+            <strong>Total score:</strong> {matrixResult.totalScore}/10.
+          </p>
+          {matrixResult.caveats.length > 0 && (
+            <details className="bg-white/40 rounded-md px-3 py-2 border border-stone-200 mt-3">
+              <summary className="text-sm font-medium cursor-pointer text-stone-800">
+                Filing caveats and county-level supplements
+              </summary>
+              <ul className="mt-2 text-sm text-stone-700 list-disc pl-5 space-y-1">
+                {matrixResult.caveats.map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            </details>
+          )}
+          <p className="text-xs text-stone-500 mt-3">
+            Axes: {TIER_AXIS_SUMMARY}. Tier cutoffs: {TIER_CUTOFF_SUMMARY}. The matrix encodes
+            statutory state rules — your county assessor's filing certificate is the binding
+            determination. Compare states on{" "}
+            the matrix methodology page
+            .
+          </p>
+        </section>
+      )}
+
+      {/* IncomeBurdenBand — state-level reading */}
+      {stateBurdenResult.tier && (
+        <section
+          className={`my-8 rounded-xl border border-${burdenTone}-200 bg-${burdenTone}-50 p-6`}
+          data-upgrade="income-burden-band"
+        >
+          <h2 className={`text-lg font-bold text-${burdenTone}-900 mb-2`}>
+            {state.state} income-share burden: {burdenTierLabel(stateBurdenResult.tier)}
+            {stateBurdenResult.burdenPct != null && (
+              <span className="ml-2 text-sm font-normal text-stone-600">
+                {stateBurdenResult.burdenPct.toFixed(1)}% of median household income
+              </span>
+            )}
+          </h2>
+          <p className={`text-sm leading-relaxed text-${burdenTone}-900 mb-3`}>
+            {burdenTierBlurb(stateBurdenResult.tier)}
+          </p>
+          <p className="text-xs text-stone-500">
+            Editorial reading · Census ACS B25103 ÷ B19013. See{" "}
+            methodology
+            .
+          </p>
+        </section>
+      )}
+
+      {/* AssessmentAppealSuccessTier — state appeal infrastructure reading */}
+      {stateAppealResult.tier && (
+        <section
+          className={`my-8 rounded-xl border border-${appealTone}-200 bg-${appealTone}-50 p-6`}
+          data-upgrade="assessment-appeal-success-tier"
+        >
+          <h2 className={`text-lg font-bold text-${appealTone}-900 mb-2`}>
+            {state.state} appeal infrastructure: {appealTierLabel(stateAppealResult.tier)}
+          </h2>
+          <p className={`text-sm leading-relaxed text-${appealTone}-900 mb-3`}>
+            {appealTierBlurb(stateAppealResult.tier, stateAppealResult.mechanism)}
+          </p>
+          {stateAppealResult.publicizedRange && (
+            <p className="text-sm text-stone-800 bg-white/60 rounded-md px-3 py-2 border border-stone-200 mb-3">
+              <strong>Published reduction-rate range:</strong> {stateAppealResult.publicizedRange}
+            </p>
+          )}
+          <details className="bg-white/40 rounded-md px-3 py-2 border border-stone-200 mb-2">
+            <summary className="text-sm font-medium cursor-pointer text-stone-800">
+              Drivers that classify {state.state}
+            </summary>
+            <ul className="mt-2 text-sm text-stone-700 list-disc pl-5 space-y-1">
+              {stateAppealResult.drivers.map((d, i) => (
+                <li key={i}>{d}</li>
+              ))}
+            </ul>
+          </details>
+          <p className="text-xs text-stone-500 mt-3">
+            See{" "}
+            appeal-success-tier methodology
+            .
+          </p>
+        </section>
+      )}
+
       <EditorNote note={`Property tax rates vary significantly across ${state.state}'s ${counties.length} counties. Your actual bill depends on local assessments, exemptions, and special district levies — not just the statewide average.`} />
 
       {/* Deep-dive cross-links — added as part of Tier S HCU expansion 2026-04-21 */}
@@ -275,10 +582,10 @@ export default async function StatePage({
           <div className="text-xs text-emerald-700 uppercase tracking-wider font-semibold mb-1">
             Deep Dive · Exemptions
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             {state.state} homestead exemption 2026 →
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Dollar amounts, senior / disabled veteran relief, assessment caps,
             and step-by-step filing instructions.
           </div>
@@ -290,10 +597,10 @@ export default async function StatePage({
           <div className="text-xs text-amber-700 uppercase tracking-wider font-semibold mb-1">
             Deep Dive · Age 65+
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             {state.state} senior property tax exemption →
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Age thresholds, income caps, assessment freezes, deferral programs,
             and tax credits for homeowners 65 and older.
           </div>
@@ -305,35 +612,28 @@ export default async function StatePage({
           <div className="text-xs text-indigo-700 uppercase tracking-wider font-semibold mb-1">
             Tool · Calculator
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             Run your {state.state} home value →
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Plug in your exact home value at the {effectiveRate.toFixed(2)}%
             effective rate to see the annual bill.
           </div>
         </a>
       </section>
 
-      <section className="my-8 p-6 bg-gradient-to-r from-blue-50 to-slate-50 rounded-xl border border-blue-100">
-        <h2 className="text-lg font-bold text-slate-900 mb-3">Key Insights for {state.state}</h2>
-        <ul className="space-y-2">
-          {insights.map((insight, i) => (
-            <li key={i} className="flex gap-2 text-sm text-slate-700">
-              <span className="text-blue-500 font-bold shrink-0">&bull;</span>
-              <span>{insight}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <InsightBlock
+        entityName={state.state}
+        insights={insights.map(ins => ({ text: ins }))}
+      />
 
       {/* County burden distribution — ACS 2024 5-Year MOE-filtered */}
       {burdenDist.totalCounties > 0 && (
         <section className="my-8">
-          <h2 className="text-lg font-bold text-slate-900 mb-2">
+          <h2 className="text-lg font-bold text-stone-900 mb-2">
             County burden distribution across {state.state}
           </h2>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-stone-600 mb-4">
             Across {burdenDist.totalCounties} counties in {state.state}, here is
             how the {VINTAGE_SHORT} effective property tax rates sort.
             {burdenSuppressed > 0
@@ -365,15 +665,15 @@ export default async function StatePage({
               </div>
               <div className="text-xs text-amber-800/80">counties</div>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-wider text-slate-600 font-semibold">
+            <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+              <div className="text-xs uppercase tracking-wider text-stone-600 font-semibold">
                 Average
               </div>
-              <div className="text-xs text-slate-600/80 mb-1">0.6 – 1.2%</div>
-              <div className="text-2xl font-bold text-slate-900">
+              <div className="text-xs text-stone-600/80 mb-1">0.6 – 1.2%</div>
+              <div className="text-2xl font-bold text-stone-900">
                 {burdenAvg}
               </div>
-              <div className="text-xs text-slate-700/80">counties</div>
+              <div className="text-xs text-stone-700/80">counties</div>
             </div>
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
               <div className="text-xs uppercase tracking-wider text-emerald-700 font-semibold">
@@ -387,13 +687,13 @@ export default async function StatePage({
             </div>
           </div>
           {(highestCounty || lowestCounty) && (
-            <p className="text-sm text-slate-600 mt-4">
+            <p className="text-sm text-stone-600 mt-4">
               {highestCounty && (
                 <>
                   Highest:{" "}
                   <a
                     href={`/county/${highestCounty.slug}/`}
-                    className="text-blue-600 hover:underline font-medium"
+                    className="text-amber-700 hover:underline font-medium"
                   >
                     {highestCounty.name}
                   </a>{" "}
@@ -406,7 +706,7 @@ export default async function StatePage({
                   Lowest:{" "}
                   <a
                     href={`/county/${lowestCounty.slug}/`}
-                    className="text-blue-600 hover:underline font-medium"
+                    className="text-amber-700 hover:underline font-medium"
                   >
                     {lowestCounty.name}
                   </a>{" "}
@@ -426,10 +726,10 @@ export default async function StatePage({
       {/* Senior tax context — ACS B19049_005E (median household income age 65+) */}
       {seniorIncome != null && seniorBurdenPct != null && (
         <section className="my-8 rounded-xl border border-amber-200 bg-amber-50/60 p-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-2">
+          <h2 className="text-lg font-bold text-stone-900 mb-2">
             Senior homeowner context for {state.state}
           </h2>
-          <p className="text-sm text-slate-700 leading-relaxed">
+          <p className="text-sm text-stone-700 leading-relaxed">
             The median household income for residents age 65 and older in{" "}
             {state.state} is {fmt(seniorIncome)}. At the state's effective property
             tax rate of {effectiveRate.toFixed(2)}%, the median annual bill of{" "}
@@ -442,7 +742,7 @@ export default async function StatePage({
               ? " That is a moderate share for a fixed-income household — a senior or homestead exemption can still trim it noticeably in many counties."
               : " That is a manageable share for most fixed-income households, though your specific county may run higher."}
           </p>
-          <p className="text-xs text-slate-500 mt-3">
+          <p className="text-xs text-stone-500 mt-3">
             Senior income figure: ACS Table B19049, age-of-householder 65+, median
             household income, {VINTAGE_SHORT}.
           </p>
@@ -455,27 +755,27 @@ export default async function StatePage({
 
       {/* State Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Effective Rate
           </div>
-          <div className="text-2xl font-bold text-blue-800">
+          <div className="text-2xl font-bold text-amber-900">
             {effectiveRate.toFixed(2)}%
           </div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Median Annual Tax
           </div>
-          <div className="text-2xl font-bold text-blue-800">
+          <div className="text-2xl font-bold text-amber-900">
             {fmt(medianTax)}
           </div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Median Home Value
           </div>
-          <div className="text-2xl font-bold text-blue-800">
+          <div className="text-2xl font-bold text-amber-900">
             {fmt(medianHomeValue)}
           </div>
         </div>
@@ -484,23 +784,23 @@ export default async function StatePage({
       {/* County breakdown */}
       {counties.length > 0 && (
         <>
-          <h2 className="text-2xl font-bold text-slate-800 mt-8 mb-4">
+          <h2 className="text-2xl font-bold text-stone-800 mt-8 mb-4">
             {state.state} Counties Property Tax Rates
           </h2>
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
+          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-8">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 text-left">
-                  <th className="px-4 py-2 font-medium text-slate-600">County</th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right">Rate</th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right">Median Tax</th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right hidden sm:table-cell">
+                <tr className="bg-stone-50 text-left">
+                  <th className="px-4 py-2 font-medium text-stone-600">County</th>
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right">Rate</th>
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right">Median Tax</th>
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right hidden sm:table-cell">
                     Median Home Value
                   </th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right hidden md:table-cell">
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right hidden md:table-cell">
                     Senior Median Income
                   </th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right hidden md:table-cell">
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right hidden md:table-cell">
                     Population
                   </th>
                 </tr>
@@ -514,9 +814,9 @@ export default async function StatePage({
                   const home = kept ? acs.median_home_value : null;
                   const seniorInc = kept ? acs.median_income_age65_plus : null;
                   return (
-                    <tr key={c.slug} className="border-t border-slate-100 hover:bg-slate-50">
+                    <tr key={c.slug} className="border-t border-stone-100 hover:bg-stone-50">
                       <td className="px-4 py-2">
-                        <a href={`/county/${c.slug}/`} className="text-blue-600 hover:underline">
+                        <a href={`/county/${c.slug}/`} className="text-amber-700 hover:underline">
                           {c.county_name}
                         </a>
                         {!kept && (
@@ -568,7 +868,7 @@ export default async function StatePage({
         <h2 className="text-xl font-bold mb-3">
           Why {state.state} property tax matters
         </h2>
-        <div className="rounded-lg border border-slate-200 bg-white p-5 text-slate-700 leading-relaxed space-y-3">
+        <div className="rounded-lg border border-stone-200 bg-white p-5 text-stone-700 leading-relaxed space-y-3">
           {(() => {
             const rate = effectiveRate;
             const annual = medianTax;
@@ -611,7 +911,7 @@ export default async function StatePage({
                 <p>{primary}</p>
                 <p>{countyNote}</p>
                 <p>{exemptionNote}</p>
-                <p className="text-sm text-slate-500">{saltNote}</p>
+                <p className="text-sm text-stone-500">{saltNote}</p>
               </>
             );
           })()}
@@ -660,21 +960,21 @@ export default async function StatePage({
       {/* Neighboring states comparison */}
       {neighbors.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-2xl font-bold text-slate-800 mb-4">
+          <h2 className="text-2xl font-bold text-stone-800 mb-4">
             How {state.state} Compares to Neighboring States
           </h2>
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 text-left">
-                  <th className="px-4 py-2 font-medium text-slate-600">State</th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right">Rate</th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right">Median Tax</th>
-                  <th className="px-4 py-2 font-medium text-slate-600 text-right">Difference</th>
+                <tr className="bg-stone-50 text-left">
+                  <th className="px-4 py-2 font-medium text-stone-600">State</th>
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right">Rate</th>
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right">Median Tax</th>
+                  <th className="px-4 py-2 font-medium text-stone-600 text-right">Difference</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-slate-100 bg-blue-50">
+                <tr className="border-t border-stone-100 bg-amber-50">
                   <td className="px-4 py-2 font-medium">{state.state}</td>
                   <td className="px-4 py-2 text-right font-medium">{effectiveRate.toFixed(2)}%</td>
                   <td className="px-4 py-2 text-right">{fmt(medianTax)}</td>
@@ -683,9 +983,9 @@ export default async function StatePage({
                 {neighbors.map((n) => {
                   const diff = n.effective_rate - effectiveRate;
                   return (
-                    <tr key={n.slug} className="border-t border-slate-100 hover:bg-slate-50">
+                    <tr key={n.slug} className="border-t border-stone-100 hover:bg-stone-50">
                       <td className="px-4 py-2">
-                        <a href={`/state/${n.slug}/`} className="text-blue-600 hover:underline">
+                        <a href={`/state/${n.slug}/`} className="text-amber-700 hover:underline">
                           {n.state}
                         </a>
                       </td>
@@ -746,12 +1046,12 @@ export default async function StatePage({
       </section>
 
       {/* Related Data Resources */}
-      <section className="mt-8 p-4 bg-slate-50 rounded-lg">
-        <h3 className="text-sm font-semibold text-slate-500 mb-2">Related Data Resources</h3>
+      <section className="mt-8 p-4 bg-stone-50 rounded-lg">
+        <h3 className="text-sm font-semibold text-stone-500 mb-2">Related Data Resources</h3>
         <div className="flex flex-wrap gap-3 text-sm">
-          <a href="https://fairrentwize.com" className="text-blue-600 hover:underline">FairRentWize - Fair market rents &rarr;</a>
-          <a href="https://costbycity.com" className="text-blue-600 hover:underline">CostByCity - Cost of living &rarr;</a>
-          <a href="https://zippeek.com" className="text-blue-600 hover:underline">ZipPeek - ZIP demographics &rarr;</a>
+          <a href="https://fairrentwize.com" className="text-amber-700 hover:underline">FairRentWize - Fair market rents &rarr;</a>
+          <a href="https://costbycity.com" className="text-amber-700 hover:underline">CostByCity - Cost of living &rarr;</a>
+          <a href="https://zippeek.com" className="text-amber-700 hover:underline">ZipPeek - ZIP demographics &rarr;</a>
         </div>
       </section>
 
@@ -760,6 +1060,8 @@ export default async function StatePage({
       </div>
 
       <DataFeedback />
+
+      <FAQ items={faqs} />
 
       <FeedbackButton pageId={slug} />
 
@@ -781,6 +1083,7 @@ export default async function StatePage({
         source={`${state.state} state-level property tax dataset`}
         showDisclaimer
       />
+      </main>
     </>
   );
 }

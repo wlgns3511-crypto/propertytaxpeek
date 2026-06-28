@@ -30,8 +30,10 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import countyCompareKeep from '@/lib/generated/county-compare-keep.json';
+import stateCompareKeep from '@/lib/generated/state-compare-keep.json';
 
 const COUNTY_COMPARE_KEEP = new Set<string>(countyCompareKeep as string[]);
+const STATE_COMPARE_KEEP = new Set<string>(stateCompareKeep as string[]);
 
 // Strip optional trailing slash so keep-set lookups are slash-agnostic.
 // (next.config trailingSlash=true but crawlers hit both forms.)
@@ -73,6 +75,22 @@ export function middleware(request: NextRequest) {
     const slug = clean.slice('/county-compare/'.length);
     // Only enforce for direct slug paths (no further nested segments).
     if (slug && !slug.includes('/') && !COUNTY_COMPARE_KEEP.has(slug)) {
+      return gone();
+    }
+  }
+
+  // (4) 2026-05-21 — Non-keep /compare/<slug>/ → 410. Same rationale as
+  //     /county-compare/ block above. GSC was showing 34,602 "duplicate
+  //     no canonical" for /compare/<slug>/ because app/compare/[slug]/
+  //     page.tsx generates only 100 canonical state pairs (CAP-100,
+  //     alphabetical) and notFound()s the rest → 404. Same as wagepeek/
+  //     degreewize/nameblooms/myschoolpeek pattern, /compare/<slug>/ now
+  //     returns 410 for unknown slugs so GSC reprocesses faster.
+  //     Root /compare/ (state list page) and exact-keep slugs (forward
+  //     and reverse — page.tsx redirects reverse → canonical) pass through.
+  if (clean.startsWith('/compare/')) {
+    const slug = clean.slice('/compare/'.length);
+    if (slug && !slug.includes('/') && !STATE_COMPARE_KEEP.has(slug)) {
       return gone();
     }
   }

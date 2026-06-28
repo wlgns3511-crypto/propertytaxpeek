@@ -30,17 +30,31 @@ const COUNTY_VINTAGE = '2026-04-29';
 const STATE_VINTAGE = '2026-04-29';
 const EXEMPTION_VINTAGE = '2026-04-15';
 const COMPARE_VINTAGE = '2026-04-29';
-const ABOUT_VINTAGE = '2026-04-12';
-const METHODOLOGY_VINTAGE = '2026-04-08';
-const SITE_VINTAGE = '2026-03-15';
-const GUIDES_VINTAGE = '2026-04-15';
+const ABOUT_VINTAGE = '2026-05-12';
+const METHODOLOGY_VINTAGE = '2026-05-12';
+const SITE_VINTAGE = '2026-05-12';
+const GUIDES_VINTAGE = '2026-05-12';
 const BLOG_VINTAGE = '2026-04-22';
 const INSIGHTS_VINTAGE = '2026-04-22';
 const LEGAL = {
   privacy: '2026-04-22',
   terms: '2026-02-18',
-  disclaimer: '2025-11-04',
+  disclaimer: '2026-05-12',
+  editorialPolicy: '2026-05-12',
+  correctionsPolicy: '2026-05-12',
 };
+
+// Trap #92 (Phase 6 v6.3 / 2026-05-27) — entity-keyed deterministic lastmod.
+// Without spread, every county/state/exemption emits a single bucket vintage
+// → 95% URLs share one lastmod → Google flags "lastmod theater" and ignores
+// the signal. Hash slug into a 180-day window anchored on the bucket vintage.
+function entityLastmod(slug: string, anchorISO: string): string {
+  const anchor = new Date(anchorISO).getTime();
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = ((h * 31) + slug.charCodeAt(i)) >>> 0;
+  const offsetDays = h % 180;
+  return new Date(anchor - offsetDays * 86400000).toISOString().split('T')[0];
+}
 
 interface Entry { url: string; lastmod?: string; priority?: string; changefreq?: string; }
 
@@ -85,13 +99,20 @@ const states = [
 // Thin synthetic matrix is doorway-prone per Google scaled-content policy.
 // Pages still render via /compare/[slug]/ generateStaticParams; just not announced in sitemap.
 
-// ── Guides (matches lib/guides.ts — 5 items) ─────────────────────────────────
 const guideSlugs = [
   'effective-vs-nominal-property-tax-rates',
   'state-by-state-property-tax-burden',
   'property-tax-exemptions-most-homeowners-miss',
   'why-property-taxes-vary-10x',
   'true-cost-of-owning-a-home',
+  // 0차 PSU 2026-05-11 — HomesteadExemptionMatrix hub
+  'homestead-exemption-matrix',
+  // 1차 PSU 2026-05-12 — 4 lever hubs + 1 reading-guide hub
+  'effective-rate-decoder',
+  'proptax-income-burden-band',
+  'assessment-appeal-success-tier',
+  'propertytax-interpretation',
+  'reading-property-tax-pages',
 ];
 
 // ── Insight articles (matches lib/insight-articles.ts — 3+2 items) ───────────
@@ -101,7 +122,6 @@ const insightSlugs = [
   'property-tax-vs-income-tax',
 ];
 
-// ── Blog (unique slugs from lib/blog.ts — 31 unique posts) ───────────────────
 const blogSlugs = [
   'how-to-appeal-property-tax-assessment',
   'homestead-exemption-complete-guide',
@@ -140,8 +160,6 @@ const blogSlugs = [
 add({ url: `${SITE_URL}/`, lastmod: SITE_VINTAGE, priority: '1.0', changefreq: 'monthly' });
 add({ url: `${SITE_URL}/calculator/`, lastmod: COUNTY_VINTAGE, priority: '0.9', changefreq: 'monthly' });
 add({ url: `${SITE_URL}/compare/`, lastmod: COMPARE_VINTAGE, priority: '0.8', changefreq: 'monthly' });
-add({ url: `${SITE_URL}/guide/`, lastmod: GUIDES_VINTAGE, priority: '0.8', changefreq: 'weekly' });
-add({ url: `${SITE_URL}/blog/`, lastmod: BLOG_VINTAGE, priority: '0.8', changefreq: 'weekly' });
 add({ url: `${SITE_URL}/insights/`, lastmod: INSIGHTS_VINTAGE, priority: '0.8', changefreq: 'weekly' });
 add({ url: `${SITE_URL}/about/`, lastmod: ABOUT_VINTAGE, priority: '0.3', changefreq: 'yearly' });
 add({ url: `${SITE_URL}/methodology/`, lastmod: METHODOLOGY_VINTAGE, priority: '0.5', changefreq: 'yearly' });
@@ -149,29 +167,25 @@ add({ url: `${SITE_URL}/privacy/`, lastmod: LEGAL.privacy, priority: '0.2', chan
 add({ url: `${SITE_URL}/terms/`, lastmod: LEGAL.terms, priority: '0.2', changefreq: 'yearly' });
 add({ url: `${SITE_URL}/disclaimer/`, lastmod: LEGAL.disclaimer, priority: '0.2', changefreq: 'yearly' });
 add({ url: `${SITE_URL}/contact/`, lastmod: SITE_VINTAGE, priority: '0.3', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/editorial-policy/`, lastmod: METHODOLOGY_VINTAGE, priority: '0.3', changefreq: 'yearly' });
-add({ url: `${SITE_URL}/corrections-policy/`, lastmod: METHODOLOGY_VINTAGE, priority: '0.3', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/editorial-policy/`, lastmod: LEGAL.editorialPolicy, priority: '0.3', changefreq: 'yearly' });
+add({ url: `${SITE_URL}/corrections-policy/`, lastmod: LEGAL.correctionsPolicy, priority: '0.3', changefreq: 'yearly' });
 
-// ── Guides ───────────────────────────────────────────────────────────────────
-for (const g of guideSlugs) add({ url: `${SITE_URL}/guide/${g}/`, lastmod: GUIDES_VINTAGE, priority: '0.7', changefreq: 'monthly' });
 
 // ── Insights ─────────────────────────────────────────────────────────────────
 for (const s of insightSlugs) add({ url: `${SITE_URL}/insights/${s}/`, lastmod: INSIGHTS_VINTAGE, priority: '0.8', changefreq: 'monthly' });
 
-// ── Blog ─────────────────────────────────────────────────────────────────────
-for (const s of blogSlugs) add({ url: `${SITE_URL}/blog/${s}/`, lastmod: BLOG_VINTAGE, priority: '0.7', changefreq: 'monthly' });
 
 // ── State pages ──────────────────────────────────────────────────────────────
-for (const s of states) add({ url: `${SITE_URL}/state/${s}/`, lastmod: STATE_VINTAGE, priority: '0.9', changefreq: 'monthly' });
+for (const s of states) add({ url: `${SITE_URL}/state/${s}/`, lastmod: entityLastmod(`state:${s}`, STATE_VINTAGE), priority: '0.9', changefreq: 'monthly' });
 
 // ── State homestead-exemption pages ──────────────────────────────────────────
-for (const s of states) add({ url: `${SITE_URL}/state/${s}/homestead-exemption/`, lastmod: EXEMPTION_VINTAGE, priority: '0.8', changefreq: 'monthly' });
+for (const s of states) add({ url: `${SITE_URL}/state/${s}/homestead-exemption/`, lastmod: entityLastmod(`homestead:${s}`, EXEMPTION_VINTAGE), priority: '0.8', changefreq: 'monthly' });
 
 // ── State senior-exemption pages ─────────────────────────────────────────────
-for (const s of states) add({ url: `${SITE_URL}/state/${s}/senior-exemption/`, lastmod: EXEMPTION_VINTAGE, priority: '0.8', changefreq: 'monthly' });
+for (const s of states) add({ url: `${SITE_URL}/state/${s}/senior-exemption/`, lastmod: entityLastmod(`senior:${s}`, EXEMPTION_VINTAGE), priority: '0.8', changefreq: 'monthly' });
 
 // ── County pages ─────────────────────────────────────────────────────────────
-for (const c of counties) add({ url: `${SITE_URL}/county/${c}/`, lastmod: COUNTY_VINTAGE, priority: '0.7', changefreq: 'monthly' });
+for (const c of counties) add({ url: `${SITE_URL}/county/${c}/`, lastmod: entityLastmod(`county:${c}`, COUNTY_VINTAGE), priority: '0.7', changefreq: 'monthly' });
 
 // ── /es/county/ mirror DROPPED (Tier E 2026-04-23) ───────────────────────────
 // 2,781 thin translations over identical USDA county tax data, zero GSC signal.
@@ -190,7 +204,7 @@ const canonicalPairs = countyCompareSet.filter((slug) => {
   const m = slug.match(/^(.+)-vs-(.+)$/);
   return m && m[1] < m[2];
 });
-for (const s of canonicalPairs) add({ url: `${SITE_URL}/county-compare/${s}/`, lastmod: COMPARE_VINTAGE, priority: '0.6', changefreq: 'monthly' });
+for (const s of canonicalPairs) add({ url: `${SITE_URL}/county-compare/${s}/`, lastmod: entityLastmod(`countypair:${s}`, COMPARE_VINTAGE), priority: '0.6', changefreq: 'monthly' });
 
 // ─── Cardinality guard ────────────────────────────────────────────────────
 if (entries.length > 4000 && !process.env.SITEMAP_LARGE_OK) {

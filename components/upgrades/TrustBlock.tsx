@@ -21,6 +21,8 @@ export interface TrustBlockProps {
   sources: TrustBlockSource[];
   /** Human-readable update string — e.g. "March 2026" or "Updated 2 days ago" */
   updated: string;
+  /** Visible reviewer label for honest trust messaging */
+  reviewedBy?: string;
   /** Methodology page URL — defaults to /methodology (standard across fleet) */
   methodologyUrl?: string;
   /** Optional label override — e.g. "Freshness" / "Data provenance" */
@@ -30,6 +32,7 @@ export interface TrustBlockProps {
 export function TrustBlock({
   sources,
   updated,
+  reviewedBy,
   methodologyUrl = "/methodology",
   label = "Verified",
 }: TrustBlockProps) {
@@ -70,6 +73,11 @@ export function TrustBlock({
         <span className="text-slate-600">
           <span className="font-medium text-slate-700">Updated:</span> {updated}
         </span>
+        {reviewedBy && (
+          <span className="text-slate-600">
+            <span className="font-medium text-slate-700">Reviewed by:</span> {reviewedBy}
+          </span>
+        )}
         <a
           href={methodologyUrl}
           data-upgrade="trust-block"

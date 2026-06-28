@@ -205,10 +205,10 @@ export default async function HomesteadExemptionPage({
 
       {/* Hero */}
       <header className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+        <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 mb-3">
           {state.state} Homestead Exemption 2026
         </h1>
-        <p className="text-lg text-slate-600 leading-relaxed">
+        <p className="text-lg text-stone-600 leading-relaxed">
           {exemption.homesteadBase > 0 ? (
             <>
               {state.state} homeowners can claim up to{" "}
@@ -285,10 +285,10 @@ export default async function HomesteadExemptionPage({
 
       {/* Tax savings examples — 3 home-value rows */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           Estimated Savings at {state.state} Home Values
         </h2>
-        <p className="text-sm text-slate-600 mb-4">
+        <p className="text-sm text-stone-600 mb-4">
           These estimates apply the {state.effective_rate.toFixed(2)}% {state.state} effective
           property tax rate to three home-value scenarios, then subtract the{" "}
           {exemption.homesteadBase > 0
@@ -297,18 +297,18 @@ export default async function HomesteadExemptionPage({
           . County rates vary by 2–3× in some states — use this as a directional
           estimate, not a final bill.
         </p>
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 text-left">
-                <th className="px-4 py-2 font-medium text-slate-600">Home Value</th>
-                <th className="px-4 py-2 font-medium text-slate-600 text-right">
+              <tr className="bg-stone-50 text-left">
+                <th className="px-4 py-2 font-medium text-stone-600">Home Value</th>
+                <th className="px-4 py-2 font-medium text-stone-600 text-right">
                   Tax Before Exemption
                 </th>
-                <th className="px-4 py-2 font-medium text-slate-600 text-right">
+                <th className="px-4 py-2 font-medium text-stone-600 text-right">
                   Exemption
                 </th>
-                <th className="px-4 py-2 font-medium text-slate-600 text-right">
+                <th className="px-4 py-2 font-medium text-stone-600 text-right">
                   Estimated Tax After
                 </th>
               </tr>
@@ -325,13 +325,13 @@ export default async function HomesteadExemptionPage({
                 return (
                   <tr
                     key={i}
-                    className={`border-t border-slate-100 ${
-                      i === 1 ? "bg-blue-50" : ""
+                    className={`border-t border-stone-100 ${
+                      i === 1 ? "bg-amber-50" : ""
                     }`}
                   >
                     <td className="px-4 py-2">
                       <div className="font-medium">{fmtUSD(home)}</div>
-                      <div className="text-xs text-slate-500">{label}</div>
+                      <div className="text-xs text-stone-500">{label}</div>
                     </td>
                     <td className="px-4 py-2 text-right">{fmtUSD(taxBefore)}</td>
                     <td className="px-4 py-2 text-right text-emerald-700 font-medium">
@@ -348,7 +348,7 @@ export default async function HomesteadExemptionPage({
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-slate-500 mt-3">
+        <p className="text-xs text-stone-500 mt-3">
           Note: Some states (Louisiana, Mississippi, South Carolina, Utah, and
           others) assess homes at a percentage of market value before applying
           the tax rate. Those states' effective rates already account for that
@@ -358,60 +358,60 @@ export default async function HomesteadExemptionPage({
 
       {/* Exemption category detail cards */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           {state.state} Property Tax Exemption Categories
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Homestead */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="bg-white border border-stone-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-stone-900">
                 Homestead (Primary Residence)
               </h3>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed">
+            <p className="text-sm text-stone-700 leading-relaxed">
               {exemption.homesteadDescription}
             </p>
           </div>
 
           {/* Senior */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="bg-white border border-stone-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
-              <h3 className="text-base font-bold text-slate-900">
+              <span className="inline-block w-2 h-2 rounded-full bg-amber-600"></span>
+              <h3 className="text-base font-bold text-stone-900">
                 Senior / Over-65
               </h3>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed">
+            <p className="text-sm text-stone-700 leading-relaxed">
               {exemption.seniorExemption ??
                 `${state.state} has no dedicated senior property tax exemption at the state level. Check county or municipal programs — many localities add age-based relief even when the state does not.`}
             </p>
           </div>
 
           {/* Disabled Veteran */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="bg-white border border-stone-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2 h-2 rounded-full bg-purple-500"></span>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-stone-900">
                 Disabled Veteran
               </h3>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed">
+            <p className="text-sm text-stone-700 leading-relaxed">
               {exemption.veteranExemption ??
                 `${state.state} does not list a separate disabled veteran property tax exemption in state statute. 100% service-connected disability status often qualifies for county-level programs; verify with your assessor.`}
             </p>
           </div>
 
           {/* Disability */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="bg-white border border-stone-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-block w-2 h-2 rounded-full bg-pink-500"></span>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-stone-900">
                 Permanent Disability
               </h3>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed">
+            <p className="text-sm text-stone-700 leading-relaxed">
               {exemption.disabilityExemption ??
                 `${state.state} does not maintain a distinct disability property tax exemption. Totally disabled homeowners are typically covered under the senior or veteran programs — confirm eligibility with the applicable program above.`}
             </p>
@@ -437,15 +437,15 @@ export default async function HomesteadExemptionPage({
 
       {/* Filing process */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           How to File for the {state.state} Homestead Exemption
         </h2>
-        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+        <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-3">
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm">
+            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-sm">
               1
             </div>
-            <div className="text-sm text-slate-700 leading-relaxed pt-0.5">
+            <div className="text-sm text-stone-700 leading-relaxed pt-0.5">
               <strong>Confirm primary-residence status.</strong> The homestead
               exemption applies only to the dwelling you occupy as your main
               home. Second homes, vacation properties, and most rentals do not
@@ -453,10 +453,10 @@ export default async function HomesteadExemptionPage({
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm">
+            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-sm">
               2
             </div>
-            <div className="text-sm text-slate-700 leading-relaxed pt-0.5">
+            <div className="text-sm text-stone-700 leading-relaxed pt-0.5">
               <strong>Gather documents.</strong> Typical requirements: driver's
               license or state ID matching the property address, deed or
               closing statement, most recent utility bill. Senior/veteran
@@ -465,19 +465,19 @@ export default async function HomesteadExemptionPage({
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm">
+            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-sm">
               3
             </div>
-            <div className="text-sm text-slate-700 leading-relaxed pt-0.5">
+            <div className="text-sm text-stone-700 leading-relaxed pt-0.5">
               <strong>{state.state}-specific filing.</strong>{" "}
               {exemption.filingProcess}
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm">
+            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-sm">
               4
             </div>
-            <div className="text-sm text-slate-700 leading-relaxed pt-0.5">
+            <div className="text-sm text-stone-700 leading-relaxed pt-0.5">
               <strong>Track the deadline.</strong> Most states use an early-year
               deadline (often March 1, April 1, or April 15). Missing the
               deadline usually pushes the exemption to the following tax year —
@@ -485,10 +485,10 @@ export default async function HomesteadExemptionPage({
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm">
+            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-sm">
               5
             </div>
-            <div className="text-sm text-slate-700 leading-relaxed pt-0.5">
+            <div className="text-sm text-stone-700 leading-relaxed pt-0.5">
               <strong>Verify on the next tax bill.</strong> Your next property
               tax statement should show the exemption line-itemed. If it does
               not, contact the assessor within the correction window (usually
@@ -499,12 +499,12 @@ export default async function HomesteadExemptionPage({
       </section>
 
       {/* State-specific context block */}
-      <section className="my-10 p-6 bg-slate-50 rounded-xl border border-slate-200">
-        <h2 className="text-lg font-bold text-slate-900 mb-3">
+      <section className="my-10 p-6 bg-stone-50 rounded-xl border border-stone-200">
+        <h2 className="text-lg font-bold text-stone-900 mb-3">
           What to Know About {state.state}&apos;s Exemption System
         </h2>
-        <p className="text-sm text-slate-700 leading-relaxed mb-3">{exemption.notes}</p>
-        <p className="text-xs text-slate-500">
+        <p className="text-sm text-stone-700 leading-relaxed mb-3">{exemption.notes}</p>
+        <p className="text-xs text-stone-500">
           Baseline data sourced from the {state.state} Department of Revenue,
           Tax Foundation state-by-state property tax tables, and the Lincoln
           Institute Significant Features of the Property Tax database.
@@ -555,29 +555,29 @@ export default async function HomesteadExemptionPage({
       <section className="my-10 grid grid-cols-1 md:grid-cols-2 gap-4">
         <a
           href={`/state/${slug}/`}
-          className="block p-5 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-sm transition"
+          className="block p-5 bg-white border border-stone-200 rounded-xl hover:border-amber-500 hover:shadow-sm transition"
         >
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Full State Overview
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             {state.state} property tax rates by county →
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Effective rate, median tax, and county-level breakdown for {state.state}.
           </div>
         </a>
         <a
           href="/calculator/"
-          className="block p-5 bg-white border border-slate-200 rounded-xl hover:border-emerald-400 hover:shadow-sm transition"
+          className="block p-5 bg-white border border-stone-200 rounded-xl hover:border-emerald-400 hover:shadow-sm transition"
         >
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Property Tax Calculator
           </div>
-          <div className="text-base font-bold text-slate-900 mb-1">
+          <div className="text-base font-bold text-stone-900 mb-1">
             Run your own home value →
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-stone-600">
             Plug in your exact home value at the {state.state} effective rate to
             get a personalized annual bill.
           </div>
@@ -587,7 +587,7 @@ export default async function HomesteadExemptionPage({
       {/* Neighboring states cross-link */}
       {neighbors.length > 0 && (
         <section className="my-10">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">
+          <h2 className="text-xl font-bold text-stone-800 mb-4">
             Compare {state.state} to Neighboring States
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -595,15 +595,15 @@ export default async function HomesteadExemptionPage({
               <a
                 key={n.slug}
                 href={`/state/${n.slug}/homestead-exemption/`}
-                className="block p-4 bg-white border border-slate-200 rounded-lg hover:border-blue-400 hover:shadow-sm transition"
+                className="block p-4 bg-white border border-stone-200 rounded-lg hover:border-amber-500 hover:shadow-sm transition"
               >
-                <div className="text-base font-bold text-slate-900 mb-1">
+                <div className="text-base font-bold text-stone-900 mb-1">
                   {n.state}
                 </div>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-stone-500">
                   {n.effective_rate.toFixed(2)}% effective rate
                 </div>
-                <div className="text-xs text-blue-600 mt-1">
+                <div className="text-xs text-amber-700 mt-1">
                   Homestead exemption →
                 </div>
               </a>
@@ -614,22 +614,22 @@ export default async function HomesteadExemptionPage({
 
       {/* FAQ */}
       <section className="my-10">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
           Frequently Asked Questions: {state.state} Homestead Exemption
         </h2>
         <div className="space-y-3">
           {faqs.map((f, i) => (
             <details
               key={i}
-              className="group bg-white border border-slate-200 rounded-xl p-4 open:border-blue-300"
+              className="group bg-white border border-stone-200 rounded-xl p-4 open:border-amber-300"
             >
-              <summary className="cursor-pointer font-semibold text-slate-900 text-sm list-none flex items-start gap-2">
-                <span className="text-blue-500 group-open:rotate-90 transition-transform">
+              <summary className="cursor-pointer font-semibold text-stone-900 text-sm list-none flex items-start gap-2">
+                <span className="text-amber-600 group-open:rotate-90 transition-transform">
                   ▸
                 </span>
                 <span>{f.q}</span>
               </summary>
-              <p className="mt-3 ml-5 text-sm text-slate-700 leading-relaxed">
+              <p className="mt-3 ml-5 text-sm text-stone-700 leading-relaxed">
                 {f.a}
               </p>
             </details>

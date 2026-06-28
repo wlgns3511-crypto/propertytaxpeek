@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       <Breadcrumb
         items={[{ label: "Home", href: "/" }, { label: "Privacy Policy" }]}
       />
-      <h1 className="text-3xl font-bold text-slate-900 mb-6">Privacy Policy</h1>
+      <h1 className="text-3xl font-bold text-stone-900 mb-6">Privacy Policy</h1>
       <div className="prose prose-slate max-w-none">
         <p>
           Last updated:{" "}
@@ -32,8 +32,8 @@ export default function PrivacyPage() {
         <p>
           We use Google AdSense and Google Analytics, which may use cookies to
           serve ads and analyze traffic. You can opt out of personalized advertising by visiting{" "}
-          <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>{" "}
-          or visit <a href="https://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>.
+          <a href="https://www.google.com/settings/ads" className="text-amber-700 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>{" "}
+          or visit <a href="https://www.aboutads.info/choices/" className="text-amber-700 hover:underline" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>.
           You can also manage cookie preferences in your browser settings.
         </p>
         <h2>Third-Party Services</h2>
@@ -59,20 +59,20 @@ export default function PrivacyPage() {
         </p>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-slate-200">
+      <div className="mt-8 pt-6 border-t border-stone-200">
         <h2 className="text-xl font-semibold mb-3">Part of DataPeek Facts Network</h2>
         <p>
           PropertyTaxPeek is part of the{" "}
-          <a href="https://datapeekfacts.com" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+          <a href="https://datapeekfacts.com" className="text-amber-700 hover:underline" target="_blank" rel="noopener noreferrer">
             DataPeek Facts
           </a>{" "}
           network of free US data tools. For general inquiries about our data network, privacy practices, or partnership
           opportunities, please contact the DataPeek Facts team at{" "}
-          <a href="mailto:datapeekfacts@gmail.com" className="text-blue-600 hover:underline">
+          <a href="mailto:datapeekfacts@gmail.com" className="text-amber-700 hover:underline">
             datapeekfacts@gmail.com
           </a>
           . You can also visit the{" "}
-          <a href="https://datapeekfacts.com/privacy/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+          <a href="https://datapeekfacts.com/privacy/" className="text-amber-700 hover:underline" target="_blank" rel="noopener noreferrer">
             DataPeek Facts Privacy Policy
           </a>{" "}
           for network-wide privacy information.

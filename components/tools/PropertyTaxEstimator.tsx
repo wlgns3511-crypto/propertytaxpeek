@@ -51,30 +51,30 @@ export function PropertyTaxEstimator({
   );
 
   const bars = [
-    { label: countyName, tax: annualTax, rate: effectiveRate, color: "bg-blue-600" },
+    { label: countyName, tax: annualTax, rate: effectiveRate, color: "bg-amber-700" },
     ...(stateAvgRate !== null
       ? [{ label: `${state} avg`, tax: stateAnnualTax!, rate: stateAvgRate, color: "bg-amber-500" }]
       : []),
-    { label: "National avg", tax: nationalAnnualTax, rate: NATIONAL_AVG_RATE, color: "bg-slate-400" },
+    { label: "National avg", tax: nationalAnnualTax, rate: NATIONAL_AVG_RATE, color: "bg-stone-400" },
   ];
 
   const diffFromNational = annualTax - nationalAnnualTax;
 
   return (
-    <section className="bg-gradient-to-br from-blue-50 to-slate-50 border border-blue-200 rounded-xl p-6 my-8">
-      <h2 className="text-xl font-bold text-blue-900 mb-1">
+    <section className="bg-gradient-to-br from-amber-50 to-stone-50 border border-amber-200 rounded-xl p-6 my-8">
+      <h2 className="text-xl font-bold text-amber-900 mb-1">
         Property Tax Estimator
       </h2>
-      <p className="text-sm text-slate-600 mb-5">
+      <p className="text-sm text-stone-600 mb-5">
         Enter your home value to estimate annual property tax in {countyName} at
         the {effectiveRate.toFixed(2)}% effective rate.
       </p>
 
       {/* Controls */}
       <div className="mb-6">
-        <label className="flex justify-between text-sm font-medium text-slate-700 mb-2">
+        <label className="flex justify-between text-sm font-medium text-stone-700 mb-2">
           <span>Home Value</span>
-          <span className="text-blue-700 font-bold text-base">{fmt(homeValue)}</span>
+          <span className="text-amber-800 font-bold text-base">{fmt(homeValue)}</span>
         </label>
         <input
           type="range"
@@ -83,9 +83,9 @@ export function PropertyTaxEstimator({
           step={10000}
           value={homeValue}
           onChange={(e) => setHomeValue(Number(e.target.value))}
-          className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          className="w-full h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-amber-700"
         />
-        <div className="flex justify-between text-xs text-slate-400 mt-1">
+        <div className="flex justify-between text-xs text-stone-400 mt-1">
           <span>$50K</span>
           <span>$2M</span>
         </div>
@@ -99,7 +99,7 @@ export function PropertyTaxEstimator({
           aria-checked={homestead}
           onClick={() => setHomestead(!homestead)}
           className={`relative w-11 h-6 rounded-full transition-colors ${
-            homestead ? "bg-blue-600" : "bg-slate-300"
+            homestead ? "bg-amber-700" : "bg-stone-300"
           }`}
         >
           <span
@@ -108,27 +108,27 @@ export function PropertyTaxEstimator({
             }`}
           />
         </button>
-        <span className="text-sm text-slate-700">
+        <span className="text-sm text-stone-700">
           Apply homestead exemption (-{fmt(HOMESTEAD_EXEMPTION)})
         </span>
       </div>
 
       {/* Result cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg p-4 text-center border border-blue-100">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <div className="bg-white rounded-lg p-4 text-center border border-amber-100">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Annual Tax
           </div>
-          <div className="text-2xl font-bold text-blue-800">{fmt(annualTax)}</div>
+          <div className="text-2xl font-bold text-amber-900">{fmt(annualTax)}</div>
         </div>
-        <div className="bg-white rounded-lg p-4 text-center border border-blue-100">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <div className="bg-white rounded-lg p-4 text-center border border-amber-100">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             Monthly (Escrow)
           </div>
-          <div className="text-2xl font-bold text-blue-800">{fmt(monthlyTax)}</div>
+          <div className="text-2xl font-bold text-amber-900">{fmt(monthlyTax)}</div>
         </div>
-        <div className="bg-white rounded-lg p-4 text-center border border-blue-100">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <div className="bg-white rounded-lg p-4 text-center border border-amber-100">
+          <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
             vs National Avg
           </div>
           <div
@@ -143,19 +143,19 @@ export function PropertyTaxEstimator({
       </div>
 
       {/* Comparison bars */}
-      <h3 className="text-sm font-semibold text-slate-600 mb-3">
+      <h3 className="text-sm font-semibold text-stone-600 mb-3">
         Annual Tax Comparison on a {fmt(homeValue)} Home
       </h3>
       <div className="space-y-3 mb-6">
         {bars.map((bar) => (
           <div key={bar.label}>
             <div className="flex items-center justify-between text-sm mb-1">
-              <span className="font-medium text-slate-700">{bar.label}</span>
-              <span className="text-slate-600">
+              <span className="font-medium text-stone-700">{bar.label}</span>
+              <span className="text-stone-600">
                 {fmt(bar.tax)}/yr ({bar.rate.toFixed(2)}%)
               </span>
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-5">
+            <div className="w-full bg-stone-100 rounded-full h-5">
               <div
                 className={`${bar.color} h-5 rounded-full transition-all duration-300`}
                 style={{
@@ -168,7 +168,7 @@ export function PropertyTaxEstimator({
       </div>
 
       {/* Summary sentence */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 text-sm text-slate-700 leading-relaxed">
+      <div className="bg-white rounded-lg border border-stone-200 p-4 text-sm text-stone-700 leading-relaxed">
         <p>
           A <strong>{fmt(homeValue)}</strong> home in <strong>{countyName}</strong>{" "}
           pays approximately <strong>{fmt(annualTax)}/year</strong> (
@@ -192,7 +192,7 @@ export function PropertyTaxEstimator({
         </p>
       </div>
 
-      <p className="text-xs text-slate-400 mt-4">
+      <p className="text-xs text-stone-400 mt-4">
         Based on the {countyName} effective tax rate of {effectiveRate.toFixed(2)}%.
         National average rate: {NATIONAL_AVG_RATE}%. Actual tax may vary based on
         local assessment practices and exemptions.

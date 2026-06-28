@@ -4,7 +4,7 @@ export function DownloadReport({ title }: { title?: string }) {
   return (
     <button
       onClick={() => window.print()}
-      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors print:hidden"
+      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-stone-700 bg-white border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors print:hidden"
       aria-label="Download as PDF"
     >
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>

@@ -29,10 +29,10 @@ export default function CalculatorPage() {
         items={[{ label: "Home", href: "/" }, { label: "Property Tax Calculator" }]}
       />
 
-      <h1 className="text-3xl font-bold text-slate-900 mb-4">
+      <h1 className="text-3xl font-bold text-stone-900 mb-4">
         Property Tax Calculator
       </h1>
-      <p className="text-slate-600 mb-8">
+      <p className="text-stone-600 mb-8">
         Estimate your annual property tax based on your home value, state, and
         assessment ratio. Results are compared to the national average of $2,690
         per year.

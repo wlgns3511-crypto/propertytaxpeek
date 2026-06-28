@@ -1,12 +1,14 @@
 /**
- * Network-wide publisher and per-site editorial team. No individual bylines;
- * data-aggregator sites publish as an Organization.
+ * Network-wide publisher and per-site editorial team. PropertyTaxPeek publishes
+ * as an Organization so that schema.org attribution reflects the
+ * data-aggregator nature of the work (data is relayed, not authored).
  *
- * HCU Phase 6 v6.2 (2026-05-05): per-source vintages + honest reviewedBy.
+ * HCU Phase 6 v6.4 (2026-05-11): per-source vintages + honest reviewedBy.
  * SOURCE_AUTHORITIES lists ONLY authorities with actual DB backing
- * (Census ACS 2024 5-Year). Cross-reference resources (Tax Foundation,
- * Lincoln Institute, IRS Pub 530) appear in body trust blocks but
- * NOT as schema-level data providers — that would be a freshness lie.
+ * (Census ACS 2024 5-Year, Census State & Local Government Finances).
+ * Cross-reference resources (Tax Foundation, Lincoln Institute, IRS Pub 530)
+ * appear in body trust blocks but NOT as schema-level data providers — that
+ * would be a freshness lie.
  */
 
 // Per-entity vintages — when each dataset/page family was last reviewed.
@@ -17,16 +19,19 @@ export const COUNTY_VINTAGE = '2026-04-29';
 export const STATE_VINTAGE = '2026-04-29';
 export const EXEMPTION_VINTAGE = '2026-04-15';
 export const COMPARE_VINTAGE = '2026-04-29';
-export const METHODOLOGY_VINTAGE = '2026-04-08';
-export const ABOUT_VINTAGE = '2026-04-12';
-export const SITE_VINTAGE = '2026-03-15';
-export const GUIDES_VINTAGE = '2026-04-15';
+export const METHODOLOGY_VINTAGE = '2026-05-12';
+export const ABOUT_VINTAGE = '2026-05-12';
+export const SITE_VINTAGE = '2026-05-12';
+export const GUIDES_VINTAGE = '2026-05-12';
 export const BLOG_VINTAGE = '2026-04-22';
+export const INTERPRETATION_VINTAGE = '2026-05-12';
 
 export const LEGAL_VINTAGES = {
   privacy: '2026-04-22',
   terms: '2026-02-18',
-  disclaimer: '2025-11-04',
+  disclaimer: '2026-05-12',
+  editorialPolicy: '2026-05-12',
+  correctionsPolicy: '2026-05-12',
 };
 
 // Per-source vintage — when each upstream authority last published.
@@ -71,3 +76,13 @@ export const SOURCE_AUTHORITIES = [
 
 export const REVIEWER_DISCLAIMER =
   'Property tax data is informational. Final tax determinations are made by your local county assessor and tax authority. Rates, exemptions, and assessment methods vary by jurisdiction and change over time. Verify current figures with your county assessor or a licensed tax professional before making financial decisions.';
+
+/**
+ * Compact source list for the above-the-fold TrustBlock component.
+ * Mirrors SOURCE_AUTHORITIES (2 honest data providers) without the
+ * `@type` field that TrustBlock UI doesn't consume.
+ */
+export const TRUST_BLOCK_SOURCES: ReadonlyArray<{ name: string; url: string }> = [
+  { name: 'US Census Bureau — ACS 2024 5-Year', url: 'https://www.census.gov/programs-surveys/acs/' },
+  { name: 'US Census Bureau — State & Local Government Finances', url: 'https://www.census.gov/programs-surveys/gov-finances.html' },
+];

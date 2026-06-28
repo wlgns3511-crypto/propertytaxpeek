@@ -75,9 +75,9 @@ export function FeedbackButton({ pageId, label = 'Was this data helpful?' }: Fee
 
   if (vote) {
     return (
-      <div className="my-6 flex items-center gap-2 px-4 py-3 bg-slate-50 rounded-lg border border-slate-200">
+      <div className="my-6 flex items-center gap-2 px-4 py-3 bg-stone-50 rounded-lg border border-stone-200">
         <span className="text-lg">{vote === 'yes' ? '👍' : '👎'}</span>
-        <span className="text-sm text-slate-600">
+        <span className="text-sm text-stone-600">
           {vote === 'yes' ? 'Thanks for your feedback!' : 'Thanks — we\'ll work to improve this.'}
         </span>
       </div>
@@ -85,19 +85,19 @@ export function FeedbackButton({ pageId, label = 'Was this data helpful?' }: Fee
   }
 
   return (
-    <div className="my-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-3 bg-slate-50 rounded-lg border border-slate-200">
-      <span className="text-sm text-slate-700 font-medium">{label}</span>
+    <div className="my-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-3 bg-stone-50 rounded-lg border border-stone-200">
+      <span className="text-sm text-stone-700 font-medium">{label}</span>
       <div className="flex gap-2">
         <button
           onClick={() => handleVote('yes')}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-white border border-slate-300 rounded-full hover:bg-emerald-50 hover:border-emerald-300 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-white border border-stone-300 rounded-full hover:bg-emerald-50 hover:border-emerald-300 transition-colors cursor-pointer"
           aria-label="Yes, helpful"
         >
           👍 Yes
         </button>
         <button
           onClick={() => handleVote('no')}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-white border border-slate-300 rounded-full hover:bg-red-50 hover:border-red-300 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-white border border-stone-300 rounded-full hover:bg-red-50 hover:border-red-300 transition-colors cursor-pointer"
           aria-label="No, not helpful"
         >
           👎 Not really

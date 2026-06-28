@@ -1,0 +1,28 @@
+# PropertyTaxPeek
+
+> US Property Tax Rates by State & County
+
+Explore property tax rates for all 50 US states and 500+ counties. Compare effective tax rates, median property taxes, and home values. Free property tax calculator.
+
+## Core pages
+- [Methodology and data sources](https://propertytaxpeek.com/methodology/): how every figure is derived, with primary-source citations
+- [Compare](https://propertytaxpeek.com/compare/): side-by-side comparison
+- [About and editorial standards](https://propertytaxpeek.com/about/): authorship and review policy
+
+## Key county
+- [Property Tax Trends 2026](https://propertytaxpeek.com/insights/property-tax-trends-2026/)
+- [Cheapest States Homeowners](https://propertytaxpeek.com/insights/cheapest-states-homeowners/)
+- [Property Tax Vs Income Tax](https://propertytaxpeek.com/insights/property-tax-vs-income-tax/)
+- [Alabama](https://propertytaxpeek.com/state/alabama/)
+- [Alaska](https://propertytaxpeek.com/state/alaska/)
+- [Arizona](https://propertytaxpeek.com/state/arizona/)
+- [Arkansas](https://propertytaxpeek.com/state/arkansas/)
+- [California](https://propertytaxpeek.com/state/california/)
+- [Colorado](https://propertytaxpeek.com/state/colorado/)
+- [Connecticut](https://propertytaxpeek.com/state/connecticut/)
+- [Delaware](https://propertytaxpeek.com/state/delaware/)
+- [District Of Columbia](https://propertytaxpeek.com/state/district-of-columbia/)
+
+## Data
+- Primary sources: US Census Bureau — American Community Survey (ACS) 2024 5-Year, US Census Bureau — State & Local Government Finances, US Census Bureau — ACS 2024 5-Year
+- All figures are derived from these primary sources; see /methodology/ for derivation and vintage.

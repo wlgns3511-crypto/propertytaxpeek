@@ -1,15 +1,16 @@
 /**
  * JSON-LD helpers for PropertyTaxPeek.
- * Phase 6 v6.2 (2026-05-05): inline reviewedBy/sourceOrganization for honest authority.
+ * Phase 6 v6.4 (2026-05-11): honest creator/publisher/reviewer split (Trap #105).
  *
- * Design notes:
- *   - SOURCE_AUTHORITIES is reused as both `sourceOrganization` (data origin) and
- *     `reviewedBy` (the org whose data we relay). It's the same set because we
- *     don't add nominal reviewers — every authority listed here also publishes
- *     the underlying numbers.
- *   - `temporalCoverage` reflects the ACS 2020/2024 5-year range for housing data.
- *   - `dateModified` accepts a per-entity vintage (state/county/etc) so each
- *     family of pages signals its own review cycle, not a single sitewide NOW.
+ * schema.org Dataset role split:
+ *   - creator           = upstream data origin (US Census Bureau ACS)
+ *   - publisher         = the platform that publishes the relay (DataPeek Network)
+ *   - sourceOrganization = all upstream data origins (Census ACS + Census Govt Finances)
+ *   - reviewedBy        = the editorial team that reviews freshness and copy
+ *
+ * `temporalCoverage` reflects the ACS 2020/2024 5-year range for housing data.
+ * `dateModified` accepts a per-entity vintage (state/county/etc) so each family
+ * of pages signals its own review cycle, not a single sitewide NOW.
  */
 
 import {
@@ -59,7 +60,7 @@ export function datasetSchema(
     description,
     ...(fullUrl ? { url: fullUrl } : {}),
     license: "https://creativecommons.org/publicdomain/zero/1.0/",
-    creator: PUBLISHER_NODE,
+    creator: SOURCE_AUTHORITIES[0],
     publisher: PUBLISHER_NODE,
     sourceOrganization: SOURCE_AUTHORITIES,
     isBasedOn: SOURCE_AUTHORITIES.map((a) => a.url),
