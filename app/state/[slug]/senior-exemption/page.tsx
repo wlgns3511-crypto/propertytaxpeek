@@ -405,8 +405,16 @@ export async function generateMetadata({
       ? `${fmtUSD(senior.creditUsd)} Credit`
       : "Deferral Program";
 
+  // 2026-07-03 Bing CTR fix: states whose official program is named
+  // "Homestead Exemption" (NE, IL, CO…) get searched by that name —
+  // «nebraska homestead exemption 2026» sat pos 7 with 0 clicks because
+  // the title only said "Senior Property Tax Exemption". Surface the
+  // official term for those states; others keep the generic phrasing.
+  const usesHomestead = /homestead/i.test(senior.programName);
   return {
-    title: `${state.state} Senior Property Tax Exemption 2026 — Age ${senior.ageThreshold}+ ${benefit}`,
+    title: usesHomestead
+      ? `${state.state} Homestead Exemption for Seniors 2026 — ${benefit}`
+      : `${state.state} Senior Property Tax Exemption 2026 — Age ${senior.ageThreshold}+ ${benefit}`,
     description: `${state.state} senior (${senior.ageThreshold}+) property tax benefits: ${senior.programName}. Income cap, exemption amount, freeze/deferral options, and filing process. 2026 values.`,
     alternates: { canonical: `/state/${slug}/senior-exemption/` },
     openGraph: { url: `/state/${slug}/senior-exemption/` },
