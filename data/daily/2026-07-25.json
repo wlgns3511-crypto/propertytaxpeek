@@ -1,0 +1,124 @@
+{
+  "date": "2026-07-25",
+  "kind": "spotlight",
+  "title": "Today’s property-tax profile data: Clinton County Pa",
+  "description": "2 readings from the PropertyTaxPeek dataset for 2026-07-25: record in focus: clinton county pa; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "intro": "2 readings from the PropertyTaxPeek dataset for 2026-07-25: record in focus: clinton county pa; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "items": [
+    {
+      "label": "Clinton County Pa",
+      "value": "Reference page",
+      "href": "/county/clinton-county-pa/"
+    },
+    {
+      "label": "Coal County Ok",
+      "value": "Reference page",
+      "href": "/county/coal-county-ok/"
+    },
+    {
+      "label": "Coahoma County Ms",
+      "value": "Reference page",
+      "href": "/county/coahoma-county-ms/"
+    },
+    {
+      "label": "Cloud County Ks",
+      "value": "Reference page",
+      "href": "/county/cloud-county-ks/"
+    },
+    {
+      "label": "Clinton County Pa",
+      "value": "Reference page",
+      "href": "/county/clinton-county-pa/"
+    },
+    {
+      "label": "Clinton County Oh",
+      "value": "Reference page",
+      "href": "/county/clinton-county-oh/"
+    },
+    {
+      "label": "Clinton County Ny",
+      "value": "Reference page",
+      "href": "/county/clinton-county-ny/"
+    },
+    {
+      "label": "Clinton County Mo",
+      "value": "Reference page",
+      "href": "/county/clinton-county-mo/"
+    },
+    {
+      "label": "Clinton County Mi",
+      "value": "Reference page",
+      "href": "/county/clinton-county-mi/"
+    }
+  ],
+  "links": [
+    {
+      "label": "View Clinton County Pa",
+      "href": "/county/clinton-county-pa/"
+    }
+  ],
+  "sections": [
+    {
+      "kind": "spotlight",
+      "heading": "Record in focus: Clinton County Pa",
+      "body": "Clinton County Pa records a reference value in the current PropertyTaxPeek data. The linked record holds the full field list and the source note behind the figure.",
+      "items": [
+        {
+          "label": "Clinton County Pa",
+          "value": "Reference page",
+          "href": "/county/clinton-county-pa/"
+        }
+      ]
+    },
+    {
+      "kind": "route",
+      "heading": "Where to go next",
+      "body": "A short path through PropertyTaxPeek for anyone starting today. These are entry points into the detailed pages, not a substitute for them.",
+      "items": [
+        {
+          "label": "Coal County Ok",
+          "value": "Reference page",
+          "href": "/county/coal-county-ok/"
+        },
+        {
+          "label": "Coahoma County Ms",
+          "value": "Reference page",
+          "href": "/county/coahoma-county-ms/"
+        },
+        {
+          "label": "Cloud County Ks",
+          "value": "Reference page",
+          "href": "/county/cloud-county-ks/"
+        },
+        {
+          "label": "Clinton County Pa",
+          "value": "Reference page",
+          "href": "/county/clinton-county-pa/"
+        },
+        {
+          "label": "Clinton County Oh",
+          "value": "Reference page",
+          "href": "/county/clinton-county-oh/"
+        },
+        {
+          "label": "Clinton County Ny",
+          "value": "Reference page",
+          "href": "/county/clinton-county-ny/"
+        },
+        {
+          "label": "Clinton County Mo",
+          "value": "Reference page",
+          "href": "/county/clinton-county-mo/"
+        },
+        {
+          "label": "Clinton County Mi",
+          "value": "Reference page",
+          "href": "/county/clinton-county-mi/"
+        }
+      ]
+    }
+  ],
+  "source": "Census ACS and documented tax sources",
+  "dataDate": "2026-07-15",
+  "fingerprint": "4d087988"
+}

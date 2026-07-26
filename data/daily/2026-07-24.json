@@ -1,0 +1,124 @@
+{
+  "date": "2026-07-24",
+  "kind": "spotlight",
+  "title": "Today’s property-tax profile data: Arizona",
+  "description": "2 readings from the PropertyTaxPeek dataset for 2026-07-24: record in focus: arizona; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "intro": "2 readings from the PropertyTaxPeek dataset for 2026-07-24: record in focus: arizona; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "items": [
+    {
+      "label": "Arizona",
+      "value": "Reference page",
+      "href": "/state/arizona/"
+    },
+    {
+      "label": "York County Sc",
+      "value": "Reference page",
+      "href": "/county/york-county-sc/"
+    },
+    {
+      "label": "York County Pa",
+      "value": "Reference page",
+      "href": "/county/york-county-pa/"
+    },
+    {
+      "label": "York County Ne",
+      "value": "Reference page",
+      "href": "/county/york-county-ne/"
+    },
+    {
+      "label": "California",
+      "value": "Reference page",
+      "href": "/state/california/"
+    },
+    {
+      "label": "Arkansas",
+      "value": "Reference page",
+      "href": "/state/arkansas/"
+    },
+    {
+      "label": "Arizona",
+      "value": "Reference page",
+      "href": "/state/arizona/"
+    },
+    {
+      "label": "Alaska",
+      "value": "Reference page",
+      "href": "/state/alaska/"
+    },
+    {
+      "label": "Senior Exemption",
+      "value": "Reference page",
+      "href": "/state/alabama/senior-exemption/"
+    }
+  ],
+  "links": [
+    {
+      "label": "View Arizona",
+      "href": "/state/arizona/"
+    }
+  ],
+  "sections": [
+    {
+      "kind": "spotlight",
+      "heading": "Record in focus: Arizona",
+      "body": "Arizona records a reference value in the current PropertyTaxPeek data. The linked record holds the full field list and the source note behind the figure.",
+      "items": [
+        {
+          "label": "Arizona",
+          "value": "Reference page",
+          "href": "/state/arizona/"
+        }
+      ]
+    },
+    {
+      "kind": "route",
+      "heading": "Where to go next",
+      "body": "A short path through PropertyTaxPeek for anyone starting today. These are entry points into the detailed pages, not a substitute for them.",
+      "items": [
+        {
+          "label": "York County Sc",
+          "value": "Reference page",
+          "href": "/county/york-county-sc/"
+        },
+        {
+          "label": "York County Pa",
+          "value": "Reference page",
+          "href": "/county/york-county-pa/"
+        },
+        {
+          "label": "York County Ne",
+          "value": "Reference page",
+          "href": "/county/york-county-ne/"
+        },
+        {
+          "label": "California",
+          "value": "Reference page",
+          "href": "/state/california/"
+        },
+        {
+          "label": "Arkansas",
+          "value": "Reference page",
+          "href": "/state/arkansas/"
+        },
+        {
+          "label": "Arizona",
+          "value": "Reference page",
+          "href": "/state/arizona/"
+        },
+        {
+          "label": "Alaska",
+          "value": "Reference page",
+          "href": "/state/alaska/"
+        },
+        {
+          "label": "Senior Exemption",
+          "value": "Reference page",
+          "href": "/state/alabama/senior-exemption/"
+        }
+      ]
+    }
+  ],
+  "source": "Census ACS and documented tax sources",
+  "dataDate": "2026-07-15",
+  "fingerprint": "33fb893e"
+}

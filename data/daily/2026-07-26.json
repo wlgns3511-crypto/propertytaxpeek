@@ -1,0 +1,124 @@
+{
+  "date": "2026-07-26",
+  "kind": "spotlight",
+  "title": "Today’s property-tax profile data: Jefferson County Or",
+  "description": "2 readings from the PropertyTaxPeek dataset for 2026-07-26: record in focus: jefferson county or; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "intro": "2 readings from the PropertyTaxPeek dataset for 2026-07-26: record in focus: jefferson county or; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "items": [
+    {
+      "label": "Jefferson County Or",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-or/"
+    },
+    {
+      "label": "Jasper County Il",
+      "value": "Reference page",
+      "href": "/county/jasper-county-il/"
+    },
+    {
+      "label": "Jefferson County Or",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-or/"
+    },
+    {
+      "label": "Jefferson County Ok",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-ok/"
+    },
+    {
+      "label": "Jefferson County Oh",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-oh/"
+    },
+    {
+      "label": "Jefferson County Ny",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-ny/"
+    },
+    {
+      "label": "Jefferson County Ne",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-ne/"
+    },
+    {
+      "label": "Jefferson County Mt",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-mt/"
+    },
+    {
+      "label": "Jefferson County Ms",
+      "value": "Reference page",
+      "href": "/county/jefferson-county-ms/"
+    }
+  ],
+  "links": [
+    {
+      "label": "View Jefferson County Or",
+      "href": "/county/jefferson-county-or/"
+    }
+  ],
+  "sections": [
+    {
+      "kind": "spotlight",
+      "heading": "Record in focus: Jefferson County Or",
+      "body": "Jefferson County Or records a reference value in the current PropertyTaxPeek data. The linked record holds the full field list and the source note behind the figure.",
+      "items": [
+        {
+          "label": "Jefferson County Or",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-or/"
+        }
+      ]
+    },
+    {
+      "kind": "route",
+      "heading": "Where to go next",
+      "body": "A short path through PropertyTaxPeek for anyone starting today. These are entry points into the detailed pages, not a substitute for them.",
+      "items": [
+        {
+          "label": "Jasper County Il",
+          "value": "Reference page",
+          "href": "/county/jasper-county-il/"
+        },
+        {
+          "label": "Jefferson County Or",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-or/"
+        },
+        {
+          "label": "Jefferson County Ok",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-ok/"
+        },
+        {
+          "label": "Jefferson County Oh",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-oh/"
+        },
+        {
+          "label": "Jefferson County Ny",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-ny/"
+        },
+        {
+          "label": "Jefferson County Ne",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-ne/"
+        },
+        {
+          "label": "Jefferson County Mt",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-mt/"
+        },
+        {
+          "label": "Jefferson County Ms",
+          "value": "Reference page",
+          "href": "/county/jefferson-county-ms/"
+        }
+      ]
+    }
+  ],
+  "source": "Census ACS and documented tax sources",
+  "dataDate": "2026-07-15",
+  "fingerprint": "b085f9a0"
+}

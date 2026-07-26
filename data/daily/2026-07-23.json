@@ -1,0 +1,239 @@
+{
+  "date": "2026-07-23",
+  "kind": "comparison",
+  "title": "MO vs NM: a quick PropertyTaxPeek comparison",
+  "description": "4 readings from the PropertyTaxPeek dataset for 2026-07-23: mo vs nm; ranked by population; record in focus: mo; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "intro": "4 readings from the PropertyTaxPeek dataset for 2026-07-23: mo vs nm; ranked by population; record in focus: mo; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "items": [
+    {
+      "label": "MO",
+      "value": "Population: 59,013",
+      "href": "/county/lincoln-county-mo/",
+      "metric": 59013,
+      "metricLabel": "population",
+      "verdict": "Ranks #877 of 2780 by population · 90% above the median (30,999)."
+    },
+    {
+      "label": "NM",
+      "value": "Population: 18,866",
+      "href": "/county/roosevelt-county-nm/",
+      "metric": 18866,
+      "metricLabel": "population",
+      "verdict": "Ranks #1803 of 2780 by population · 39% below the median (30,999)."
+    },
+    {
+      "label": "FL",
+      "value": "Population: 1,944,375",
+      "href": "/county/broward-county-fl/",
+      "metric": 1944375,
+      "metricLabel": "population",
+      "verdict": "Ranks #17 of 2780 by population · top 1% · 6172% above the median (30,999)."
+    },
+    {
+      "label": "CA",
+      "value": "Population: 1,936,259",
+      "href": "/county/santa-clara-county-ca/",
+      "metric": 1936259,
+      "metricLabel": "population",
+      "verdict": "Ranks #18 of 2780 by population · top 1% · 6146% above the median (30,999)."
+    },
+    {
+      "label": "MI",
+      "value": "Population: 1,793,561",
+      "href": "/county/wayne-county-mi/",
+      "metric": 1793561,
+      "metricLabel": "population",
+      "verdict": "Ranks #19 of 2780 by population · top 1% · 5686% above the median (30,999)."
+    },
+    {
+      "label": "NY",
+      "value": "Population: 1,694,251",
+      "href": "/county/new-york-county-ny/",
+      "metric": 1694251,
+      "metricLabel": "population",
+      "verdict": "Ranks #20 of 2780 by population · top 1% · 5366% above the median (30,999)."
+    },
+    {
+      "label": "CA",
+      "value": "Population: 1,682,353",
+      "href": "/county/alameda-county-ca/",
+      "metric": 1682353,
+      "metricLabel": "population",
+      "verdict": "Ranks #21 of 2780 by population · top 1% · 5327% above the median (30,999)."
+    },
+    {
+      "label": "MO",
+      "value": "Population: 59,013",
+      "href": "/county/lincoln-county-mo/",
+      "metric": 59013,
+      "metricLabel": "population",
+      "verdict": "Ranks #877 of 2780 by population · 90% above the median (30,999)."
+    },
+    {
+      "label": "WI",
+      "value": "Population: 16,554",
+      "href": "/county/sawyer-county-wi/",
+      "metric": 16554,
+      "metricLabel": "population"
+    },
+    {
+      "label": "AZ",
+      "value": "Population: 16,557",
+      "href": "/county/la-paz-county-az/",
+      "metric": 16557,
+      "metricLabel": "population"
+    },
+    {
+      "label": "AR",
+      "value": "Population: 16,559",
+      "href": "/county/lawrence-county-ar/",
+      "metric": 16559,
+      "metricLabel": "population"
+    },
+    {
+      "label": "MS",
+      "value": "Population: 16,564",
+      "href": "/county/jasper-county-ms/",
+      "metric": 16564,
+      "metricLabel": "population"
+    }
+  ],
+  "links": [
+    {
+      "label": "View MO",
+      "href": "/county/lincoln-county-mo/"
+    },
+    {
+      "label": "View NM",
+      "href": "/county/roosevelt-county-nm/"
+    }
+  ],
+  "sections": [
+    {
+      "kind": "comparison",
+      "heading": "MO vs NM",
+      "body": "MO (Population: 59,013) against NM (Population: 18,866). MO is 40,147 population higher, a 212.8% gap.",
+      "items": [
+        {
+          "label": "MO",
+          "value": "Population: 59,013",
+          "href": "/county/lincoln-county-mo/",
+          "metric": 59013,
+          "metricLabel": "population",
+          "verdict": "Ranks #877 of 2780 by population · 90% above the median (30,999)."
+        },
+        {
+          "label": "NM",
+          "value": "Population: 18,866",
+          "href": "/county/roosevelt-county-nm/",
+          "metric": 18866,
+          "metricLabel": "population",
+          "verdict": "Ranks #1803 of 2780 by population · 39% below the median (30,999)."
+        }
+      ],
+      "takeaway": "Both sit against a dataset median of 30,999 population."
+    },
+    {
+      "kind": "ranking",
+      "heading": "Ranked by population",
+      "body": "Positions 17–21 of 2780 records carrying a population figure. Ordering is computed from the stored values, not editorial preference.",
+      "items": [
+        {
+          "label": "FL",
+          "value": "Population: 1,944,375",
+          "href": "/county/broward-county-fl/",
+          "metric": 1944375,
+          "metricLabel": "population",
+          "verdict": "Ranks #17 of 2780 by population · top 1% · 6172% above the median (30,999)."
+        },
+        {
+          "label": "CA",
+          "value": "Population: 1,936,259",
+          "href": "/county/santa-clara-county-ca/",
+          "metric": 1936259,
+          "metricLabel": "population",
+          "verdict": "Ranks #18 of 2780 by population · top 1% · 6146% above the median (30,999)."
+        },
+        {
+          "label": "MI",
+          "value": "Population: 1,793,561",
+          "href": "/county/wayne-county-mi/",
+          "metric": 1793561,
+          "metricLabel": "population",
+          "verdict": "Ranks #19 of 2780 by population · top 1% · 5686% above the median (30,999)."
+        },
+        {
+          "label": "NY",
+          "value": "Population: 1,694,251",
+          "href": "/county/new-york-county-ny/",
+          "metric": 1694251,
+          "metricLabel": "population",
+          "verdict": "Ranks #20 of 2780 by population · top 1% · 5366% above the median (30,999)."
+        },
+        {
+          "label": "CA",
+          "value": "Population: 1,682,353",
+          "href": "/county/alameda-county-ca/",
+          "metric": 1682353,
+          "metricLabel": "population",
+          "verdict": "Ranks #21 of 2780 by population · top 1% · 5327% above the median (30,999)."
+        }
+      ],
+      "takeaway": "Dataset median: 30,999. Highest on file: 10,014,009 (CA)."
+    },
+    {
+      "kind": "spotlight",
+      "heading": "Record in focus: MO",
+      "body": "MO records population of 59,013 in the current PropertyTaxPeek data. The linked record holds the full field list and the source note behind the figure.",
+      "items": [
+        {
+          "label": "MO",
+          "value": "Population: 59,013",
+          "href": "/county/lincoln-county-mo/",
+          "metric": 59013,
+          "metricLabel": "population",
+          "verdict": "Ranks #877 of 2780 by population · 90% above the median (30,999)."
+        }
+      ],
+      "takeaway": "Ranks #877 of 2780 by population · 90% above the median (30,999)."
+    },
+    {
+      "kind": "route",
+      "heading": "Where to go next",
+      "body": "A short path through PropertyTaxPeek for anyone starting today. These are entry points into the detailed pages, not a substitute for them.",
+      "items": [
+        {
+          "label": "WI",
+          "value": "Population: 16,554",
+          "href": "/county/sawyer-county-wi/",
+          "metric": 16554,
+          "metricLabel": "population"
+        },
+        {
+          "label": "AZ",
+          "value": "Population: 16,557",
+          "href": "/county/la-paz-county-az/",
+          "metric": 16557,
+          "metricLabel": "population"
+        },
+        {
+          "label": "AR",
+          "value": "Population: 16,559",
+          "href": "/county/lawrence-county-ar/",
+          "metric": 16559,
+          "metricLabel": "population"
+        },
+        {
+          "label": "MS",
+          "value": "Population: 16,564",
+          "href": "/county/jasper-county-ms/",
+          "metric": 16564,
+          "metricLabel": "population"
+        }
+      ]
+    }
+  ],
+  "source": "Census ACS and documented tax sources",
+  "dataDate": "2026-07-15",
+  "fingerprint": "7c340ba4"
+}

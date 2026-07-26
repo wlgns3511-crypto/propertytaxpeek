@@ -1,0 +1,239 @@
+{
+  "date": "2026-07-22",
+  "kind": "comparison",
+  "title": "NM vs TX: a quick PropertyTaxPeek comparison",
+  "description": "4 readings from the PropertyTaxPeek dataset for 2026-07-22: nm vs tx; ranked by population; record in focus: nm; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "intro": "4 readings from the PropertyTaxPeek dataset for 2026-07-22: nm vs tx; ranked by population; record in focus: nm; where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "items": [
+    {
+      "label": "NM",
+      "value": "Population: 38,921",
+      "href": "/county/rio-arriba-county-nm/",
+      "metric": 38921,
+      "metricLabel": "population",
+      "verdict": "Ranks #1196 of 2780 by population · 26% above the median (30,999)."
+    },
+    {
+      "label": "TX",
+      "value": "Population: 12,372",
+      "href": "/county/morris-county-tx/",
+      "metric": 12372,
+      "metricLabel": "population",
+      "verdict": "Ranks #2122 of 2780 by population · 60% below the median (30,999)."
+    },
+    {
+      "label": "TX",
+      "value": "Population: 2,009,324",
+      "href": "/county/bexar-county-tx/",
+      "metric": 2009324,
+      "metricLabel": "population",
+      "verdict": "Ranks #16 of 2780 by population · top 1% · 6382% above the median (30,999)."
+    },
+    {
+      "label": "FL",
+      "value": "Population: 1,944,375",
+      "href": "/county/broward-county-fl/",
+      "metric": 1944375,
+      "metricLabel": "population",
+      "verdict": "Ranks #17 of 2780 by population · top 1% · 6172% above the median (30,999)."
+    },
+    {
+      "label": "CA",
+      "value": "Population: 1,936,259",
+      "href": "/county/santa-clara-county-ca/",
+      "metric": 1936259,
+      "metricLabel": "population",
+      "verdict": "Ranks #18 of 2780 by population · top 1% · 6146% above the median (30,999)."
+    },
+    {
+      "label": "MI",
+      "value": "Population: 1,793,561",
+      "href": "/county/wayne-county-mi/",
+      "metric": 1793561,
+      "metricLabel": "population",
+      "verdict": "Ranks #19 of 2780 by population · top 1% · 5686% above the median (30,999)."
+    },
+    {
+      "label": "NY",
+      "value": "Population: 1,694,251",
+      "href": "/county/new-york-county-ny/",
+      "metric": 1694251,
+      "metricLabel": "population",
+      "verdict": "Ranks #20 of 2780 by population · top 1% · 5366% above the median (30,999)."
+    },
+    {
+      "label": "NM",
+      "value": "Population: 38,921",
+      "href": "/county/rio-arriba-county-nm/",
+      "metric": 38921,
+      "metricLabel": "population",
+      "verdict": "Ranks #1196 of 2780 by population · 26% above the median (30,999)."
+    },
+    {
+      "label": "IN",
+      "value": "Population: 24,665",
+      "href": "/county/randolph-county-in/",
+      "metric": 24665,
+      "metricLabel": "population"
+    },
+    {
+      "label": "MI",
+      "value": "Population: 24,668",
+      "href": "/county/otsego-county-mi/",
+      "metric": 24668,
+      "metricLabel": "population"
+    },
+    {
+      "label": "MO",
+      "value": "Population: 24,696",
+      "href": "/county/crawford-county-mo/",
+      "metric": 24696,
+      "metricLabel": "population"
+    },
+    {
+      "label": "OR",
+      "value": "Population: 24,706",
+      "href": "/county/crook-county-or/",
+      "metric": 24706,
+      "metricLabel": "population"
+    }
+  ],
+  "links": [
+    {
+      "label": "View NM",
+      "href": "/county/rio-arriba-county-nm/"
+    },
+    {
+      "label": "View TX",
+      "href": "/county/morris-county-tx/"
+    }
+  ],
+  "sections": [
+    {
+      "kind": "comparison",
+      "heading": "NM vs TX",
+      "body": "NM (Population: 38,921) against TX (Population: 12,372). NM is 26,549 population higher, a 214.6% gap.",
+      "items": [
+        {
+          "label": "NM",
+          "value": "Population: 38,921",
+          "href": "/county/rio-arriba-county-nm/",
+          "metric": 38921,
+          "metricLabel": "population",
+          "verdict": "Ranks #1196 of 2780 by population · 26% above the median (30,999)."
+        },
+        {
+          "label": "TX",
+          "value": "Population: 12,372",
+          "href": "/county/morris-county-tx/",
+          "metric": 12372,
+          "metricLabel": "population",
+          "verdict": "Ranks #2122 of 2780 by population · 60% below the median (30,999)."
+        }
+      ],
+      "takeaway": "Both sit against a dataset median of 30,999 population."
+    },
+    {
+      "kind": "ranking",
+      "heading": "Ranked by population",
+      "body": "Positions 16–20 of 2780 records carrying a population figure. Ordering is computed from the stored values, not editorial preference.",
+      "items": [
+        {
+          "label": "TX",
+          "value": "Population: 2,009,324",
+          "href": "/county/bexar-county-tx/",
+          "metric": 2009324,
+          "metricLabel": "population",
+          "verdict": "Ranks #16 of 2780 by population · top 1% · 6382% above the median (30,999)."
+        },
+        {
+          "label": "FL",
+          "value": "Population: 1,944,375",
+          "href": "/county/broward-county-fl/",
+          "metric": 1944375,
+          "metricLabel": "population",
+          "verdict": "Ranks #17 of 2780 by population · top 1% · 6172% above the median (30,999)."
+        },
+        {
+          "label": "CA",
+          "value": "Population: 1,936,259",
+          "href": "/county/santa-clara-county-ca/",
+          "metric": 1936259,
+          "metricLabel": "population",
+          "verdict": "Ranks #18 of 2780 by population · top 1% · 6146% above the median (30,999)."
+        },
+        {
+          "label": "MI",
+          "value": "Population: 1,793,561",
+          "href": "/county/wayne-county-mi/",
+          "metric": 1793561,
+          "metricLabel": "population",
+          "verdict": "Ranks #19 of 2780 by population · top 1% · 5686% above the median (30,999)."
+        },
+        {
+          "label": "NY",
+          "value": "Population: 1,694,251",
+          "href": "/county/new-york-county-ny/",
+          "metric": 1694251,
+          "metricLabel": "population",
+          "verdict": "Ranks #20 of 2780 by population · top 1% · 5366% above the median (30,999)."
+        }
+      ],
+      "takeaway": "Dataset median: 30,999. Highest on file: 10,014,009 (CA)."
+    },
+    {
+      "kind": "spotlight",
+      "heading": "Record in focus: NM",
+      "body": "NM records population of 38,921 in the current PropertyTaxPeek data. The linked record holds the full field list and the source note behind the figure.",
+      "items": [
+        {
+          "label": "NM",
+          "value": "Population: 38,921",
+          "href": "/county/rio-arriba-county-nm/",
+          "metric": 38921,
+          "metricLabel": "population",
+          "verdict": "Ranks #1196 of 2780 by population · 26% above the median (30,999)."
+        }
+      ],
+      "takeaway": "Ranks #1196 of 2780 by population · 26% above the median (30,999)."
+    },
+    {
+      "kind": "route",
+      "heading": "Where to go next",
+      "body": "A short path through PropertyTaxPeek for anyone starting today. These are entry points into the detailed pages, not a substitute for them.",
+      "items": [
+        {
+          "label": "IN",
+          "value": "Population: 24,665",
+          "href": "/county/randolph-county-in/",
+          "metric": 24665,
+          "metricLabel": "population"
+        },
+        {
+          "label": "MI",
+          "value": "Population: 24,668",
+          "href": "/county/otsego-county-mi/",
+          "metric": 24668,
+          "metricLabel": "population"
+        },
+        {
+          "label": "MO",
+          "value": "Population: 24,696",
+          "href": "/county/crawford-county-mo/",
+          "metric": 24696,
+          "metricLabel": "population"
+        },
+        {
+          "label": "OR",
+          "value": "Population: 24,706",
+          "href": "/county/crook-county-or/",
+          "metric": 24706,
+          "metricLabel": "population"
+        }
+      ]
+    }
+  ],
+  "source": "Census ACS and documented tax sources",
+  "dataDate": "2026-07-15",
+  "fingerprint": "c9371c6"
+}
